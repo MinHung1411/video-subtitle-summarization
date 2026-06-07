@@ -1,0 +1,56 @@
+# Python
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+.Python
+*.egg-info/
+dist/
+build/
+*.egg
+
+# Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Virtual environments
+venv/
+env/
+.venv/
+
+# Model weights (too large for git)
+*.bin
+*.safetensors
+*.pt
+*.pth
+bart_best/
+
+# Video files
+*.mp4
+*.mkv
+*.avi
+*.mov
+
+# Colab/Drive cache
+.config/
+drive/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+
+# Logs
+*.log
+*.out
+
+# Zip/archives
+*.zip
+*.tar.gz
+*.rar
+
+# Environment variables
+.env
