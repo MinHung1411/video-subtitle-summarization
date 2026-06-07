@@ -229,10 +229,15 @@ Upload a video file (`.mp4`, `.mkv`, `.avi`). Whisper transcribes the audio, the
 
 **IUH – Faculty of Information Technology | NLP Course 2026**
 
-| Member | Role |
-|---|---|
-| Minh Hùng | Model fine-tuning, pipeline, Gradio UI |
-| *(Team)* | Research, evaluation, presentation |
+> Instructor: **TS. Bùi Thanh Hùng**
+
+| Member | Responsibilities | Hours | % |
+|---|---|---|---|
+| **Hồ Minh Hưng** | Data EDA, VT-SSum preprocessing, dataset loading pipeline | 40h | 25% |
+| **Hồ Minh Hưng** | Fine-tuning BART-large-cnn, Trainer API config, training curves | 60h | 37.5% |
+| **Huỳnh Quốc Anh** | T5-small & Lead-3 baseline implementation, metrics computation & comparison | 40h | 25% |
+| **Huỳnh Quốc Anh** | Technical report writing, research paper, system diagrams & flowcharts | 20h | 12.5% |
+| **Total** | — | **160h** | **100%** |
 
 ---
 
