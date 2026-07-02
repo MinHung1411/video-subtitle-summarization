@@ -1,0 +1,9 @@
+transformers==4.46.3
+torch
+gradio==5.50.0
+huggingface_hub==0.36.2
+openai-whisper
+nltk
+rouge-score
+sentencepiece
+audioop-lts

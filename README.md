@@ -12,6 +12,10 @@
 
 *An end-to-end NLP pipeline that transcribes video audio with Whisper ASR and generates abstractive summaries using a fine-tuned BART-large-cnn model.*
 
+### 🚀 [▶️ Live Demo trên Hugging Face Spaces](https://minhunhooo-video-subtitle-summarization.hf.space/)
+
+[![Live Demo](https://img.shields.io/badge/🤗%20Live%20Demo-Hugging%20Face%20Spaces-FF9D00?style=for-the-badge&logo=huggingface&logoColor=white)](https://minhunhooo-video-subtitle-summarization.hf.space/)
+
 </div>
 
 ---
@@ -113,10 +117,16 @@ Fine-tuned `BART-large-cnn` evaluated on **400-sample VT-SSum test set**:
 ```
 video-subtitle-summarization/
 │
-├── DEMO_CODE.ipynb        # Main notebook: UI + full inference pipeline
-├── CODE_MODEL.ipynb       # Model training & fine-tuning notebook
-├── requirements.txt       # Python dependencies
-├── Dataset.txt            # Link to VT-SSum dataset on Kaggle
+├── DEMO_CODE.ipynb              # Main notebook: UI + full inference pipeline
+├── CODE_MODEL.ipynb             # Model training & fine-tuning notebook
+├── requirements.txt             # Python dependencies
+├── Dataset.txt                  # Link to VT-SSum dataset on Kaggle
+├── BaiBao_NLP_DeTai17.docx      # Research paper (Vietnamese)
+├── BaoCao_DeTai17.docx          # Technical report (Vietnamese)
+├── deploy-huggingface/          # Hugging Face Spaces deployment
+│   ├── app.py                   # Gradio application
+│   ├── requirements.txt         # Space dependencies
+│   └── README.md                # Space metadata
 └── README.md
 ```
 
@@ -233,11 +243,12 @@ Upload a video file (`.mp4`, `.mkv`, `.avi`). Whisper transcribes the audio, the
 
 | Member | Responsibilities | Hours | % |
 |---|---|---|---|
-| **Hồ Minh Hưng** | Data EDA, VT-SSum preprocessing, dataset loading pipeline | 40h | 25% |
-| **Hồ Minh Hưng** | Fine-tuning BART-large-cnn, Trainer API config, training curves | 60h | 37.5% |
-| **Huỳnh Quốc Anh** | T5-small & Lead-3 baseline implementation, metrics computation & comparison | 40h | 25% |
-| **Huỳnh Quốc Anh** | Technical report writing, research paper, system diagrams & flowcharts | 20h | 12.5% |
-| **Total** | — | **160h** | **100%** |
+| **Hồ Minh Hưng** | Data EDA, VT-SSum preprocessing, dataset loading pipeline | 40h | 20% |
+| **Hồ Minh Hưng** | Fine-tuning BART-large-cnn, Trainer API config, training curves | 60h | 30% |
+| **Hồ Minh Hưng** | Deploy Hugging Face Spaces, xây dựng Gradio demo app, CI/CD pipeline | 40h | 20% |
+| **Huỳnh Quốc Anh** | T5-small & Lead-3 baseline implementation, metrics computation & comparison | 40h | 20% |
+| **Huỳnh Quốc Anh** | Technical report writing, research paper, system diagrams & flowcharts | 20h | 10% |
+| **Total** | — | **200h** | **100%** |
 
 ---
 

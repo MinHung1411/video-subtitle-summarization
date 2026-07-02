@@ -23,6 +23,10 @@ env/
 *.pt
 *.pth
 bart_best/
+deploy-huggingface/bart_best/
+
+# Redundant files (info already in README)
+link demo.txt
 
 # Video files
 *.mp4
