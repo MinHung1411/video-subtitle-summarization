@@ -12,11 +12,13 @@
 
 *An end-to-end NLP pipeline that transcribes video audio with Whisper ASR and generates abstractive summaries using a fine-tuned BART-large-cnn model.*
 
-### 🚀 [▶️ Live Demo trên Hugging Face Spaces](https://minhunhooo-video-subtitle-summarization.hf.space/)
-
-[![Live Demo](https://img.shields.io/badge/🤗%20Live%20Demo-Hugging%20Face%20Spaces-FF9D00?style=for-the-badge&logo=huggingface&logoColor=white)](https://minhunhooo-video-subtitle-summarization.hf.space/)
+[![🤗 LIVE DEMO](https://img.shields.io/badge/🤗%20LIVE%20DEMO-Hugging%20Face-blue?style=for-the-badge&logoColor=white)](https://minhunhooo-video-subtitle-summarization.hf.space/)
+[![TRY NOW!](https://img.shields.io/badge/▶%20TRY%20NOW!-Click%20Here-brightgreen?style=for-the-badge)](https://minhunhooo-video-subtitle-summarization.hf.space/)
+[![🤗 DATASET](https://img.shields.io/badge/🤗%20DATASET-VT--SSum-blue?style=for-the-badge)](https://www.kaggle.com/datasets/prasadmagdum/nlpproject)
 
 </div>
+
+> **Live Demo:** [🎥 Video Subtitle Summarization – Hugging Face Spaces](https://minhunhooo-video-subtitle-summarization.hf.space/)
 
 ---
 
