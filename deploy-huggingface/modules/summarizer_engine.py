@@ -17,7 +17,10 @@ from nltk.tokenize import sent_tokenize
 from rouge_score import rouge_scorer as _rouge_scorer
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+def get_current_device() -> str:
+    return "cuda" if torch.cuda.is_available() else "cpu"
+
+DEVICE = get_current_device()
 
 nltk.download("punkt", quiet=True)
 nltk.download("punkt_tab", quiet=True)
@@ -59,14 +62,17 @@ def get_summarizer_model(model_name: str = None):
     if target_repo in _LOADED_MODELS:
         return _LOADED_MODELS[target_repo]
 
-    print(f"Loading summarization model: {target_repo} on {DEVICE.upper()}...")
+    curr_device = get_current_device()
+    print(f"Loading summarization model: {target_repo}...")
     try:
         tokenizer = AutoTokenizer.from_pretrained(target_repo)
         model = AutoModelForSeq2SeqLM.from_pretrained(
             target_repo,
             torch_dtype=torch.float32,
             low_cpu_mem_usage=True
-        ).to(DEVICE)
+        )
+        if torch.cuda.is_available():
+            model = model.to("cuda")
         model.eval()
         _LOADED_MODELS[target_repo] = (model, tokenizer)
         return model, tokenizer
@@ -74,7 +80,9 @@ def get_summarizer_model(model_name: str = None):
         print(f"Error loading {target_repo}: {e}. Fallback to csebuetnlp/mT5_multilingual_XLSum...")
         fallback = "csebuetnlp/mT5_multilingual_XLSum"
         tokenizer = AutoTokenizer.from_pretrained(fallback)
-        model = AutoModelForSeq2SeqLM.from_pretrained(fallback, torch_dtype=torch.float32).to(DEVICE)
+        model = AutoModelForSeq2SeqLM.from_pretrained(fallback, torch_dtype=torch.float32)
+        if torch.cuda.is_available():
+            model = model.to("cuda")
         model.eval()
         _LOADED_MODELS[fallback] = (model, tokenizer)
         return model, tokenizer
@@ -97,6 +105,11 @@ def generate_single_summary(
     num_beams: int = 4
 ) -> str:
     model, tokenizer = get_summarizer_model()
+    device = get_current_device()
+    try:
+        model = model.to(device)
+    except Exception:
+        pass
 
     clean_text = re.sub(r"\s+", " ", text).strip()
     prefix = f"summarize {lang}: "
@@ -108,7 +121,7 @@ def generate_single_summary(
         truncation=True,
         padding=True,
         return_tensors="pt"
-    ).to(DEVICE)
+    ).to(device)
 
     with torch.no_grad():
         output_ids = model.generate(

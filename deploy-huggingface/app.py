@@ -6,6 +6,18 @@ NLP Production Pipeline · Topic 17 · IUH 2026
 import os
 import time
 import gradio as gr
+
+try:
+    import spaces
+except ImportError:
+    class spaces:
+        @staticmethod
+        def GPU(fn=None, duration=None):
+            if fn is not None and callable(fn):
+                return fn
+            def decorator(func):
+                return func
+            return decorator
 from modules.audio_handler import download_audio_from_url, format_seconds_to_time
 from modules.asr_engine import transcribe_audio, clean_subtitle_text, parse_srt_with_timestamps
 from modules.chunker import chunk_by_segments, chunk_plain_text
@@ -173,14 +185,17 @@ def process_pipeline(
     except Exception as e:
         return None, f"System error: {str(e)}", "", "", "", "", None
 
+@spaces.GPU(duration=120)
 def run_url_tab(url, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
     return process_pipeline("url", url, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
+@spaces.GPU(duration=120)
 def run_file_tab(file_obj, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
     if file_obj is None:
         return None, "Please upload a file.", "", "", "", "", None
     return process_pipeline("file", file_obj.name, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
+@spaces.GPU(duration=60)
 def run_text_tab(text, target_lang, max_tokens, min_tokens, num_beams):
     return process_pipeline("text", "", text, target_lang, "base", max_tokens, min_tokens, num_beams)
 

@@ -48,11 +48,16 @@ def parse_srt_with_timestamps(srt_content: str) -> list:
 
 def load_whisper_model(model_size: str = "base"):
     global _WHISPER_CACHE
+    device = "cuda" if torch.cuda.is_available() else "cpu"
     if model_size not in _WHISPER_CACHE:
         import whisper
-        model = whisper.load_model(model_size, device=DEVICE)
-        _WHISPER_CACHE[model_size] = model
-    return _WHISPER_CACHE[model_size]
+        model = whisper.load_model(model_size, device=device)
+        _WHISPER_CACHE[model_size] = (model, device)
+    model, cached_dev = _WHISPER_CACHE[model_size]
+    if cached_dev != device:
+        model = model.to(device)
+        _WHISPER_CACHE[model_size] = (model, device)
+    return model
 
 def transcribe_audio(audio_path: str, model_size: str = "base", language: str = None) -> dict:
     if not os.path.exists(audio_path):
@@ -67,7 +72,7 @@ def transcribe_audio(audio_path: str, model_size: str = "base", language: str = 
     t0 = time.time()
     try:
         model = load_whisper_model(model_size)
-        use_fp16 = DEVICE == "cuda"
+        use_fp16 = torch.cuda.is_available()
 
         result = model.transcribe(
             audio_path,
