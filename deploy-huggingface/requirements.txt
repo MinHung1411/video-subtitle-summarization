@@ -2,6 +2,7 @@ transformers>=4.40.0
 torch
 huggingface_hub<1.0.0
 pydantic==2.10.6
+youtube-transcript-api
 openai-whisper
 yt-dlp
 nltk

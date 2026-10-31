@@ -1,6 +1,6 @@
 """
 Video Subtitle Understanding & Multilingual Summarization Suite
-NLP Production Pipeline · Topic 17 · IUH 2026
+NLP Production Pipeline · Topic 17 · Industrial University of Ho Chi Minh City (IUH) 2026
 """
 
 try:
@@ -18,7 +18,12 @@ except ImportError:
 import os
 import time
 import gradio as gr
-from modules.audio_handler import download_audio_from_url, format_seconds_to_time
+from modules.audio_handler import (
+    download_audio_from_url,
+    format_seconds_to_time,
+    extract_youtube_video_id,
+    fetch_youtube_captions
+)
 from modules.asr_engine import transcribe_audio, clean_subtitle_text, parse_srt_with_timestamps
 from modules.chunker import chunk_by_segments, chunk_plain_text
 from modules.summarizer_engine import (
@@ -41,7 +46,7 @@ def process_pipeline(
     num_beams: int = 4
 ):
     t_start = time.time()
-    title = "Analysis Session"
+    title = "Session Analysis"
     duration_str = "N/A"
     detected_lang = "en"
     temp_audio_file = None
@@ -59,63 +64,101 @@ def process_pipeline(
     target_lang_code = lang_map.get(target_lang, "auto")
 
     try:
-        # Ingestion
-        if input_type == "url":
-            if not url_or_path or not url_or_path.strip():
-                return None, "Error: Please provide a valid video URL.", "", "", "", "", None
+        # Mode 1: Text Transcript
+        if input_type == "text":
+            if not raw_text or not raw_text.strip():
+                return None, "Error: Vui lòng nhập hoặc dán nội dung văn bản transcript.", "", "", "", "", None
+            full_transcript = clean_subtitle_text(raw_text)
+            title = "Direct Transcript"
+            chunks = chunk_plain_text(full_transcript, max_words_per_chunk=400)
 
-            dl_res = download_audio_from_url(url_or_path.strip())
-            if not dl_res["success"]:
-                return None, f"Audio extraction error: {dl_res['error']}", "", "", "", "", None
-
-            audio_path = dl_res["audio_path"]
-            temp_audio_file = audio_path
-            title = dl_res.get("title", "YouTube Video")
-            duration_str = format_seconds_to_time(dl_res.get("duration", 0))
-
-            asr_res = transcribe_audio(audio_path, model_size=whisper_size)
-            if not asr_res["success"]:
-                return None, f"ASR transcription error: {asr_res['error']}", "", "", "", "", None
-
-            full_transcript = asr_res["text"]
-            detected_lang = asr_res["language"]
-            chunks = chunk_by_segments(asr_res["segments"], max_words_per_chunk=400)
-
+        # Mode 2: File Upload (Subtitle or Video/Audio)
         elif input_type == "file":
             if not url_or_path:
-                return None, "Error: Please upload a video, audio, or subtitle file.", "", "", "", "", None
+                return None, "Error: Vui lòng tải lên file hợp lệ.", "", "", "", "", None
 
-            file_path = url_or_path
+            file_path = url_or_path if isinstance(url_or_path, str) else getattr(url_or_path, "name", str(url_or_path))
             title = os.path.basename(file_path)
 
-            if file_path.endswith((".srt", ".vtt")):
+            if file_path.lower().endswith((".srt", ".vtt")):
                 with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                     content = f.read()
                 segments = parse_srt_with_timestamps(content)
                 if segments:
                     chunks = chunk_by_segments(segments, max_words_per_chunk=400)
                     full_transcript = " ".join([s["text"] for s in segments])
+                    total_sec = segments[-1]["end"] if segments else 0
+                    duration_str = format_seconds_to_time(total_sec)
                 else:
                     full_transcript = clean_subtitle_text(content)
                     chunks = chunk_plain_text(full_transcript, max_words_per_chunk=400)
+            elif file_path.lower().endswith(".txt"):
+                with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
+                    full_transcript = clean_subtitle_text(f.read())
+                chunks = chunk_plain_text(full_transcript, max_words_per_chunk=400)
             else:
                 asr_res = transcribe_audio(file_path, model_size=whisper_size)
                 if not asr_res["success"]:
-                    return None, f"ASR transcription error: {asr_res['error']}", "", "", "", "", None
+                    return None, f"Lỗi nhận diện âm thanh ASR: {asr_res['error']}", "", "", "", "", None
+                full_transcript = asr_res["text"]
+                detected_lang = asr_res["language"]
+                chunks = chunk_by_segments(asr_res["segments"], max_words_per_chunk=400)
+                if asr_res.get("segments"):
+                    duration_str = format_seconds_to_time(asr_res["segments"][-1]["end"])
+
+        # Mode 3: Online URL
+        elif input_type == "url":
+            clean_url = url_or_path.strip()
+            if not clean_url:
+                return None, "Error: Vui lòng cung cấp link video hợp lệ.", "", "", "", "", None
+
+            yt_id = extract_youtube_video_id(clean_url)
+            transcript_found = False
+
+            # Fast Strategy: Direct Captions extraction
+            if yt_id:
+                yt_res = fetch_youtube_captions(yt_id)
+                if yt_res.get("success") and len(yt_res.get("text", "").split()) >= 15:
+                    full_transcript = yt_res["text"]
+                    detected_lang = yt_res.get("language", "en")
+                    chunks = chunk_by_segments(yt_res["segments"], max_words_per_chunk=400)
+                    title = yt_res.get("title", f"YouTube Video ({yt_id})")
+                    duration_str = format_seconds_to_time(yt_res.get("duration", 0))
+                    transcript_found = True
+
+            # Fallback Strategy: Audio stream download + Whisper ASR
+            if not transcript_found:
+                dl_res = download_audio_from_url(clean_url)
+                if not dl_res["success"]:
+                    err_msg = dl_res.get("error", "Unknown error")
+                    if "Sign in to confirm you're not a bot" in err_msg or "bot" in err_msg.lower():
+                        return (
+                            None,
+                            "⚠️ **Tường lửa YouTube (Datacenter Protection):** YouTube chặn tải ngầm video trực tiếp từ máy chủ đám mây.\n\n"
+                            "💡 **Để tiếp tục tóm tắt video này:**\n"
+                            "1. Dùng **Tab 2 ('Upload Phụ Đề')**: Tải file `.srt` phụ đề của video lên (rất nhẹ, xử lý ngay).\n"
+                            "2. Dùng **Tab 3 ('Upload Video / Audio')**: Tải file `.mp4` hoặc `.mp3` của video lên để Whisper nhận diện.\n"
+                            "3. Dùng **Tab 1 ('Nhập Transcript')**: Dán lời thoại vào để mô hình tóm tắt tức thì!",
+                            "", "", "", "", None
+                        )
+                    return None, f"Lỗi trích xuất audio: {err_msg}", "", "", "", "", None
+
+                audio_path = dl_res["audio_path"]
+                temp_audio_file = audio_path
+                title = dl_res.get("title", "Online Video")
+                duration_str = format_seconds_to_time(dl_res.get("duration", 0))
+
+                asr_res = transcribe_audio(audio_path, model_size=whisper_size)
+                if not asr_res["success"]:
+                    return None, f"Lỗi ASR: {asr_res['error']}", "", "", "", "", None
+
                 full_transcript = asr_res["text"]
                 detected_lang = asr_res["language"]
                 chunks = chunk_by_segments(asr_res["segments"], max_words_per_chunk=400)
 
-        elif input_type == "text":
-            if not raw_text or not raw_text.strip():
-                return None, "Error: Input text is empty.", "", "", "", "", None
-            full_transcript = clean_subtitle_text(raw_text)
-            title = "Text Transcript"
-            chunks = chunk_plain_text(full_transcript, max_words_per_chunk=400)
-
         word_count = len(full_transcript.split())
         if word_count < 15:
-            return None, f"Warning: Transcript is too short ({word_count} words) for summarization.", "", "", "", "", None
+            return None, f"Cảnh báo: Nội dung quá ngắn ({word_count} từ) để tóm tắt.", "", "", "", "", None
 
         # Summarization & Evaluation
         keywords = extract_keywords(full_transcript)
@@ -145,8 +188,8 @@ def process_pipeline(
         total_elapsed = time.time() - t_start
 
         meta_info = (
-            f"**Title:** {title} | **Duration:** {duration_str} | **Language:** {detected_lang.upper()} | "
-            f"**Total Words:** {word_count:,} | **Latency:** {total_elapsed:.1f}s | **Device:** {DEVICE.upper()}"
+            f"**Tiêu đề:** {title} | **Thời lượng:** {duration_str} | **Ngôn ngữ:** {detected_lang.upper()} | "
+            f"**Tổng số từ:** {word_count:,} | **Độ trễ:** {total_elapsed:.1f}s | **Phần cứng:** {DEVICE.upper()} (ZeroGPU A100)"
         )
 
         metadata_dict = {
@@ -183,21 +226,29 @@ def process_pipeline(
         )
 
     except Exception as e:
-        return None, f"System error: {str(e)}", "", "", "", "", None
+        return None, f"Lỗi hệ thống: {str(e)}", "", "", "", "", None
 
-@spaces.GPU(duration=120)
-def run_url_tab(url, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
-    return process_pipeline("url", url, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
-
-@spaces.GPU(duration=120)
-def run_file_tab(file_obj, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
-    if file_obj is None:
-        return None, "Please upload a file.", "", "", "", "", None
-    return process_pipeline("file", file_obj.name, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
-
-@spaces.GPU(duration=60)
+@spaces.GPU(duration=30)
 def run_text_tab(text, target_lang, max_tokens, min_tokens, num_beams):
     return process_pipeline("text", "", text, target_lang, "base", max_tokens, min_tokens, num_beams)
+
+@spaces.GPU(duration=30)
+def run_srt_tab(file_obj, target_lang, max_tokens, min_tokens, num_beams):
+    if file_obj is None:
+        return None, "Error: Vui lòng tải lên file phụ đề (.srt, .vtt, .txt).", "", "", "", "", None
+    path = file_obj if isinstance(file_obj, str) else getattr(file_obj, "name", str(file_obj))
+    return process_pipeline("file", path, "", target_lang, "base", max_tokens, min_tokens, num_beams)
+
+@spaces.GPU(duration=60)
+def run_video_tab(file_obj, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
+    if file_obj is None:
+        return None, "Error: Vui lòng tải lên file video/audio (.mp4, .mp3, .wav).", "", "", "", "", None
+    path = file_obj if isinstance(file_obj, str) else getattr(file_obj, "name", str(file_obj))
+    return process_pipeline("file", path, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
+
+@spaces.GPU(duration=60)
+def run_url_tab(url, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
+    return process_pipeline("url", url, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
 CUSTOM_CSS = """
 .container { max-width: 1200px; margin: auto; }
@@ -211,14 +262,14 @@ TRANSCRIPT_EXAMPLES = [
     ["So let's talk about how neural networks actually learn. Imagine teaching a child to recognize cats without giving them a rulebook; you simply show them thousands of pictures. A deep neural network learns similarly through backpropagation, adjusting internal weights layer by layer. The early layers identify simple edges and shapes, while deeper layers detect complex patterns like facial structures. This breakthrough in representation learning is why modern deep learning has achieved human-level performance across vision and speech tasks."]
 ]
 
-with gr.Blocks(title="Video Multilingual Summarization Suite", theme=gr.themes.Base(), css=CUSTOM_CSS) as demo:
+with gr.Blocks(title="Video Subtitle Multilingual Summarization Suite", theme=gr.themes.Base(), css=CUSTOM_CSS) as demo:
 
     gr.Markdown(
         """
         # 🎥 Video Subtitle Understanding & Multilingual Summarization
-        **NLP Production Pipeline · Topic 17 · IUH 2026**
+        **NLP Production Pipeline · Topic 17 · Industrial University of Ho Chi Minh City (IUH)**
         
-        End-to-end framework integrating speech-to-text (Whisper), hierarchical chunking, and multilingual abstractive summarization.
+        End-to-end framework integrating speech-to-text (Whisper), hierarchical chunking, and multilingual abstractive summarization (`mT5`).
         
         🔗 **Model Hub:** [`minhunhooo/video-subtitle-summarization-mt5`](https://huggingface.co/minhunhooo/video-subtitle-summarization-mt5) | 💻 **GitHub:** [`video-subtitle-summarization`](https://github.com/MinHung1411/video-subtitle-summarization)
         """
@@ -226,123 +277,145 @@ with gr.Blocks(title="Video Multilingual Summarization Suite", theme=gr.themes.B
 
     with gr.Tabs():
 
-        # Tab 1: YouTube / Web URL
-        with gr.Tab("YouTube / Web URL"):
+        # Tab 1: 📝 Nhập / Dán Transcript (Default & Instant)
+        with gr.Tab("📝 1. Nhập / Dán Transcript"):
             with gr.Row():
                 with gr.Column(scale=3):
-                    url_in = gr.Textbox(
-                        label="Video URL (YouTube, TikTok, Vimeo)",
-                        placeholder="https://www.youtube.com/watch?v=...",
-                        lines=2
+                    text_in = gr.Textbox(
+                        label="Transcript / Raw Subtitle Text (Văn bản lời thoại)",
+                        placeholder="Dán nội dung phụ đề bài giảng hoặc transcript video vào đây...",
+                        lines=10
                     )
                 with gr.Column(scale=1):
                     lang_opt_1 = gr.Dropdown(
                         choices=["Auto", "Tiếng Việt", "English", "Français", "Español"],
                         value="Auto",
-                        label="Output Summary Language"
+                        label="Ngôn ngữ tóm tắt đầu ra"
                     )
-                    whisper_opt_1 = gr.Dropdown(
-                        choices=["tiny", "base", "small"],
-                        value="base",
-                        label="Whisper Model"
-                    )
-
-            with gr.Accordion("Generation Hyperparameters", open=False):
-                with gr.Row():
                     sl_max_1 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
                     sl_min_1 = gr.Slider(30, 150, value=60, step=10, label="Min Tokens")
                     sl_beam_1 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
-            btn_url = gr.Button("Summarize Video", variant="primary", size="large")
+            gr.Examples(examples=TRANSCRIPT_EXAMPLES, inputs=text_in, label="Dữ liệu mẫu thử nhanh (Click để chọn):")
+            btn_text = gr.Button("Tóm tắt Văn bản (Summarize Text)", variant="primary", size="large")
 
-        # Tab 2: Upload File
-        with gr.Tab("Upload File"):
+        # Tab 2: 📁 Upload File Phụ Đề (.srt / .vtt / .txt)
+        with gr.Tab("📁 2. Upload File Phụ Đề (.srt / .txt)"):
             with gr.Row():
                 with gr.Column(scale=3):
-                    file_in = gr.File(
-                        label="Upload Video, Audio, or Subtitle file (.mp4, .mkv, .mp3, .wav, .srt)",
-                        file_types=[".mp4", ".mkv", ".avi", ".mov", ".mp3", ".wav", ".m4a", ".srt", ".vtt"]
+                    srt_in = gr.File(
+                        label="Tải lên file phụ đề (.srt, .vtt, .txt)",
+                        file_types=[".srt", ".vtt", ".txt"],
+                        type="filepath"
                     )
                 with gr.Column(scale=1):
                     lang_opt_2 = gr.Dropdown(
                         choices=["Auto", "Tiếng Việt", "English", "Français", "Español"],
                         value="Auto",
-                        label="Output Summary Language"
+                        label="Ngôn ngữ tóm tắt đầu ra"
                     )
-                    whisper_opt_2 = gr.Dropdown(
-                        choices=["tiny", "base", "small"],
-                        value="base",
-                        label="Whisper Model"
-                    )
-
-            with gr.Accordion("Generation Hyperparameters", open=False):
-                with gr.Row():
                     sl_max_2 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
                     sl_min_2 = gr.Slider(30, 150, value=60, step=10, label="Min Tokens")
                     sl_beam_2 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
-            btn_file = gr.Button("Summarize File", variant="primary", size="large")
+            btn_srt = gr.Button("Tóm tắt File Phụ Đề (Summarize Subtitles)", variant="primary", size="large")
 
-        # Tab 3: Text Transcript
-        with gr.Tab("Direct Transcript"):
+        # Tab 3: 🎬 Upload Video / Audio (Whisper ASR)
+        with gr.Tab("🎬 3. Upload Video / Audio (Whisper ASR)"):
             with gr.Row():
                 with gr.Column(scale=3):
-                    text_in = gr.Textbox(
-                        label="Transcript / Raw Subtitle Text",
-                        placeholder="Paste lecture transcript or subtitle text here...",
-                        lines=10
+                    video_in = gr.File(
+                        label="Tải lên file Video hoặc Âm thanh (.mp4, .mkv, .avi, .mp3, .wav, .m4a)",
+                        file_types=[".mp4", ".mkv", ".avi", ".mov", ".mp3", ".wav", ".m4a"],
+                        type="filepath"
                     )
                 with gr.Column(scale=1):
                     lang_opt_3 = gr.Dropdown(
                         choices=["Auto", "Tiếng Việt", "English", "Français", "Español"],
                         value="Auto",
-                        label="Output Summary Language"
+                        label="Ngôn ngữ tóm tắt đầu ra"
                     )
+                    whisper_opt_3 = gr.Dropdown(
+                        choices=["tiny", "base", "small"],
+                        value="base",
+                        label="Mô hình Whisper ASR"
+                    )
+
+            with gr.Accordion("Siêu tham số sinh (Generation Hyperparameters)", open=False):
+                with gr.Row():
                     sl_max_3 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
                     sl_min_3 = gr.Slider(30, 150, value=60, step=10, label="Min Tokens")
                     sl_beam_3 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
-            gr.Examples(examples=TRANSCRIPT_EXAMPLES, inputs=text_in, label="Examples:")
-            btn_text = gr.Button("Summarize Text", variant="primary", size="large")
+            btn_video = gr.Button("Nhận diện giọng nói & Tóm tắt Video", variant="primary", size="large")
+
+        # Tab 4: 🔗 Video URL (YouTube / Stream)
+        with gr.Tab("🔗 4. Link Video Trực Tuyến (URL)"):
+            with gr.Row():
+                with gr.Column(scale=3):
+                    url_in = gr.Textbox(
+                        label="Video URL (YouTube, Vimeo, TikTok, direct stream)",
+                        placeholder="https://www.youtube.com/watch?v=...",
+                        lines=2
+                    )
+                with gr.Column(scale=1):
+                    lang_opt_4 = gr.Dropdown(
+                        choices=["Auto", "Tiếng Việt", "English", "Français", "Español"],
+                        value="Auto",
+                        label="Ngôn ngữ tóm tắt đầu ra"
+                    )
+                    whisper_opt_4 = gr.Dropdown(
+                        choices=["tiny", "base", "small"],
+                        value="base",
+                        label="Mô hình Whisper ASR"
+                    )
+
+            with gr.Accordion("Siêu tham số sinh (Generation Hyperparameters)", open=False):
+                with gr.Row():
+                    sl_max_4 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
+                    sl_min_4 = gr.Slider(30, 150, value=60, step=10, label="Min Tokens")
+                    sl_beam_4 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
+
+            btn_url = gr.Button("Tóm tắt từ Link URL", variant="primary", size="large")
 
     gr.Markdown("---")
-    gr.Markdown("### Summary & Analysis Results")
+    gr.Markdown("### 📊 Kết Quả Tóm Tắt & Phân Tích (Summary & Analysis Results)")
 
     meta_out = gr.Markdown()
 
     with gr.Row():
         with gr.Column(scale=2):
             exec_out = gr.Textbox(
-                label="Executive Summary",
+                label="Executive Summary (Bản tóm tắt điều hành)",
                 lines=7,
                 interactive=False,
                 elem_id="summary-box"
             )
         with gr.Column(scale=1):
             kw_out = gr.Textbox(
-                label="Key Concepts",
+                label="Key Concepts (Từ khóa chính)",
                 lines=3,
                 interactive=False
             )
             download_out = gr.File(
-                label="Export Markdown Report (.md)",
+                label="Tải báo cáo tóm tắt (.md)",
                 interactive=False
             )
 
-    with gr.Accordion("Chapter Timeline", open=True):
+    with gr.Accordion("Dòng thời gian phân đoạn (Chapter Timeline)", open=True):
         chapter_out = gr.Markdown(elem_id="chapter-box")
 
     with gr.Row():
         with gr.Column():
             stats_out = gr.Textbox(
-                label="Evaluation Metrics (ROUGE & Compression)",
+                label="Báo cáo đánh giá (ROUGE & Tỷ lệ nén)",
                 lines=10,
                 interactive=False,
                 elem_id="stats-box"
             )
         with gr.Column():
             transcript_out = gr.Textbox(
-                label="Source Transcript (Preview)",
+                label="Văn bản gốc (Source Transcript Preview)",
                 lines=10,
                 interactive=False
             )
@@ -357,25 +430,32 @@ with gr.Blocks(title="Video Multilingual Summarization Suite", theme=gr.themes.B
         download_out
     ]
 
-    btn_url.click(
-        fn=run_url_tab,
-        inputs=[url_in, lang_opt_1, whisper_opt_1, sl_max_1, sl_min_1, sl_beam_1],
-        outputs=output_components,
-        api_name="summarize_url"
-    )
-
-    btn_file.click(
-        fn=run_file_tab,
-        inputs=[file_in, lang_opt_2, whisper_opt_2, sl_max_2, sl_min_2, sl_beam_2],
-        outputs=output_components,
-        api_name="summarize_file"
-    )
-
     btn_text.click(
         fn=run_text_tab,
-        inputs=[text_in, lang_opt_3, sl_max_3, sl_min_3, sl_beam_3],
+        inputs=[text_in, lang_opt_1, sl_max_1, sl_min_1, sl_beam_1],
         outputs=output_components,
         api_name="summarize_text"
+    )
+
+    btn_srt.click(
+        fn=run_srt_tab,
+        inputs=[srt_in, lang_opt_2, sl_max_2, sl_min_2, sl_beam_2],
+        outputs=output_components,
+        api_name="summarize_srt"
+    )
+
+    btn_video.click(
+        fn=run_video_tab,
+        inputs=[video_in, lang_opt_3, whisper_opt_3, sl_max_3, sl_min_3, sl_beam_3],
+        outputs=output_components,
+        api_name="summarize_video"
+    )
+
+    btn_url.click(
+        fn=run_url_tab,
+        inputs=[url_in, lang_opt_4, whisper_opt_4, sl_max_4, sl_min_4, sl_beam_4],
+        outputs=output_components,
+        api_name="summarize_url"
     )
 
 if __name__ == "__main__":

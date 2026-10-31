@@ -9,6 +9,93 @@ import re
 import tempfile
 import uuid
 
+def extract_youtube_video_id(url: str) -> str:
+    if not url:
+        return None
+    patterns = [
+        r'(?:v=|\/)([0-9A-Za-z_-]{11})',
+        r'(?:embed\/|v\/|shorts\/)([0-9A-Za-z_-]{11})',
+        r'youtu\.be\/([0-9A-Za-z_-]{11})'
+    ]
+    for p in patterns:
+        m = re.search(p, url)
+        if m:
+            return m.group(1)
+    return None
+
+def fetch_youtube_captions(video_id: str) -> dict:
+    try:
+        from youtube_transcript_api import YouTubeTranscriptApi
+
+        transcript_data = None
+        lang = "en"
+
+        # Try v1.x API
+        try:
+            api = YouTubeTranscriptApi()
+            if hasattr(api, 'fetch'):
+                try:
+                    transcript_data = api.fetch(video_id, languages=('vi', 'en', 'fr', 'es'))
+                except Exception:
+                    transcript_data = api.fetch(video_id)
+        except Exception:
+            pass
+
+        # Try v0.x API fallback
+        if transcript_data is None and hasattr(YouTubeTranscriptApi, 'get_transcript'):
+            try:
+                transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=['vi', 'en', 'fr', 'es'])
+            except Exception:
+                try:
+                    transcript_data = YouTubeTranscriptApi.get_transcript(video_id)
+                except Exception:
+                    pass
+
+        # Try list method fallback
+        if transcript_data is None:
+            try:
+                api = YouTubeTranscriptApi()
+                list_fn = getattr(api, 'list', None) or getattr(YouTubeTranscriptApi, 'list_transcripts', None)
+                if list_fn:
+                    tl = list_fn(video_id)
+                    t = next(iter(tl))
+                    transcript_data = t.fetch()
+            except Exception:
+                pass
+
+        if not transcript_data:
+            return {"success": False, "error": "No captions available for this video."}
+
+        segments = []
+        for it in transcript_data:
+            txt = getattr(it, 'text', None) or (it.get('text') if isinstance(it, dict) else str(it))
+            st = getattr(it, 'start', 0.0) or (it.get('start', 0.0) if isinstance(it, dict) else 0.0)
+            dur = getattr(it, 'duration', 0.0) or (it.get('duration', 0.0) if isinstance(it, dict) else 0.0)
+            if txt and txt.strip():
+                clean_t = re.sub(r'[\r\n]+', ' ', txt).strip()
+                segments.append({
+                    'start': float(st),
+                    'end': float(st) + float(dur),
+                    'text': clean_t
+                })
+
+        full_text = " ".join([s['text'] for s in segments])
+        total_duration = segments[-1]['end'] if segments else 0.0
+        lang = getattr(transcript_data, 'language_code', lang)
+        return {
+            "success": True,
+            "segments": segments,
+            "text": full_text,
+            "language": lang,
+            "duration": total_duration,
+            "title": f"YouTube Video ({video_id})"
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e)
+        }
+
 def is_valid_url(url: str) -> bool:
     if not url or not isinstance(url, str):
         return False
@@ -55,6 +142,11 @@ def download_audio_from_url(
     ydl_opts = {
         "format": "bestaudio/best",
         "outtmpl": output_template,
+        "extractor_args": {
+            "youtube": {
+                "player_client": ["android", "ios", "mweb"]
+            }
+        },
         "postprocessors": [
             {
                 "key": "FFmpegExtractAudio",
