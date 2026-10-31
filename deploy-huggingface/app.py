@@ -3,10 +3,6 @@ Video Subtitle Understanding & Multilingual Summarization Suite
 NLP Production Pipeline · Topic 17 · IUH 2026
 """
 
-import os
-import time
-import gradio as gr
-
 try:
     import spaces
 except ImportError:
@@ -18,6 +14,10 @@ except ImportError:
             def decorator(func):
                 return func
             return decorator
+
+import os
+import time
+import gradio as gr
 from modules.audio_handler import download_audio_from_url, format_seconds_to_time
 from modules.asr_engine import transcribe_audio, clean_subtitle_text, parse_srt_with_timestamps
 from modules.chunker import chunk_by_segments, chunk_plain_text
@@ -360,20 +360,23 @@ with gr.Blocks(title="Video Multilingual Summarization Suite", theme=gr.themes.B
     btn_url.click(
         fn=run_url_tab,
         inputs=[url_in, lang_opt_1, whisper_opt_1, sl_max_1, sl_min_1, sl_beam_1],
-        outputs=output_components
+        outputs=output_components,
+        api_name="summarize_url"
     )
 
     btn_file.click(
         fn=run_file_tab,
         inputs=[file_in, lang_opt_2, whisper_opt_2, sl_max_2, sl_min_2, sl_beam_2],
-        outputs=output_components
+        outputs=output_components,
+        api_name="summarize_file"
     )
 
     btn_text.click(
         fn=run_text_tab,
         inputs=[text_in, lang_opt_3, sl_max_3, sl_min_3, sl_beam_3],
-        outputs=output_components
+        outputs=output_components,
+        api_name="summarize_text"
     )
 
 if __name__ == "__main__":
-    demo.launch()
+    demo.queue().launch()
