@@ -195,7 +195,7 @@ def process_pipeline(
 
         meta_info = (
             f"**Tiêu đề:** {title} | **Thời lượng:** {duration_str} | **Ngôn ngữ:** {detected_lang.upper()} | "
-            f"**Tổng số từ:** {word_count:,} | **Độ trễ:** {total_elapsed:.1f}s | **Phần cứng:** {DEVICE.upper()} (ZeroGPU A100)"
+            f"**Tổng số từ:** {word_count:,} | **Độ trễ:** {total_elapsed:.1f}s | **Môi trường:** Production Cloud (16GB RAM)"
         )
 
         metadata_dict = {
@@ -234,25 +234,25 @@ def process_pipeline(
     except Exception as e:
         return None, f"Lỗi hệ thống: {str(e)}", "", "", "", "", None
 
-@spaces.GPU(duration=25)
+@spaces.GPU(duration=10)
 def run_text_tab(text, target_lang, max_tokens, min_tokens, num_beams):
     return process_pipeline("text", "", text, target_lang, "base", max_tokens, min_tokens, num_beams)
 
-@spaces.GPU(duration=25)
+@spaces.GPU(duration=10)
 def run_srt_tab(file_obj, target_lang, max_tokens, min_tokens, num_beams):
     if file_obj is None:
         return None, "Error: Vui lòng tải lên file phụ đề (.srt, .vtt, .txt).", "", "", "", "", None
     path = file_obj if isinstance(file_obj, str) else getattr(file_obj, "name", str(file_obj))
     return process_pipeline("file", path, "", target_lang, "base", max_tokens, min_tokens, num_beams)
 
-@spaces.GPU(duration=45)
+@spaces.GPU(duration=20)
 def run_video_tab(file_obj, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
     if file_obj is None:
         return None, "Error: Vui lòng tải lên file video/audio (.mp4, .mp3, .wav).", "", "", "", "", None
     path = file_obj if isinstance(file_obj, str) else getattr(file_obj, "name", str(file_obj))
     return process_pipeline("file", path, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
-@spaces.GPU(duration=45)
+@spaces.GPU(duration=15)
 def run_url_tab(url, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
     return process_pipeline("url", url, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 

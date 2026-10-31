@@ -1,7 +1,8 @@
 """
 Long-context Chunking Module:
-Splits long transcripts into semantic chunks to respect Transformer context limits
-with adaptive sentence-boundary splitting for rich multi-perspective summarization.
+Splits long transcripts into semantic chunks to respect Transformer context limits.
+Preserves semantic integrity by keeping short/medium texts (< 350 words) intact
+to prevent Seq2Seq hallucinations.
 """
 
 import re
@@ -9,7 +10,7 @@ from typing import List, Dict
 from .audio_handler import format_seconds_to_time
 
 def chunk_by_segments(
-    segments: List[Dict], max_words_per_chunk: int = 280
+    segments: List[Dict], max_words_per_chunk: int = 300
 ) -> List[Dict]:
     """
     Time-aligned chunking for subtitle segments (SRT, VTT, Whisper ASR).
@@ -58,12 +59,12 @@ def chunk_by_segments(
     return chunks
 
 def chunk_plain_text(
-    text: str, max_words_per_chunk: int = 280
+    text: str, max_words_per_chunk: int = 350
 ) -> List[Dict]:
     """
-    Adaptive sentence-aware chunking for direct text / transcript.
-    Intelligently splits short and medium texts into logical sections
-    so that Seq2Seq models produce comprehensive, multi-paragraph summaries.
+    Semantic chunking for direct text / transcript.
+    Short and medium texts (< 350 words) are kept intact to preserve semantic integrity
+    and prevent Seq2Seq hallucinations.
     """
     text = (text or "").strip()
     if not text:
@@ -72,8 +73,7 @@ def chunk_plain_text(
     words = text.split()
     total_words = len(words)
 
-    # For very short texts (<= 55 words), keep as 1 chunk
-    if total_words <= 55:
+    if total_words <= max_words_per_chunk:
         return [{
             "chunk_id": 1,
             "start_time": 0.0,
@@ -83,25 +83,10 @@ def chunk_plain_text(
             "word_count": total_words,
         }]
 
-    # Split by sentence boundaries (preserving Vietnamese and punctuation)
+    # For long texts, split by sentences respecting max_words_per_chunk
     sentences = [s.strip() for s in re.split(r"(?<=[.!?…\n])\s+", text) if s.strip()]
-    if not sentences or len(sentences) == 1:
-        return [{
-            "chunk_id": 1,
-            "start_time": 0.0,
-            "end_time": 0.0,
-            "time_str": "Toàn văn",
-            "text": text,
-            "word_count": total_words,
-        }]
-
-    # Determine adaptive target chunk size based on text length
-    if total_words <= 150:
-        target_chunk_size = 60
-    elif total_words <= 320:
-        target_chunk_size = 110
-    else:
-        target_chunk_size = max_words_per_chunk
+    if not sentences:
+        sentences = [text]
 
     chunks = []
     cur_sentences = []
@@ -109,12 +94,12 @@ def chunk_plain_text(
 
     for s in sentences:
         s_words = len(s.split())
-        if cur_word_count + s_words > target_chunk_size and cur_sentences:
+        if cur_word_count + s_words > max_words_per_chunk and cur_sentences:
             chunks.append({
                 "chunk_id": len(chunks) + 1,
                 "start_time": 0.0,
                 "end_time": 0.0,
-                "time_str": f"Phân đoạn {len(chunks) + 1}",
+                "time_str": f"Phần {len(chunks) + 1}",
                 "text": " ".join(cur_sentences),
                 "word_count": cur_word_count,
             })
@@ -129,7 +114,7 @@ def chunk_plain_text(
             "chunk_id": len(chunks) + 1,
             "start_time": 0.0,
             "end_time": 0.0,
-            "time_str": f"Phân đoạn {len(chunks) + 1}",
+            "time_str": f"Phần {len(chunks) + 1}",
             "text": " ".join(cur_sentences),
             "word_count": cur_word_count,
         })

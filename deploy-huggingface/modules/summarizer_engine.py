@@ -99,7 +99,7 @@ def generate_single_summary(
     text: str,
     lang: str = "vi",
     max_output: int = 250,
-    min_output: int = 50,
+    min_output: int = 35,
     num_beams: int = 4
 ) -> str:
     model, tokenizer = get_summarizer_model()
@@ -122,19 +122,19 @@ def generate_single_summary(
     ).to(device)
 
     input_word_count = len(clean_text.split())
-    target_min = min(max(min_output, 40), max(input_word_count // 2, 20))
-    target_max = max(max_output, target_min + 50)
+    target_min = min(max(min_output, 25), max(input_word_count // 3, 15))
+    target_max = max(max_output, target_min + 35)
 
     with torch.no_grad():
         output_ids = model.generate(
             **inputs,
             max_new_tokens=target_max,
             min_new_tokens=target_min,
-            length_penalty=1.8,
+            length_penalty=1.0,
             num_beams=num_beams,
             no_repeat_ngram_size=3,
-            repetition_penalty=1.25,
-            early_stopping=False
+            repetition_penalty=1.15,
+            early_stopping=True
         )
 
     return tokenizer.decode(output_ids[0], skip_special_tokens=True).strip()
@@ -144,7 +144,7 @@ def hierarchical_summarize(
     target_lang: str = "auto",
     detected_lang: str = "en",
     max_output: int = 250,
-    min_output: int = 50,
+    min_output: int = 35,
     num_beams: int = 4
 ) -> Tuple[str, List[Dict], float]:
     t0 = time.time()
@@ -172,7 +172,7 @@ def hierarchical_summarize(
             c_text,
             lang=resolved_lang,
             max_output=max(120, max_output),
-            min_output=max(35, min_output // 2),
+            min_output=max(25, min_output // 2),
             num_beams=num_beams
         )
 
@@ -211,24 +211,19 @@ def hierarchical_summarize(
 
         if resolved_lang == "vi":
             executive_summary = (
-                f"📌 **TỔNG QUAN NỘI DUNG (Executive Overview):**\n"
                 f"{global_overview}\n\n"
-                f"🎯 **CÁC TRỌNG TÂM CHI TIẾT THEO PHÂN ĐOẠN (Key Insights):**\n"
+                f"**Tóm lược các phân đoạn chính:**\n"
                 f"{bullets_joined}"
             )
         else:
             executive_summary = (
-                f"📌 **EXECUTIVE OVERVIEW:**\n"
                 f"{global_overview}\n\n"
-                f"🎯 **KEY SECTION TAKEAWAYS:**\n"
+                f"**Key Section Takeaways:**\n"
                 f"{bullets_joined}"
             )
     else:
-        raw_s = chunk_summaries[0] if chunk_summaries else ""
-        if resolved_lang == "vi":
-            executive_summary = f"📌 **TỔNG QUAN NỘI DUNG (Executive Summary):**\n{raw_s}"
-        else:
-            executive_summary = f"📌 **EXECUTIVE SUMMARY:**\n{raw_s}"
+        # Single chunk: clean, accurate summary directly
+        executive_summary = chunk_summaries[0] if chunk_summaries else ""
 
     return executive_summary, chapters, time.time() - t0
 
