@@ -13,7 +13,6 @@ from typing import List, Dict, Tuple
 import torch
 import nltk
 from nltk.corpus import stopwords
-from nltk.tokenize import sent_tokenize
 from rouge_score import rouge_scorer as _rouge_scorer
 from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
@@ -62,7 +61,6 @@ def get_summarizer_model(model_name: str = None):
     if target_repo in _LOADED_MODELS:
         return _LOADED_MODELS[target_repo]
 
-    curr_device = get_current_device()
     print(f"Loading summarization model: {target_repo}...")
     try:
         tokenizer = AutoTokenizer.from_pretrained(target_repo)
@@ -100,8 +98,8 @@ def lead3_summarize(text: str) -> str:
 def generate_single_summary(
     text: str,
     lang: str = "vi",
-    max_output: int = 150,
-    min_output: int = 30,
+    max_output: int = 250,
+    min_output: int = 50,
     num_beams: int = 4
 ) -> str:
     model, tokenizer = get_summarizer_model()
@@ -123,15 +121,20 @@ def generate_single_summary(
         return_tensors="pt"
     ).to(device)
 
+    input_word_count = len(clean_text.split())
+    target_min = min(max(min_output, 40), max(input_word_count // 2, 20))
+    target_max = max(max_output, target_min + 50)
+
     with torch.no_grad():
         output_ids = model.generate(
             **inputs,
-            max_new_tokens=max_output,
-            min_length=min_output,
+            max_new_tokens=target_max,
+            min_new_tokens=target_min,
+            length_penalty=1.8,
             num_beams=num_beams,
             no_repeat_ngram_size=3,
-            repetition_penalty=1.2,
-            early_stopping=True
+            repetition_penalty=1.25,
+            early_stopping=False
         )
 
     return tokenizer.decode(output_ids[0], skip_special_tokens=True).strip()
@@ -160,6 +163,7 @@ def hierarchical_summarize(
     chapters = []
     chunk_summaries = []
 
+    # Map Phase: Summarize each segment/chapter
     for chunk in chunks:
         c_text = chunk["text"]
         time_str = chunk.get("time_str", "")
@@ -167,8 +171,8 @@ def hierarchical_summarize(
         c_summary = generate_single_summary(
             c_text,
             lang=resolved_lang,
-            max_output=max(80, max_output // 2),
-            min_output=min(20, min_output // 2),
+            max_output=max(120, max_output),
+            min_output=max(35, min_output // 2),
             num_beams=num_beams
         )
 
@@ -180,17 +184,51 @@ def hierarchical_summarize(
             "raw_text": c_text
         })
 
+    # Reduce Phase: Synthesize into structured executive briefing
     if len(chunk_summaries) > 1:
         combined_text = " ".join(chunk_summaries)
-        executive_summary = generate_single_summary(
+        global_overview = generate_single_summary(
             combined_text,
             lang=resolved_lang,
             max_output=max_output,
             min_output=min_output,
             num_beams=num_beams
         )
+
+        bullets = []
+        for ch in chapters:
+            t_str = ch.get("time_str", "")
+            if ":" in str(t_str):
+                time_badge = f"[{t_str}] "
+                label = f"Chương {ch['chunk_id']}"
+            else:
+                time_badge = ""
+                label = f"Phần {ch['chunk_id']}"
+
+            bullets.append(f"• **{label} {time_badge}:** {ch['summary']}")
+
+        bullets_joined = "\n".join(bullets)
+
+        if resolved_lang == "vi":
+            executive_summary = (
+                f"📌 **TỔNG QUAN NỘI DUNG (Executive Overview):**\n"
+                f"{global_overview}\n\n"
+                f"🎯 **CÁC TRỌNG TÂM CHI TIẾT THEO PHÂN ĐOẠN (Key Insights):**\n"
+                f"{bullets_joined}"
+            )
+        else:
+            executive_summary = (
+                f"📌 **EXECUTIVE OVERVIEW:**\n"
+                f"{global_overview}\n\n"
+                f"🎯 **KEY SECTION TAKEAWAYS:**\n"
+                f"{bullets_joined}"
+            )
     else:
-        executive_summary = chunk_summaries[0] if chunk_summaries else ""
+        raw_s = chunk_summaries[0] if chunk_summaries else ""
+        if resolved_lang == "vi":
+            executive_summary = f"📌 **TỔNG QUAN NỘI DUNG (Executive Summary):**\n{raw_s}"
+        else:
+            executive_summary = f"📌 **EXECUTIVE SUMMARY:**\n{raw_s}"
 
     return executive_summary, chapters, time.time() - t0
 
@@ -225,6 +263,7 @@ ROUGE Scores (vs. Source):
 Abstractiveness:
   Novel Vocabulary : {abstractive_ratio:.1f}% (Generated beyond Lead-3)
 --------------------------------------------------
-Engine: fine-tuned mT5 (minhunhooo/video-subtitle-summarization-mt5)"""
+Architecture: fine-tuned mT5 + Hierarchical Map-Reduce
+Engine: Multilingual Seq2Seq (vi · en · fr · es)"""
 
     return report

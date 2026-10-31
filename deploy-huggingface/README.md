@@ -10,14 +10,11 @@ pinned: false
 license: mit
 ---
 
-# 🎥 Video Subtitle Understanding & Multilingual Summarization
+# 🎥 Video Subtitle Intelligence & Multilingual Summarization
 
-**Production NLP Pipeline · Topic 17 · Industrial University of Ho Chi Minh City (IUH)**
+**Production NLP Architecture · Topic 17 · Industrial University of Ho Chi Minh City (IUH)**
 
 An end-to-end multi-stage pipeline designed for long-form video transcript processing, multilingual speech-to-text, hierarchical map-reduce chunking, and abstractive summarization.
-
-🔗 **Model Weights:** [minhunhooo/video-subtitle-summarization-mt5](https://huggingface.co/minhunhooo/video-subtitle-summarization-mt5)  
-💻 **GitHub Repository:** [MinHung1411/video-subtitle-summarization](https://github.com/MinHung1411/video-subtitle-summarization)
 
 ---
 

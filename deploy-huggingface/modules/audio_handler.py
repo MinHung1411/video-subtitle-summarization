@@ -30,18 +30,38 @@ def fetch_youtube_captions(video_id: str) -> dict:
         transcript_data = None
         lang = "en"
 
-        # Try v1.x API
+        # Strategy 1: Prioritize list & find transcript (v1.x instance API)
         try:
             api = YouTubeTranscriptApi()
-            if hasattr(api, 'fetch'):
+            if hasattr(api, 'list'):
+                tl = api.list(video_id)
+                t = None
                 try:
-                    transcript_data = api.fetch(video_id, languages=('vi', 'en', 'fr', 'es'))
+                    t = tl.find_transcript(['vi', 'en', 'fr', 'es'])
                 except Exception:
-                    transcript_data = api.fetch(video_id)
+                    try:
+                        t = tl.find_generated_transcript(['vi', 'en', 'fr', 'es'])
+                    except Exception:
+                        try:
+                            t = next(iter(tl))
+                        except Exception:
+                            t = None
+                if t:
+                    transcript_data = t.fetch()
+                    lang = getattr(t, 'language_code', lang)
         except Exception:
             pass
 
-        # Try v0.x API fallback
+        # Strategy 2: Direct instance fetch
+        if transcript_data is None:
+            try:
+                api = YouTubeTranscriptApi()
+                if hasattr(api, 'fetch'):
+                    transcript_data = api.fetch(video_id)
+            except Exception:
+                pass
+
+        # Strategy 3: v0.x classmethod fallback
         if transcript_data is None and hasattr(YouTubeTranscriptApi, 'get_transcript'):
             try:
                 transcript_data = YouTubeTranscriptApi.get_transcript(video_id, languages=['vi', 'en', 'fr', 'es'])
@@ -50,18 +70,6 @@ def fetch_youtube_captions(video_id: str) -> dict:
                     transcript_data = YouTubeTranscriptApi.get_transcript(video_id)
                 except Exception:
                     pass
-
-        # Try list method fallback
-        if transcript_data is None:
-            try:
-                api = YouTubeTranscriptApi()
-                list_fn = getattr(api, 'list', None) or getattr(YouTubeTranscriptApi, 'list_transcripts', None)
-                if list_fn:
-                    tl = list_fn(video_id)
-                    t = next(iter(tl))
-                    transcript_data = t.fetch()
-            except Exception:
-                pass
 
         if not transcript_data:
             return {"success": False, "error": "No captions available for this video."}
@@ -81,7 +89,6 @@ def fetch_youtube_captions(video_id: str) -> dict:
 
         full_text = " ".join([s['text'] for s in segments])
         total_duration = segments[-1]['end'] if segments else 0.0
-        lang = getattr(transcript_data, 'language_code', lang)
         return {
             "success": True,
             "segments": segments,

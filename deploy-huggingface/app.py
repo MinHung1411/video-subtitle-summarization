@@ -1,5 +1,5 @@
 """
-Video Subtitle Understanding & Multilingual Summarization Suite
+Video Subtitle Intelligence & Multilingual Summarization Platform
 NLP Production Pipeline · Topic 17 · Industrial University of Ho Chi Minh City (IUH) 2026
 """
 
@@ -31,6 +31,7 @@ from modules.summarizer_engine import (
     extract_keywords,
     lead3_summarize,
     evaluate_summary,
+    detect_language,
     DEVICE
 )
 from modules.exporter import format_markdown_report, create_downloadable_file
@@ -69,8 +70,9 @@ def process_pipeline(
             if not raw_text or not raw_text.strip():
                 return None, "Error: Vui lòng nhập hoặc dán nội dung văn bản transcript.", "", "", "", "", None
             full_transcript = clean_subtitle_text(raw_text)
+            detected_lang = detect_language(full_transcript)
             title = "Direct Transcript"
-            chunks = chunk_plain_text(full_transcript, max_words_per_chunk=400)
+            chunks = chunk_plain_text(full_transcript, max_words_per_chunk=280)
 
         # Mode 2: File Upload (Subtitle or Video/Audio)
         elif input_type == "file":
@@ -85,24 +87,26 @@ def process_pipeline(
                     content = f.read()
                 segments = parse_srt_with_timestamps(content)
                 if segments:
-                    chunks = chunk_by_segments(segments, max_words_per_chunk=400)
+                    chunks = chunk_by_segments(segments, max_words_per_chunk=280)
                     full_transcript = " ".join([s["text"] for s in segments])
                     total_sec = segments[-1]["end"] if segments else 0
                     duration_str = format_seconds_to_time(total_sec)
                 else:
                     full_transcript = clean_subtitle_text(content)
-                    chunks = chunk_plain_text(full_transcript, max_words_per_chunk=400)
+                    chunks = chunk_plain_text(full_transcript, max_words_per_chunk=280)
+                detected_lang = detect_language(full_transcript)
             elif file_path.lower().endswith(".txt"):
                 with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                     full_transcript = clean_subtitle_text(f.read())
-                chunks = chunk_plain_text(full_transcript, max_words_per_chunk=400)
+                chunks = chunk_plain_text(full_transcript, max_words_per_chunk=280)
+                detected_lang = detect_language(full_transcript)
             else:
                 asr_res = transcribe_audio(file_path, model_size=whisper_size)
                 if not asr_res["success"]:
                     return None, f"Lỗi nhận diện âm thanh ASR: {asr_res['error']}", "", "", "", "", None
                 full_transcript = asr_res["text"]
                 detected_lang = asr_res["language"]
-                chunks = chunk_by_segments(asr_res["segments"], max_words_per_chunk=400)
+                chunks = chunk_by_segments(asr_res["segments"], max_words_per_chunk=280)
                 if asr_res.get("segments"):
                     duration_str = format_seconds_to_time(asr_res["segments"][-1]["end"])
 
@@ -121,7 +125,7 @@ def process_pipeline(
                 if yt_res.get("success") and len(yt_res.get("text", "").split()) >= 15:
                     full_transcript = yt_res["text"]
                     detected_lang = yt_res.get("language", "en")
-                    chunks = chunk_by_segments(yt_res["segments"], max_words_per_chunk=400)
+                    chunks = chunk_by_segments(yt_res["segments"], max_words_per_chunk=280)
                     title = yt_res.get("title", f"YouTube Video ({yt_id})")
                     duration_str = format_seconds_to_time(yt_res.get("duration", 0))
                     transcript_found = True
@@ -130,18 +134,17 @@ def process_pipeline(
             if not transcript_found:
                 dl_res = download_audio_from_url(clean_url)
                 if not dl_res["success"]:
-                    err_msg = dl_res.get("error", "Unknown error")
-                    if "Sign in to confirm you're not a bot" in err_msg or "bot" in err_msg.lower():
-                        return (
-                            None,
-                            "⚠️ **Tường lửa YouTube (Datacenter Protection):** YouTube chặn tải ngầm video trực tiếp từ máy chủ đám mây.\n\n"
-                            "💡 **Để tiếp tục tóm tắt video này:**\n"
-                            "1. Dùng **Tab 2 ('Upload Phụ Đề')**: Tải file `.srt` phụ đề của video lên (rất nhẹ, xử lý ngay).\n"
-                            "2. Dùng **Tab 3 ('Upload Video / Audio')**: Tải file `.mp4` hoặc `.mp3` của video lên để Whisper nhận diện.\n"
-                            "3. Dùng **Tab 1 ('Nhập Transcript')**: Dán lời thoại vào để mô hình tóm tắt tức thì!",
-                            "", "", "", "", None
-                        )
-                    return None, f"Lỗi trích xuất audio: {err_msg}", "", "", "", "", None
+                    return (
+                        None,
+                        "⚠️ **Thông Báo Trích Xuất Video URL:**\n\n"
+                        "YouTube hiện kích hoạt tường lửa bot đối với máy chủ đám mây khi tải ngầm luồng âm thanh video không có phụ đề trực tiếp.\n\n"
+                        "💡 **Các giải pháp khả dụng ngay:**\n"
+                        "1. **Thử Video có phụ đề CC:** Sử dụng các link video có sẵn phụ đề (ví dụ video mẫu bên dưới) để trích xuất tức thì dưới 3 giây.\n"
+                        "2. **Dùng Tab 2 (Upload File Phụ Đề):** Tải file `.srt` phụ đề của video lên hệ thống.\n"
+                        "3. **Dùng Tab 3 (Upload Video / Audio):** Tải trực tiếp file `.mp4`/`.mp3` lên — mô hình Whisper chạy trên ZeroGPU A100 sẽ phiên âm cực nhanh (video 5 phút chỉ mất ~25 giây)!\n"
+                        "4. **Dùng Tab 1 (Nhập Transcript):** Dán trực tiếp lời thoại để tạo tóm tắt ngay lập tức.",
+                        "", "", "", "", None
+                    )
 
                 audio_path = dl_res["audio_path"]
                 temp_audio_file = audio_path
@@ -154,7 +157,7 @@ def process_pipeline(
 
                 full_transcript = asr_res["text"]
                 detected_lang = asr_res["language"]
-                chunks = chunk_by_segments(asr_res["segments"], max_words_per_chunk=400)
+                chunks = chunk_by_segments(asr_res["segments"], max_words_per_chunk=280)
 
         word_count = len(full_transcript.split())
         if word_count < 15:
@@ -180,10 +183,13 @@ def process_pipeline(
         if chapters and len(chapters) > 1:
             for ch in chapters:
                 time_range = ch.get("time_str", "")
-                chapter_md.append(f"- **`{time_range}` Chapter {ch['chunk_id']}:** {ch['summary']}")
+                if ":" in str(time_range):
+                    chapter_md.append(f"### 📍 Chương {ch['chunk_id']} `⏱️ {time_range}`\n{ch['summary']}")
+                else:
+                    chapter_md.append(f"### 📍 Phân đoạn {ch['chunk_id']}\n{ch['summary']}")
         elif chapters:
-            chapter_md.append(f"- **Summary:** {chapters[0]['summary']}")
-        chapter_display = "\n\n".join(chapter_md)
+            chapter_md.append(f"### 📍 Tóm tắt cốt lõi:\n{chapters[0]['summary']}")
+        chapter_display = "\n\n---\n\n".join(chapter_md)
 
         total_elapsed = time.time() - t_start
 
@@ -228,33 +234,53 @@ def process_pipeline(
     except Exception as e:
         return None, f"Lỗi hệ thống: {str(e)}", "", "", "", "", None
 
-@spaces.GPU(duration=30)
+@spaces.GPU(duration=25)
 def run_text_tab(text, target_lang, max_tokens, min_tokens, num_beams):
     return process_pipeline("text", "", text, target_lang, "base", max_tokens, min_tokens, num_beams)
 
-@spaces.GPU(duration=30)
+@spaces.GPU(duration=25)
 def run_srt_tab(file_obj, target_lang, max_tokens, min_tokens, num_beams):
     if file_obj is None:
         return None, "Error: Vui lòng tải lên file phụ đề (.srt, .vtt, .txt).", "", "", "", "", None
     path = file_obj if isinstance(file_obj, str) else getattr(file_obj, "name", str(file_obj))
     return process_pipeline("file", path, "", target_lang, "base", max_tokens, min_tokens, num_beams)
 
-@spaces.GPU(duration=60)
+@spaces.GPU(duration=45)
 def run_video_tab(file_obj, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
     if file_obj is None:
         return None, "Error: Vui lòng tải lên file video/audio (.mp4, .mp3, .wav).", "", "", "", "", None
     path = file_obj if isinstance(file_obj, str) else getattr(file_obj, "name", str(file_obj))
     return process_pipeline("file", path, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
-@spaces.GPU(duration=60)
+@spaces.GPU(duration=45)
 def run_url_tab(url, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
     return process_pipeline("url", url, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
 CUSTOM_CSS = """
-.container { max-width: 1200px; margin: auto; }
-#summary-box textarea { background: #f8fafc !important; border-left: 4px solid #2563eb !important; font-size: 14.5px; line-height: 1.6; }
-#chapter-box { background: #ffffff; border-radius: 6px; padding: 12px; border: 1px solid #e2e8f0; }
-#stats-box textarea { font-family: monospace; background: #f8fafc !important; font-size: 12.5px; }
+.container { max-width: 1240px; margin: auto; }
+#summary-box textarea {
+    background: #ffffff !important;
+    border-left: 5px solid #2563eb !important;
+    font-size: 14.5px !important;
+    line-height: 1.65 !important;
+    color: #0f172a !important;
+    font-weight: 500 !important;
+    border-radius: 8px !important;
+}
+#chapter-box {
+    background: #ffffff !important;
+    border-radius: 8px !important;
+    padding: 16px !important;
+    border: 1px solid #e2e8f0 !important;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
+}
+#stats-box textarea {
+    font-family: 'Consolas', 'Menlo', monospace !important;
+    background: #f8fafc !important;
+    font-size: 12.5px !important;
+    color: #334155 !important;
+    border-radius: 8px !important;
+}
 """
 
 TRANSCRIPT_EXAMPLES = [
@@ -262,16 +288,33 @@ TRANSCRIPT_EXAMPLES = [
     ["So let's talk about how neural networks actually learn. Imagine teaching a child to recognize cats without giving them a rulebook; you simply show them thousands of pictures. A deep neural network learns similarly through backpropagation, adjusting internal weights layer by layer. The early layers identify simple edges and shapes, while deeper layers detect complex patterns like facial structures. This breakthrough in representation learning is why modern deep learning has achieved human-level performance across vision and speech tasks."]
 ]
 
-with gr.Blocks(title="Video Subtitle Multilingual Summarization Suite", theme=gr.themes.Base(), css=CUSTOM_CSS) as demo:
+URL_EXAMPLES = [
+    ["https://www.youtube.com/watch?v=UF8uR6Z6KLc"],
+    ["https://www.youtube.com/watch?v=aircAruvnKk"]
+]
 
-    gr.Markdown(
+with gr.Blocks(title="Video Subtitle Understanding & Multilingual Summarization", theme=gr.themes.Base(), css=CUSTOM_CSS) as demo:
+
+    gr.HTML(
         """
-        # 🎥 Video Subtitle Understanding & Multilingual Summarization
-        **NLP Production Pipeline · Topic 17 · Industrial University of Ho Chi Minh City (IUH)**
-        
-        End-to-end framework integrating speech-to-text (Whisper), hierarchical chunking, and multilingual abstractive summarization (`mT5`).
-        
-        🔗 **Model Hub:** [`minhunhooo/video-subtitle-summarization-mt5`](https://huggingface.co/minhunhooo/video-subtitle-summarization-mt5) | 💻 **GitHub:** [`video-subtitle-summarization`](https://github.com/MinHung1411/video-subtitle-summarization)
+        <div style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); color: #ffffff; padding: 24px 28px; border-radius: 12px; margin-bottom: 20px; box-shadow: 0 4px 15px rgba(0,0,0,0.1);">
+          <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
+            <div>
+              <h1 style="margin: 0; font-size: 25px; font-weight: 700; color: #ffffff; letter-spacing: -0.5px;">
+                🎥 Video Subtitle Intelligence & Multilingual Summarization
+              </h1>
+              <p style="margin: 6px 0 0 0; color: #94a3b8; font-size: 14.5px;">
+                Nền Tảng Trí Tuệ Nhân Tạo Tóm Tắt & Phân Tích Lời Thoại Video Đa Ngôn Ngữ
+              </p>
+            </div>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <span style="background: rgba(37, 99, 235, 0.25); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">🎙️ Whisper ASR</span>
+              <span style="background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">🧠 mT5 Multilingual</span>
+              <span style="background: rgba(245, 158, 11, 0.25); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">⚡ ZeroGPU A100</span>
+              <span style="background: rgba(168, 85, 247, 0.25); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">🌐 Vi · En · Fr · Es</span>
+            </div>
+          </div>
+        </div>
         """
     )
 
@@ -354,8 +397,8 @@ with gr.Blocks(title="Video Subtitle Multilingual Summarization Suite", theme=gr
             with gr.Row():
                 with gr.Column(scale=3):
                     url_in = gr.Textbox(
-                        label="Video URL (YouTube, Vimeo, TikTok, direct stream)",
-                        placeholder="https://www.youtube.com/watch?v=...",
+                        label="Video URL (YouTube, Vimeo, direct stream)",
+                        placeholder="Dán link YouTube có phụ đề CC vào đây (ví dụ: https://www.youtube.com/watch?v=...)",
                         lines=2
                     )
                 with gr.Column(scale=1):
@@ -376,6 +419,12 @@ with gr.Blocks(title="Video Subtitle Multilingual Summarization Suite", theme=gr
                     sl_min_4 = gr.Slider(30, 150, value=60, step=10, label="Min Tokens")
                     sl_beam_4 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
+            gr.Examples(
+                examples=URL_EXAMPLES,
+                inputs=url_in,
+                label="Video mẫu có sẵn phụ đề chuẩn (Click để thử nghiệm ngay):"
+            )
+
             btn_url = gr.Button("Tóm tắt từ Link URL", variant="primary", size="large")
 
     gr.Markdown("---")
@@ -387,7 +436,7 @@ with gr.Blocks(title="Video Subtitle Multilingual Summarization Suite", theme=gr
         with gr.Column(scale=2):
             exec_out = gr.Textbox(
                 label="Executive Summary (Bản tóm tắt điều hành)",
-                lines=7,
+                lines=10,
                 interactive=False,
                 elem_id="summary-box"
             )
