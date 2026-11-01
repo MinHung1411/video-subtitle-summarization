@@ -31,6 +31,26 @@ except Exception:
         "with", "was", "are", "be", "this", "that"
     }
 
+VI_STOP_WORDS = {
+    "và", "hoặc", "nhưng", "tuy", "nhiên", "các", "những", "một", "của", "cho", "với", "được",
+    "trong", "trên", "dưới", "ngoài", "khi", "lúc", "này", "đó", "kia", "đang", "đã", "sẽ",
+    "phải", "luôn", "cũng", "vẫn", "thì", "là", "rằng", "việc", "sự", "cái", "chiếc", "nhất",
+    "hơn", "rất", "quá", "lắm", "nhiều", "ít", "đến", "từ", "vào", "ra", "lại", "qua", "về",
+    "theo", "bởi", "vì", "do", "nên", "vậy", "thế", "nào", "gì", "ai", "sao", "đâu", "đây",
+    "ấy", "họ", "chúng", "tôi", "ta", "bạn", "ông", "bà", "anh", "chị", "em", "người", "mọi",
+    "mỗi", "từng", "toàn", "bộ", "phần", "điều", "thứ", "làm", "tạo", "thấy", "biết", "nghĩ",
+    "nói", "khác", "như", "cùng", "sau", "trước", "giữa", "thêm", "bớt", "vậy"
+}
+
+try:
+    FR_STOP_WORDS = set(stopwords.words("french"))
+    ES_STOP_WORDS = set(stopwords.words("spanish"))
+except Exception:
+    FR_STOP_WORDS = set()
+    ES_STOP_WORDS = set()
+
+ALL_STOP_WORDS = STOP_WORDS | VI_STOP_WORDS | FR_STOP_WORDS | ES_STOP_WORDS
+
 class UnicodeTokenizer:
     """NFC Unicode-aware tokenizer preserving Vietnamese diacritics for accurate ROUGE."""
     def tokenize(self, text):
@@ -79,11 +99,24 @@ def get_summarizer_model(model_name: str = None):
         _LOADED_MODELS[fallback] = (model, tokenizer)
         return model, tokenizer
 
-def extract_keywords(text: str, top_k: int = 12) -> str:
-    words = [w.lower() for w in text.split() if w.isalpha() and w.lower() not in STOP_WORDS and len(w) > 3]
-    freq = Counter(words)
-    top = [w for w, _ in freq.most_common(top_k)]
-    return ", ".join(top) if top else "N/A"
+def extract_keywords(text: str, top_k: int = 10) -> str:
+    tokens = re.findall(r"[A-Za-zÀ-ỹ0-9_+-]+", text)
+    cleaned = []
+    for w in tokens:
+        wl = w.lower()
+        if len(wl) >= 2 and wl not in ALL_STOP_WORDS and not wl.isdigit():
+            cleaned.append(w.capitalize())
+
+    freq = Counter(cleaned)
+    top_words = [w for w, _ in freq.most_common(top_k)]
+    if not top_words:
+        return "N/A"
+
+    badges = [
+        f'<span style="display: inline-block; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; padding: 3px 9px; border-radius: 12px; font-size: 12px; font-weight: 600; margin: 2px 3px;">#{w}</span>'
+        for w in top_words
+    ]
+    return " ".join(badges)
 
 def lead3_summarize(text: str) -> str:
     sentences = re.split(r"(?<=[.!?])\s+", text.strip())
@@ -236,23 +269,18 @@ def evaluate_summary(transcript: str, summary: str, lead3: str) -> str:
     novel_words = [w for w in words_s if w not in set_lead and len(w) > 2]
     abstractive_ratio = len(novel_words) / max(n_s, 1) * 100
 
-    report = f"""EVALUATION REPORT (Unicode NFC Preserved)
---------------------------------------------------
-Compression Metrics:
-  Source Tokens    : {n_t:,}
-  Summary Tokens   : {n_s:,}
-  Compression Ratio: {ratio * 100:.1f}%
+    report = f"""| Chỉ số NLP Benchmark | Kết quả Đạt được | Ý nghĩa / Baseline Kỹ thuật |
+| :--- | :---: | :--- |
+| **Độ dài Bản gốc (Source Length)** | **`{n_t:,}`** từ | Toàn văn lời thoại transcript được trích xuất |
+| **Độ dài Tóm tắt (Summary Length)** | **`{n_s:,}`** từ | Bản tóm tắt điều hành được sinh tự động |
+| **Tỷ lệ Nén (Compression Ratio)** | **`{ratio * 100:.1f}%`** | Nén súc tích, cô đọng nội dung cốt lõi |
+| **Mô hình ROUGE-1 (Unigram Overlap)** | **`{r_vs_trans['rouge1'].fmeasure * 100:.1f}%`** | Độ trùng khớp từ vựng đơn ngữ nghĩa |
+| **Mô hình ROUGE-L (LCS Coherence)** | **`{r_vs_trans['rougeL'].fmeasure * 100:.1f}%`** | Mức độ mạch lạc chuỗi từ liên tiếp dài nhất |
+| **Lead-3 Baseline (ROUGE-1 / L)** | `{r_lead['rouge1'].fmeasure * 100:.1f}%` / `{r_lead['rougeL'].fmeasure * 100:.1f}%` | Chuẩn so sánh trích xuất 3 câu đầu kinh điển |
+| **Mức độ Trừu tượng (Novel Vocabulary)** | **`{abstractive_ratio:.1f}%`** | Tỷ lệ từ vựng mới sinh ra ngoài Lead-3 |
 
-ROUGE Scores (vs. Source):
-  Model ROUGE-1    : {r_vs_trans['rouge1'].fmeasure * 100:.1f}%
-  Model ROUGE-L    : {r_vs_trans['rougeL'].fmeasure * 100:.1f}%
-  Lead-3 ROUGE-1   : {r_lead['rouge1'].fmeasure * 100:.1f}% (Baseline)
-  Lead-3 ROUGE-L   : {r_lead['rougeL'].fmeasure * 100:.1f}% (Baseline)
-
-Abstractiveness:
-  Novel Vocabulary : {abstractive_ratio:.1f}% (Generated beyond Lead-3)
---------------------------------------------------
-Architecture: fine-tuned mT5 + Hierarchical Map-Reduce
-Engine: Multilingual Seq2Seq (vi · en · fr · es)"""
+> 🧠 **Mô hình Huấn luyện:** `minhunhooo/video-subtitle-summarization-mt5` (582M params)  
+> 🔬 **Thuật toán Tóm tắt:** Hierarchical Map-Reduce (Bảo toàn đầy đủ tất cả các phân đoạn)  
+> 🌐 **Bộ Chuẩn hóa:** Custom Unicode NFC Tokenizer (Bảo toàn 100% nguyên vẹn dấu thanh Tiếng Việt)"""
 
     return report
