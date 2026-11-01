@@ -31,7 +31,6 @@ from modules.asr_engine import transcribe_audio, clean_subtitle_text, parse_srt_
 from modules.chunker import chunk_by_segments, chunk_plain_text
 from modules.summarizer_engine import (
     hierarchical_summarize,
-    extract_keywords,
     lead3_summarize,
     evaluate_summary,
     detect_language,
@@ -71,16 +70,16 @@ def process_pipeline(
         # Mode 1: Text Transcript
         if input_type == "text":
             if not raw_text or not raw_text.strip():
-                return None, "Error: Vui lòng nhập hoặc dán nội dung văn bản transcript.", "", "", "", "", None
+                return None, "Error: Vui lòng nhập hoặc dán nội dung văn bản transcript.", "", "", "", None
             full_transcript = clean_subtitle_text(raw_text)
             detected_lang = detect_language(full_transcript)
             title = "Direct Transcript"
-            chunks = chunk_plain_text(full_transcript, max_words_per_chunk=280)
+            chunks = chunk_plain_text(full_transcript, max_words_per_chunk=320)
 
         # Mode 2: File Upload (Subtitle or Video/Audio)
         elif input_type == "file":
             if not url_or_path:
-                return None, "Error: Vui lòng tải lên file hợp lệ.", "", "", "", "", None
+                return None, "Error: Vui lòng tải lên file hợp lệ.", "", "", "", None
 
             file_path = url_or_path if isinstance(url_or_path, str) else getattr(url_or_path, "name", str(url_or_path))
             title = os.path.basename(file_path)
@@ -96,17 +95,17 @@ def process_pipeline(
                     duration_str = format_seconds_to_time(total_sec)
                 else:
                     full_transcript = clean_subtitle_text(content)
-                    chunks = chunk_plain_text(full_transcript, max_words_per_chunk=280)
+                    chunks = chunk_plain_text(full_transcript, max_words_per_chunk=320)
                 detected_lang = detect_language(full_transcript)
             elif file_path.lower().endswith(".txt"):
                 with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                     full_transcript = clean_subtitle_text(f.read())
-                chunks = chunk_plain_text(full_transcript, max_words_per_chunk=280)
+                chunks = chunk_plain_text(full_transcript, max_words_per_chunk=320)
                 detected_lang = detect_language(full_transcript)
             else:
                 asr_res = transcribe_audio(file_path, model_size=whisper_size)
                 if not asr_res["success"]:
-                    return None, f"Lỗi nhận diện âm thanh ASR: {asr_res['error']}", "", "", "", "", None
+                    return None, f"Lỗi nhận diện âm thanh ASR: {asr_res['error']}", "", "", "", None
                 full_transcript = asr_res["text"]
                 detected_lang = asr_res["language"]
                 chunks = chunk_by_segments(asr_res["segments"], max_words_per_chunk=280)
@@ -117,7 +116,7 @@ def process_pipeline(
         elif input_type == "url":
             clean_url = url_or_path.strip()
             if not clean_url:
-                return None, "Error: Vui lòng cung cấp link video hợp lệ.", "", "", "", "", None
+                return None, "Error: Vui lòng cung cấp link video hợp lệ.", "", "", "", None
 
             yt_id = extract_youtube_video_id(clean_url)
             transcript_found = False
@@ -146,7 +145,7 @@ def process_pipeline(
                         "2. **Dùng Tab 2 (Upload File Phụ Đề):** Tải file `.srt` phụ đề của video lên hệ thống.\n"
                         "3. **Dùng Tab 3 (Upload Video / Audio):** Tải trực tiếp file `.mp4`/`.mp3` lên — mô hình Whisper ASR trên máy chủ 16GB RAM sẽ tự động chuyển đổi giọng nói thành phụ đề và tạo các mốc thời gian chuẩn xác 100%!\n"
                         "4. **Dùng Tab 1 (Nhập Transcript):** Dán trực tiếp lời thoại để tạo tóm tắt ngay lập tức.",
-                        "", "", "", "", None
+                        "", "", "", None
                     )
 
                 audio_path = dl_res["audio_path"]
@@ -156,7 +155,7 @@ def process_pipeline(
 
                 asr_res = transcribe_audio(audio_path, model_size=whisper_size)
                 if not asr_res["success"]:
-                    return None, f"Lỗi ASR: {asr_res['error']}", "", "", "", "", None
+                    return None, f"Lỗi ASR: {asr_res['error']}", "", "", "", None
 
                 full_transcript = asr_res["text"]
                 detected_lang = asr_res["language"]
@@ -164,10 +163,9 @@ def process_pipeline(
 
         word_count = len(full_transcript.split())
         if word_count < 15:
-            return None, f"Cảnh báo: Nội dung quá ngắn ({word_count} từ) để tóm tắt.", "", "", "", "", None
+            return None, f"Cảnh báo: Nội dung quá ngắn ({word_count} từ) để tóm tắt.", "", "", "", None
 
         # Summarization & Evaluation
-        keywords = extract_keywords(full_transcript)
         lead3 = lead3_summarize(full_transcript)
 
         exec_summary, chapters, sum_time = hierarchical_summarize(
@@ -188,13 +186,16 @@ def process_pipeline(
                 time_range = ch.get("time_str", "")
                 if re.search(r"\d{1,2}:\d{2}", str(time_range)):
                     chapter_md.append(f"### 📍 Chương {ch['chunk_id']} `⏱️ {time_range}`\n{ch['summary']}")
-                elif time_range:
+                elif time_range and time_range != "Toàn văn":
                     chapter_md.append(f"### 📍 {time_range}\n{ch['summary']}")
-                else:
-                    chapter_md.append(f"### 📍 Phân đoạn {ch['chunk_id']}\n{ch['summary']}")
-        elif chapters:
-            chapter_md.append(f"### 📍 Tóm tắt cốt lõi:\n{chapters[0]['summary']}")
-        chapter_display = "\n\n---\n\n".join(chapter_md)
+        elif chapters and any(re.search(r"\d{1,2}:\d{2}", str(c.get("time_str", ""))) for c in chapters):
+            ch = chapters[0]
+            chapter_md.append(f"### 📍 Chương 1 `⏱️ {ch.get('time_str', '')}`\n{ch['summary']}")
+
+        if chapter_md:
+            chapter_display = "\n\n---\n\n".join(chapter_md)
+        else:
+            chapter_display = "> ℹ️ *Nội dung đã được tóm tắt súc tích, hoàn chỉnh trong Bản Tóm Tắt ở trên.*"
 
         total_elapsed = time.time() - t_start
 
@@ -218,7 +219,7 @@ def process_pipeline(
             title=title,
             executive_summary=exec_summary,
             chapters=chapters,
-            keywords=keywords,
+            keywords="",
             metadata=metadata_dict
         )
         download_path = create_downloadable_file(full_md_report, filename_prefix="Summary_Report")
@@ -236,14 +237,13 @@ def process_pipeline(
             meta_info,
             exec_summary,
             chapter_display,
-            keywords,
             eval_report,
             transcript_preview,
             download_path
         )
 
     except Exception as e:
-        return None, f"Lỗi hệ thống: {str(e)}", "", "", "", "", None
+        return None, f"Lỗi hệ thống: {str(e)}", "", "", "", None
 
 @spaces.GPU(duration=1)
 def _zerogpu_keeper():
@@ -255,13 +255,13 @@ def run_text_tab(text, target_lang, max_tokens, min_tokens, num_beams):
 
 def run_srt_tab(file_obj, target_lang, max_tokens, min_tokens, num_beams):
     if file_obj is None:
-        return None, "Error: Vui lòng tải lên file phụ đề (.srt, .vtt, .txt).", "", "", "", "", None
+        return None, "Error: Vui lòng tải lên file phụ đề (.srt, .vtt, .txt).", "", "", "", None
     path = file_obj if isinstance(file_obj, str) else getattr(file_obj, "name", str(file_obj))
     return process_pipeline("file", path, "", target_lang, "base", max_tokens, min_tokens, num_beams)
 
 def run_video_tab(file_obj, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
     if file_obj is None:
-        return None, "Error: Vui lòng tải lên file video/audio (.mp4, .mp3, .wav).", "", "", "", "", None
+        return None, "Error: Vui lòng tải lên file video/audio (.mp4, .mp3, .wav).", "", "", "", None
     path = file_obj if isinstance(file_obj, str) else getattr(file_obj, "name", str(file_obj))
     return process_pipeline("file", path, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
@@ -323,14 +323,6 @@ CUSTOM_CSS = """
     padding: 8px 14px !important;
     border: 1px solid #e2e8f0 !important;
     color: #334155 !important;
-}
-#concept-card {
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 10px !important;
-    padding: 14px 18px !important;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03) !important;
-    min-height: 85px;
 }
 """
 
@@ -491,42 +483,37 @@ with gr.Blocks(title="VideoInsight · Multilingual Video Intelligence & Hierarch
             btn_url = gr.Button("🚀 Phân Tích & Tóm Tắt từ Link URL (Summarize from URL)", variant="primary", size="large")
 
     gr.Markdown("---")
-    gr.Markdown("### 📊 Kết Quả Tóm Tắt & Phân Tích Chuyên Sâu (Executive Summary & NLP Analytics)")
+    gr.Markdown("### 📊 Kết Quả Tóm Tắt (Summary Results)")
 
     meta_out = gr.Markdown()
 
     with gr.Row():
-        with gr.Column(scale=3):
-            gr.Markdown("#### 📌 Bản Tóm Tắt Điều Hành (Executive Summary)")
+        with gr.Column(scale=4):
+            gr.Markdown("#### 📌 Bản Tóm Tắt (Executive Summary)")
             exec_out = gr.Markdown(
-                value="*Kết quả tóm tắt điều hành đa tầng sẽ xuất hiện tại đây sau khi bạn nhấn nút xử lý.*",
+                value="*Kết quả tóm tắt súc tích, đầy đủ ý chính sẽ xuất hiện tại đây sau khi bạn nhấn nút xử lý.*",
                 elem_id="summary-card"
             )
-        with gr.Column(scale=2):
-            gr.Markdown("#### 🏷️ Khái Niệm & Thực Thể Chính (Key Concepts)")
-            kw_out = gr.HTML(
-                value="*Các thực thể và từ khóa chủ chốt sẽ được trích xuất tại đây.*",
-                elem_id="concept-card"
-            )
-            gr.Markdown("#### 📥 Tải Báo Cáo Phân Tích")
+        with gr.Column(scale=1):
+            gr.Markdown("#### 📥 Tải Báo Cáo")
             download_out = gr.File(
-                label="Báo cáo tóm tắt định dạng Markdown (.md)",
+                label="Báo cáo tóm tắt (.md)",
                 interactive=False
             )
 
-    with gr.Accordion("📍 Dòng Thời Gian Phân Đoạn (Chapter Timeline & Key Moments)", open=True):
+    with gr.Accordion("📍 Dòng Thời Gian Phân Đoạn (Chapter Timeline)", open=True):
         chapter_out = gr.Markdown(
-            value="*Dòng thời gian các phân đoạn nội dung chính sẽ hiển thị tại đây.*",
+            value="*Dòng thời gian các phân đoạn nội dung chính (nếu có mốc thời gian từ video/audio) sẽ hiển thị tại đây.*",
             elem_id="chapter-card"
         )
 
-    with gr.Accordion("📈 Báo Cáo Đánh Giá Chất Lượng NLP & Benchmark Định Lượng", open=True):
+    with gr.Accordion("🔬 Chi Tiết Kỹ Thuật & Đánh Giá NLP (ROUGE Benchmark · Dành cho Tuyển Dụng / Phỏng Vấn)", open=False):
         stats_out = gr.Markdown(
             value="*Bảng chỉ số đo lường ROUGE, tỷ lệ nén và mức độ tóm tắt trừu tượng (Abstractiveness).*",
             elem_id="metrics-card"
         )
 
-    with gr.Accordion("📄 Lời Thoại Transcript Gốc (Source Transcript Preview)", open=False):
+    with gr.Accordion("📄 Lời Thoại Transcript Gốc (Source Transcript)", open=False):
         transcript_out = gr.Textbox(
             label="Nội dung lời thoại trích xuất từ audio / phụ đề",
             lines=8,
@@ -538,7 +525,6 @@ with gr.Blocks(title="VideoInsight · Multilingual Video Intelligence & Hierarch
         meta_out,
         exec_out,
         chapter_out,
-        kw_out,
         stats_out,
         transcript_out,
         download_out

@@ -144,15 +144,15 @@ def generate_single_summary(
     )
 
     input_word_count = len(clean_text.split())
-    target_min = min(max(min_output, 20), max(input_word_count // 3, 15))
-    target_max = max(max_output, target_min + 35)
+    target_min = min(max(min_output, 35), max(input_word_count // 2, 25))
+    target_max = max(max_output, target_min + 40)
 
     with torch.no_grad():
         output_ids = model.generate(
             **inputs,
             max_new_tokens=target_max,
             min_new_tokens=target_min,
-            length_penalty=1.0,
+            length_penalty=1.4,
             num_beams=num_beams,
             no_repeat_ngram_size=3,
             repetition_penalty=1.15,
@@ -218,39 +218,10 @@ def hierarchical_summarize(
 
         full_overview = " ".join(combined_sents)
 
-        bullets = []
-        for ch in chapters:
-            t_str = ch.get("time_str", "")
-            if re.search(r"\d{1,2}:\d{2}", str(t_str)):
-                bullets.append(f"• **Chương {ch['chunk_id']} [{t_str}]:** {ch['summary']}")
-            elif t_str:
-                bullets.append(f"• **{t_str}:** {ch['summary']}")
-            else:
-                bullets.append(f"• **Phần {ch['chunk_id']}:** {ch['summary']}")
-
-        bullets_joined = "\n".join(bullets)
-
-        if resolved_lang == "vi":
-            executive_summary = (
-                f"📌 **TỔNG QUAN NỘI DUNG (Executive Summary):**\n"
-                f"{full_overview}\n\n"
-                f"🎯 **CÁC TRỌNG TÂM CHI TIẾT (Key Takeaways):**\n"
-                f"{bullets_joined}"
-            )
-        else:
-            executive_summary = (
-                f"📌 **EXECUTIVE SUMMARY:**\n"
-                f"{full_overview}\n\n"
-                f"🎯 **KEY SECTION TAKEAWAYS:**\n"
-                f"{bullets_joined}"
-            )
+        executive_summary = full_overview
     else:
         # Single chunk: clean, accurate summary directly
-        raw_s = chunk_summaries[0] if chunk_summaries else ""
-        if resolved_lang == "vi":
-            executive_summary = f"📌 **TỔNG QUAN NỘI DUNG (Executive Summary):**\n{raw_s}"
-        else:
-            executive_summary = f"📌 **EXECUTIVE SUMMARY:**\n{raw_s}"
+        executive_summary = chunk_summaries[0] if chunk_summaries else ""
 
     return executive_summary, chapters, time.time() - t0
 

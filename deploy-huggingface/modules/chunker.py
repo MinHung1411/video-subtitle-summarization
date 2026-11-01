@@ -59,24 +59,21 @@ def chunk_by_segments(
     return chunks
 
 def chunk_plain_text(
-    text: str, max_words_per_chunk: int = 280
+    text: str, max_words_per_chunk: int = 320
 ) -> List[Dict]:
     """
-    Thematic section chunking for direct text / transcript.
-    Splits multi-sentence text into logical thematic sections (opening, middle, conclusion)
-    so that summarization captures all key ideas and never drops early paragraphs.
+    Semantic chunking for direct text / transcript.
+    Texts within model context (<= 320 words) are kept intact to preserve context and fluency.
+    Longer texts are cleanly partitioned by sentence boundaries.
     """
     text = (text or "").strip()
     if not text:
         return []
 
-    sentences = [s.strip() for s in re.split(r"(?<=[.!?…\n])\s+", text) if s.strip()]
-    n = len(sentences)
     words = text.split()
     total_words = len(words)
 
-    # Very short texts (1-2 sentences or <= 45 words): 1 single chunk
-    if n <= 2 or total_words <= 45:
+    if total_words <= max_words_per_chunk:
         return [{
             "chunk_id": 1,
             "start_time": 0.0,
@@ -86,67 +83,10 @@ def chunk_plain_text(
             "word_count": total_words,
         }]
 
-    # Short to medium texts (3 to 6 sentences, e.g. 50-250 words like sample texts):
-    # Split into 2 balanced thematic sections: First half (Opening & Core points), Second half (Challenges & Conclusion)
-    if n <= 6 and total_words <= 260:
-        mid = max(1, n // 2)
-        part1_text = " ".join(sentences[:mid])
-        part2_text = " ".join(sentences[mid:])
-        return [
-            {
-                "chunk_id": 1,
-                "start_time": 0.0,
-                "end_time": 0.0,
-                "time_str": "Phần 1: Bối cảnh & Ứng dụng",
-                "text": part1_text,
-                "word_count": len(part1_text.split()),
-            },
-            {
-                "chunk_id": 2,
-                "start_time": 0.0,
-                "end_time": 0.0,
-                "time_str": "Phần 2: Thách thức & Khuyến nghị",
-                "text": part2_text,
-                "word_count": len(part2_text.split()),
-            }
-        ]
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?…\n])\s+", text) if s.strip()]
+    if not sentences:
+        sentences = [text]
 
-    # Medium texts (7 to 12 sentences, e.g. 250-450 words):
-    # Split into 3 sections: Opening, Deep Dive / Evidence, Conclusion
-    if n <= 12 and total_words <= 450:
-        p1 = max(1, n // 3)
-        p2 = max(p1 + 1, 2 * n // 3)
-        part1 = " ".join(sentences[:p1])
-        part2 = " ".join(sentences[p1:p2])
-        part3 = " ".join(sentences[p2:])
-        return [
-            {
-                "chunk_id": 1,
-                "start_time": 0.0,
-                "end_time": 0.0,
-                "time_str": "Phần 1: Khởi đầu & Bối cảnh",
-                "text": part1,
-                "word_count": len(part1.split()),
-            },
-            {
-                "chunk_id": 2,
-                "start_time": 0.0,
-                "end_time": 0.0,
-                "time_str": "Phần 2: Phân tích & Thực trạng",
-                "text": part2,
-                "word_count": len(part2.split()),
-            },
-            {
-                "chunk_id": 3,
-                "start_time": 0.0,
-                "end_time": 0.0,
-                "time_str": "Phần 3: Đánh giá & Khuyến nghị",
-                "text": part3,
-                "word_count": len(part3.split()),
-            }
-        ]
-
-    # Longer texts (> 450 words): split by sentence boundaries respecting max_words_per_chunk
     chunks = []
     cur_sentences = []
     cur_word_count = 0
@@ -158,7 +98,7 @@ def chunk_plain_text(
                 "chunk_id": len(chunks) + 1,
                 "start_time": 0.0,
                 "end_time": 0.0,
-                "time_str": f"Chương {len(chunks) + 1}",
+                "time_str": f"Phần {len(chunks) + 1}",
                 "text": " ".join(cur_sentences),
                 "word_count": cur_word_count,
             })
@@ -173,7 +113,7 @@ def chunk_plain_text(
             "chunk_id": len(chunks) + 1,
             "start_time": 0.0,
             "end_time": 0.0,
-            "time_str": f"Chương {len(chunks) + 1}",
+            "time_str": f"Phần {len(chunks) + 1}",
             "text": " ".join(cur_sentences),
             "word_count": cur_word_count,
         })
