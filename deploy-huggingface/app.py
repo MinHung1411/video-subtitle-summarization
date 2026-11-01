@@ -3,6 +3,9 @@ Video Subtitle Intelligence & Multilingual Summarization Platform
 NLP Production Pipeline · Topic 17 · Industrial University of Ho Chi Minh City (IUH) 2026
 """
 
+import os
+os.environ["CUDA_VISIBLE_DEVICES"] = ""
+
 try:
     import spaces
 except ImportError:
@@ -15,7 +18,6 @@ except ImportError:
                 return func
             return decorator
 
-import os
 import time
 import gradio as gr
 from modules.audio_handler import (
@@ -234,25 +236,26 @@ def process_pipeline(
     except Exception as e:
         return None, f"Lỗi hệ thống: {str(e)}", "", "", "", "", None
 
-@spaces.GPU(duration=10)
+@spaces.GPU(duration=1)
+def _zerogpu_keeper():
+    """Startup probe function for container initialization."""
+    return True
+
 def run_text_tab(text, target_lang, max_tokens, min_tokens, num_beams):
     return process_pipeline("text", "", text, target_lang, "base", max_tokens, min_tokens, num_beams)
 
-@spaces.GPU(duration=10)
 def run_srt_tab(file_obj, target_lang, max_tokens, min_tokens, num_beams):
     if file_obj is None:
         return None, "Error: Vui lòng tải lên file phụ đề (.srt, .vtt, .txt).", "", "", "", "", None
     path = file_obj if isinstance(file_obj, str) else getattr(file_obj, "name", str(file_obj))
     return process_pipeline("file", path, "", target_lang, "base", max_tokens, min_tokens, num_beams)
 
-@spaces.GPU(duration=20)
 def run_video_tab(file_obj, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
     if file_obj is None:
         return None, "Error: Vui lòng tải lên file video/audio (.mp4, .mp3, .wav).", "", "", "", "", None
     path = file_obj if isinstance(file_obj, str) else getattr(file_obj, "name", str(file_obj))
     return process_pipeline("file", path, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
-@spaces.GPU(duration=15)
 def run_url_tab(url, target_lang, whisper_size, max_tokens, min_tokens, num_beams):
     return process_pipeline("url", url, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
@@ -310,7 +313,7 @@ with gr.Blocks(title="Video Subtitle Understanding & Multilingual Summarization"
             <div style="display: flex; gap: 8px; flex-wrap: wrap;">
               <span style="background: rgba(37, 99, 235, 0.25); color: #60a5fa; border: 1px solid rgba(96, 165, 250, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">🎙️ Whisper ASR</span>
               <span style="background: rgba(16, 185, 129, 0.25); color: #34d399; border: 1px solid rgba(52, 211, 153, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">🧠 mT5 Multilingual</span>
-              <span style="background: rgba(245, 158, 11, 0.25); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">⚡ ZeroGPU A100</span>
+              <span style="background: rgba(245, 158, 11, 0.25); color: #fbbf24; border: 1px solid rgba(251, 191, 36, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">⚡ 16GB Dedicated RAM</span>
               <span style="background: rgba(168, 85, 247, 0.25); color: #c084fc; border: 1px solid rgba(192, 132, 252, 0.4); padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;">🌐 Vi · En · Fr · Es</span>
             </div>
           </div>

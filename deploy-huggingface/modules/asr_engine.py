@@ -9,7 +9,7 @@ import time
 import torch
 
 _WHISPER_CACHE = {}
-DEVICE = "cuda" if torch.cuda.is_available() else "cpu"
+DEVICE = "cpu"
 
 def clean_subtitle_text(text: str) -> str:
     if not text:
@@ -48,15 +48,12 @@ def parse_srt_with_timestamps(srt_content: str) -> list:
 
 def load_whisper_model(model_size: str = "base"):
     global _WHISPER_CACHE
-    device = "cuda" if torch.cuda.is_available() else "cpu"
+    device = "cpu"
     if model_size not in _WHISPER_CACHE:
         import whisper
         model = whisper.load_model(model_size, device=device)
         _WHISPER_CACHE[model_size] = (model, device)
     model, cached_dev = _WHISPER_CACHE[model_size]
-    if cached_dev != device:
-        model = model.to(device)
-        _WHISPER_CACHE[model_size] = (model, device)
     return model
 
 def transcribe_audio(audio_path: str, model_size: str = "base", language: str = None) -> dict:
