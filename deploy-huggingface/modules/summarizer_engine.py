@@ -175,44 +175,49 @@ def hierarchical_summarize(
 
     # Reduce Phase: Synthesize into structured executive briefing
     if len(chunk_summaries) > 1:
-        combined_text = " ".join(chunk_summaries)
-        global_overview = generate_single_summary(
-            combined_text,
-            lang=resolved_lang,
-            max_output=max_output,
-            min_output=min_output,
-            num_beams=num_beams
-        )
+        combined_sents = []
+        for s in chunk_summaries:
+            s_clean = s.strip()
+            if s_clean and not s_clean.endswith((".", "!", "?")):
+                s_clean += "."
+            if s_clean:
+                combined_sents.append(s_clean)
+
+        full_overview = " ".join(combined_sents)
 
         bullets = []
         for ch in chapters:
             t_str = ch.get("time_str", "")
-            if ":" in str(t_str):
-                time_badge = f"[{t_str}] "
-                label = f"Chương {ch['chunk_id']}"
+            if re.search(r"\d{1,2}:\d{2}", str(t_str)):
+                bullets.append(f"• **Chương {ch['chunk_id']} [{t_str}]:** {ch['summary']}")
+            elif t_str:
+                bullets.append(f"• **{t_str}:** {ch['summary']}")
             else:
-                time_badge = ""
-                label = f"Phần {ch['chunk_id']}"
-
-            bullets.append(f"• **{label} {time_badge}:** {ch['summary']}")
+                bullets.append(f"• **Phần {ch['chunk_id']}:** {ch['summary']}")
 
         bullets_joined = "\n".join(bullets)
 
         if resolved_lang == "vi":
             executive_summary = (
-                f"{global_overview}\n\n"
-                f"**Tóm lược các phân đoạn chính:**\n"
+                f"📌 **TỔNG QUAN NỘI DUNG (Executive Summary):**\n"
+                f"{full_overview}\n\n"
+                f"🎯 **CÁC TRỌNG TÂM CHI TIẾT (Key Takeaways):**\n"
                 f"{bullets_joined}"
             )
         else:
             executive_summary = (
-                f"{global_overview}\n\n"
-                f"**Key Section Takeaways:**\n"
+                f"📌 **EXECUTIVE SUMMARY:**\n"
+                f"{full_overview}\n\n"
+                f"🎯 **KEY SECTION TAKEAWAYS:**\n"
                 f"{bullets_joined}"
             )
     else:
         # Single chunk: clean, accurate summary directly
-        executive_summary = chunk_summaries[0] if chunk_summaries else ""
+        raw_s = chunk_summaries[0] if chunk_summaries else ""
+        if resolved_lang == "vi":
+            executive_summary = f"📌 **TỔNG QUAN NỘI DUNG (Executive Summary):**\n{raw_s}"
+        else:
+            executive_summary = f"📌 **EXECUTIVE SUMMARY:**\n{raw_s}"
 
     return executive_summary, chapters, time.time() - t0
 

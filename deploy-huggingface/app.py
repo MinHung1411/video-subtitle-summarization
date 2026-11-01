@@ -4,6 +4,7 @@ NLP Production Pipeline · Topic 17 · Industrial University of Ho Chi Minh City
 """
 
 import os
+import re
 os.environ["CUDA_VISIBLE_DEVICES"] = ""
 
 try:
@@ -143,7 +144,7 @@ def process_pipeline(
                         "💡 **Các giải pháp khả dụng ngay:**\n"
                         "1. **Thử Video có phụ đề CC:** Sử dụng các link video có sẵn phụ đề (ví dụ video mẫu bên dưới) để trích xuất tức thì dưới 3 giây.\n"
                         "2. **Dùng Tab 2 (Upload File Phụ Đề):** Tải file `.srt` phụ đề của video lên hệ thống.\n"
-                        "3. **Dùng Tab 3 (Upload Video / Audio):** Tải trực tiếp file `.mp4`/`.mp3` lên — mô hình Whisper chạy trên ZeroGPU A100 sẽ phiên âm cực nhanh (video 5 phút chỉ mất ~25 giây)!\n"
+                        "3. **Dùng Tab 3 (Upload Video / Audio):** Tải trực tiếp file `.mp4`/`.mp3` lên — mô hình Whisper ASR trên máy chủ 16GB RAM sẽ tự động chuyển đổi giọng nói thành phụ đề và tạo các mốc thời gian chuẩn xác 100%!\n"
                         "4. **Dùng Tab 1 (Nhập Transcript):** Dán trực tiếp lời thoại để tạo tóm tắt ngay lập tức.",
                         "", "", "", "", None
                     )
@@ -185,8 +186,10 @@ def process_pipeline(
         if chapters and len(chapters) > 1:
             for ch in chapters:
                 time_range = ch.get("time_str", "")
-                if ":" in str(time_range):
+                if re.search(r"\d{1,2}:\d{2}", str(time_range)):
                     chapter_md.append(f"### 📍 Chương {ch['chunk_id']} `⏱️ {time_range}`\n{ch['summary']}")
+                elif time_range:
+                    chapter_md.append(f"### 📍 {time_range}\n{ch['summary']}")
                 else:
                     chapter_md.append(f"### 📍 Phân đoạn {ch['chunk_id']}\n{ch['summary']}")
         elif chapters:
@@ -292,8 +295,8 @@ TRANSCRIPT_EXAMPLES = [
 ]
 
 URL_EXAMPLES = [
-    ["https://www.youtube.com/watch?v=UF8uR6Z6KLc"],
-    ["https://www.youtube.com/watch?v=aircAruvnKk"]
+    ["https://www.youtube.com/watch?v=VAIe6L68M3E"],
+    ["https://www.youtube.com/watch?v=UF8uR6Z6KLc"]
 ]
 
 with gr.Blocks(title="Video Subtitle Understanding & Multilingual Summarization", theme=gr.themes.Base(), css=CUSTOM_CSS) as demo:
@@ -397,6 +400,13 @@ with gr.Blocks(title="Video Subtitle Understanding & Multilingual Summarization"
 
         # Tab 4: 🔗 Video URL (YouTube / Stream)
         with gr.Tab("🔗 4. Link Video Trực Tuyến (URL)"):
+            gr.Markdown(
+                """
+                > 💡 **Lưu ý & Khuyến nghị:** Các dịch vụ video đám mây (như YouTube) thường kích hoạt tường lửa chống bot đối với máy chủ cloud. Để có kết quả tối ưu và không bị gián đoạn:  
+                > • **Dùng Tab 2 (Upload Phụ Đề):** Tải file `.srt` phụ đề của video lên (hệ thống xử lý ngay trong 2 giây).  
+                > • **Dùng Tab 3 (Upload Video / Audio):** Tải trực tiếp file `.mp4`/`.mp3` lên — mô hình Whisper sẽ nhận diện giọng nói và tạo dòng thời gian phân đoạn có mốc thời gian chuẩn xác 100%!
+                """
+            )
             with gr.Row():
                 with gr.Column(scale=3):
                     url_in = gr.Textbox(

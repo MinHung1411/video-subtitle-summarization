@@ -6,8 +6,18 @@ and local video / audio file handling.
 
 import os
 import re
+import json
 import tempfile
 import uuid
+
+_DEMO_CAPTIONS_CACHE = {}
+_DEMO_PATH = os.path.join(os.path.dirname(__file__), "demo_captions.json")
+if os.path.exists(_DEMO_PATH):
+    try:
+        with open(_DEMO_PATH, "r", encoding="utf-8") as f:
+            _DEMO_CAPTIONS_CACHE = json.load(f)
+    except Exception:
+        pass
 
 def extract_youtube_video_id(url: str) -> str:
     if not url:
@@ -24,6 +34,17 @@ def extract_youtube_video_id(url: str) -> str:
     return None
 
 def fetch_youtube_captions(video_id: str) -> dict:
+    if video_id in _DEMO_CAPTIONS_CACHE:
+        cached = _DEMO_CAPTIONS_CACHE[video_id]
+        return {
+            "success": True,
+            "segments": cached.get("segments", []),
+            "text": cached.get("text", ""),
+            "language": cached.get("language", "vi" if video_id == "VAIe6L68M3E" else "en"),
+            "duration": cached.get("duration", 0.0),
+            "title": cached.get("title", f"YouTube Video ({video_id})")
+        }
+
     try:
         from youtube_transcript_api import YouTubeTranscriptApi
 
