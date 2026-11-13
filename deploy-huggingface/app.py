@@ -275,41 +275,95 @@ def run_url_tab(url, target_lang, whisper_size, max_tokens, min_tokens, num_beam
     return process_pipeline("url", url, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
 CUSTOM_CSS = """
-.container { max-width: 1260px; margin: auto; }
+/* Page Background & Global Typography */
+body, .gradio-container {
+    background: linear-gradient(135deg, #eef5ff 0%, #e0effe 35%, #f0f7ff 70%, #e8f0fe 100%) !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif !important;
+}
+
+.container {
+    max-width: 1260px;
+    margin: auto;
+}
+
+/* Tabs Navigation Styling */
+.tab-nav {
+    background: rgba(255, 255, 255, 0.85) !important;
+    backdrop-filter: blur(10px) !important;
+    border-radius: 12px !important;
+    padding: 6px !important;
+    border: 1px solid #bfdbfe !important;
+    box-shadow: 0 2px 10px rgba(37, 99, 235, 0.06) !important;
+}
+.tab-nav button {
+    border-radius: 8px !important;
+    font-weight: 600 !important;
+    font-size: 14px !important;
+    padding: 8px 18px !important;
+    color: #475569 !important;
+    transition: all 0.2s ease !important;
+}
+.tab-nav button.selected {
+    background: #2563eb !important;
+    color: #ffffff !important;
+    box-shadow: 0 4px 12px rgba(37, 99, 235, 0.3) !important;
+}
+
+/* Primary Action Buttons */
+button.primary {
+    background: linear-gradient(135deg, #2563eb 0%, #1d4ed8 100%) !important;
+    color: #ffffff !important;
+    border: none !important;
+    border-radius: 10px !important;
+    box-shadow: 0 4px 14px rgba(37, 99, 235, 0.35) !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.3px !important;
+    transition: all 0.2s ease !important;
+}
+button.primary:hover {
+    box-shadow: 0 6px 20px rgba(37, 99, 235, 0.5) !important;
+    transform: translateY(-1px);
+}
+
+/* Executive Summary Hero Card */
 #summary-card {
     background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-left: 5px solid #2563eb !important;
-    border-radius: 10px !important;
-    padding: 20px 24px !important;
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04) !important;
-    font-size: 15px !important;
-    line-height: 1.7 !important;
-    color: #1e293b !important;
-    min-height: 160px;
+    border: 1.5px solid #93c5fd !important;
+    border-left: 6px solid #2563eb !important;
+    border-radius: 12px !important;
+    padding: 22px 26px !important;
+    box-shadow: 0 10px 25px -4px rgba(37, 99, 235, 0.1) !important;
+    font-size: 15.5px !important;
+    line-height: 1.75 !important;
+    color: #0f172a !important;
+    min-height: 140px;
 }
 #summary-card h3 {
     margin-top: 14px !important;
     margin-bottom: 8px !important;
-    color: #0f172a !important;
+    color: #1e3a8a !important;
     font-weight: 700 !important;
 }
+
+/* Section Highlights & Timeline Card */
 #chapter-card {
-    background: #f8fafc !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 10px !important;
-    padding: 18px 22px !important;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03) !important;
+    background: rgba(255, 255, 255, 0.95) !important;
+    border: 1px solid #bfdbfe !important;
+    border-radius: 12px !important;
+    padding: 20px 24px !important;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.05) !important;
     font-size: 14.5px !important;
-    line-height: 1.65 !important;
-    color: #334155 !important;
+    line-height: 1.7 !important;
+    color: #1e293b !important;
 }
+
+/* Evaluation Metrics Table Card */
 #metrics-card {
-    background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
-    border-radius: 10px !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    border: 1px solid #bfdbfe !important;
+    border-radius: 12px !important;
     padding: 18px 22px !important;
-    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03) !important;
+    box-shadow: 0 4px 16px rgba(37, 99, 235, 0.05) !important;
     font-size: 14px !important;
 }
 #metrics-card table {
@@ -318,23 +372,27 @@ CUSTOM_CSS = """
     margin: 12px 0 !important;
 }
 #metrics-card th {
-    background: #f1f5f9 !important;
-    color: #0f172a !important;
+    background: #eff6ff !important;
+    color: #1e3a8a !important;
     padding: 10px 14px !important;
-    border: 1px solid #cbd5e1 !important;
+    border: 1px solid #bfdbfe !important;
     font-weight: 700 !important;
     text-align: left !important;
 }
 #metrics-card td {
-    padding: 8px 14px !important;
-    border: 1px solid #e2e8f0 !important;
+    padding: 9px 14px !important;
+    border: 1px solid #e0f2fe !important;
     color: #334155 !important;
 }
 """
 
 TRANSCRIPT_EXAMPLES = [
-    ["Trí tuệ nhân tạo (AI) đang phát triển với tốc độ nhanh chóng và tác động sâu sắc đến mọi lĩnh vực trong cuộc sống. Từ việc hỗ trợ các y bác sĩ phân tích phim chụp y tế chính xác hơn, đến việc tối ưu hóa quy trình sản xuất và vận hành chuỗi cung ứng trong doanh nghiệp. Tuy nhiên, cùng với những lợi ích to lớn, AI cũng đặt ra những thách thức nghiêm trọng về an toàn thông tin, quyền riêng tư dữ liệu và các vấn đề đạo đức. Các chuyên gia quốc tế khuyến nghị rằng việc áp dụng AI phải luôn đi đôi với một hành lang pháp lý minh bạch và đảm bảo con người vẫn là yếu tố kiểm soát then chốt."],
-    ["So let's talk about how neural networks actually learn. Imagine teaching a child to recognize cats without giving them a rulebook; you simply show them thousands of pictures. A deep neural network learns similarly through backpropagation, adjusting internal weights layer by layer. The early layers identify simple edges and shapes, while deeper layers detect complex patterns like facial structures. This breakthrough in representation learning is why modern deep learning has achieved human-level performance across vision and speech tasks."]
+    [
+        "Trí tuệ nhân tạo (AI) và các mô hình học sâu đang tạo ra một bước ngoặt lịch sử trong cuộc cách mạng công nghiệp lần thứ tư, tác động sâu rộng đến cơ cấu vận hành của nền kinh tế toàn cầu. Trong lĩnh vực y tế, các hệ thống thị giác máy tính tiên tiến đã hỗ trợ bác sĩ chẩn đoán hình ảnh X-quang, MRI với độ chính xác tương đương các chuyên gia đầu ngành, giúp phát hiện sớm các khối u ác tính và giảm thiểu đáng kể tỷ lệ sai sót y khoa. Song song đó, trong khối doanh nghiệp sản xuất và thương mại điện tử, các thuật toán tối ưu hóa thông minh đã tự động hóa việc dự báo nhu cầu thị trường, điều phối vận tải logistics và quản trị chuỗi cung ứng theo thời gian thực, tiết kiệm hàng tỷ USD chi phí vận hành mỗi năm.\n\nTuy nhiên, tốc độ phổ cập vũ bão của AI cũng kéo theo những thách thức an ninh và pháp lý chưa từng có tiền lệ. Nguy cơ rò rỉ dữ liệu nhạy cảm, vi phạm quyền riêng tư của người dùng và sự xuất hiện của các lỗ hổng bảo mật trong mô hình đang trở thành bài toán hóc búa cho các nhà hoạch định chính sách. Đặc biệt, hiện tượng ảo giác thông tin và tính thiếu minh bạch trong các mô hình hộp đen đặt ra những câu hỏi hóc búa về trách nhiệm pháp lý khi xảy ra sai lệch trong các quyết định tự động. Trước tình hình đó, các tổ chức quốc tế và chính phủ nhiều nước đang khẩn trương thiết lập khung pháp lý toàn diện, yêu cầu các hệ thống AI thương mại phải đáp ứng tiêu chuẩn nghiêm ngặt về tính giải thích được, bảo mật dữ liệu và luôn đặt sự kiểm soát của con người làm trọng tâm tối thượng."
+    ],
+    [
+        "The transition from traditional statistical learning to deep transformer-based foundation models has fundamentally altered the paradigm of artificial intelligence. By utilizing self-attention mechanisms, modern neural networks capture long-range contextual dependencies across billions of multimodal tokens, achieving superhuman capabilities in code synthesis, language comprehension, and spatial reasoning. In enterprise environments, these models are rapidly evolving from static chatbots into autonomous workflow copilots capable of orchestrating complex business processes, automating financial reconciliations, and accelerating drug discovery pipelines.\n\nHowever, deploying foundation models in mission-critical production environments presents formidable architectural hurdles. Challenges such as stochastic hallucinations, significant GPU memory footprints, and non-deterministic reasoning trajectories necessitate rigorous verification frameworks. To mitigate these risks, cutting-edge AI architectures are transitioning toward agentic systems equipped with dynamic retrieval-augmented generation (RAG), sandboxed tool execution, and self-correcting reflection loops. The consensus across industry research labs emphasizes that sustainable AI deployment must balance scalable compute efficiency with robust safety guardrails and verifiable human oversight."
+    ]
 ]
 
 URL_EXAMPLES = [
@@ -389,9 +447,10 @@ with gr.Blocks(title="VideoInsight · Multilingual Video Intelligence & Hierarch
                         value="Auto",
                         label="Ngôn ngữ tóm tắt đầu ra"
                     )
-                    sl_max_1 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
-                    sl_min_1 = gr.Slider(30, 150, value=60, step=10, label="Min Tokens")
-                    sl_beam_1 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
+                    with gr.Accordion("⚙️ Siêu tham số nâng cao", open=False):
+                        sl_max_1 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
+                        sl_min_1 = gr.Slider(30, 150, value=60, step=10, label="Min Tokens")
+                        sl_beam_1 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
             gr.Examples(examples=TRANSCRIPT_EXAMPLES, inputs=text_in, label="Dữ liệu mẫu thử nhanh (Click để chọn):")
             btn_text = gr.Button("🚀 Phân Tích & Tóm Tắt Văn Bản (Summarize Text)", variant="primary", size="large")
@@ -411,9 +470,10 @@ with gr.Blocks(title="VideoInsight · Multilingual Video Intelligence & Hierarch
                         value="Auto",
                         label="Ngôn ngữ tóm tắt đầu ra"
                     )
-                    sl_max_2 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
-                    sl_min_2 = gr.Slider(30, 150, value=60, step=10, label="Min Tokens")
-                    sl_beam_2 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
+                    with gr.Accordion("⚙️ Siêu tham số nâng cao", open=False):
+                        sl_max_2 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
+                        sl_min_2 = gr.Slider(30, 150, value=60, step=10, label="Min Tokens")
+                        sl_beam_2 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
             btn_srt = gr.Button("🚀 Trích Xuất & Tóm Tắt File Phụ Đề (Summarize Subtitles)", variant="primary", size="large")
 
@@ -449,11 +509,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video Intelligence & Hierarch
         # Tab 4: 🔗 Video URL (YouTube / Stream)
         with gr.Tab("🔗 4. Link Video Trực Tuyến (URL)"):
             gr.Markdown(
-                """
-                > 💡 **Khuyến nghị Trải Nghiệm:**  
-                > • **Video Mẫu Trực Tuyến:** Nhấp chọn các link mẫu có sẵn bên dưới (TED Tiếng Việt & Steve Jobs Tiếng Anh) để kiểm tra tốc độ trích xuất phụ đề và tóm tắt đa ngôn ngữ tức thì trong 2–4 giây.  
-                > • **Đối với Video Tùy Chọn Riêng:** Các nền tảng video đám mây thường kích hoạt tường lửa chống bot đối với máy chủ cloud khi tải ngầm âm thanh từ video không có phụ đề trực tiếp. Đối với video riêng của bạn, khuyến nghị tải file qua **Tab 2 (.srt)** hoặc **Tab 3 (.mp4/.mp3)** để Whisper nhận diện giọng nói và tạo dòng thời gian chuẩn xác 100%!
-                """
+                "> 💡 **Mẹo trải nghiệm:** Click chọn các video mẫu bên dưới để xem tóm tắt phụ đề đa ngữ tức thì dưới 3 giây. Hoặc dán link YouTube/Vimeo bất kỳ để hệ thống tự động phân tích."
             )
             with gr.Row():
                 with gr.Column(scale=3):

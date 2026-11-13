@@ -59,12 +59,13 @@ def chunk_by_segments(
     return chunks
 
 def chunk_plain_text(
-    text: str, max_words_per_chunk: int = 320
+    text: str, max_words_per_chunk: int = 180
 ) -> List[Dict]:
     """
-    Semantic chunking for direct text / transcript.
-    Texts within model context (<= 320 words) are kept intact to preserve context and fluency.
-    Longer texts are cleanly partitioned by sentence boundaries.
+    Semantic balanced chunking for direct text / transcript.
+    - Texts <= 180 words are kept intact as a single cohesive unit.
+    - Texts > 180 words are cleanly and evenly partitioned into balanced thematic sections
+      (e.g., 2 chunks for ~300-360 words, 3 chunks for ~450-540 words) along sentence/paragraph boundaries.
     """
     text = (text or "").strip()
     if not text:
@@ -73,7 +74,7 @@ def chunk_plain_text(
     words = text.split()
     total_words = len(words)
 
-    if total_words <= max_words_per_chunk:
+    if total_words <= 180:
         return [{
             "chunk_id": 1,
             "start_time": 0.0,
@@ -83,9 +84,24 @@ def chunk_plain_text(
             "word_count": total_words,
         }]
 
+    # Check natural paragraph splits first
+    paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text) if p.strip()]
+    if len(paragraphs) > 1 and all(len(p.split()) >= 45 for p in paragraphs):
+        chunks = []
+        for i, p in enumerate(paragraphs):
+            chunks.append({
+                "chunk_id": i + 1,
+                "start_time": 0.0,
+                "end_time": 0.0,
+                "time_str": f"Phần {i + 1}",
+                "text": p,
+                "word_count": len(p.split()),
+            })
+        return chunks
+
     sentences = [s.strip() for s in re.split(r"(?<=[.!?…\n])\s+", text) if s.strip()]
-    if not sentences:
-        sentences = [text]
+    num_chunks = max(2, round(total_words / max_words_per_chunk))
+    target_words_per_chunk = total_words / num_chunks
 
     chunks = []
     cur_sentences = []
@@ -93,7 +109,7 @@ def chunk_plain_text(
 
     for s in sentences:
         s_words = len(s.split())
-        if cur_word_count + s_words > max_words_per_chunk and cur_sentences:
+        if cur_word_count + s_words > target_words_per_chunk and len(chunks) < num_chunks - 1 and cur_sentences:
             chunks.append({
                 "chunk_id": len(chunks) + 1,
                 "start_time": 0.0,
