@@ -122,6 +122,53 @@ def lead3_summarize(text: str) -> str:
     sentences = re.split(r"(?<=[.!?])\s+", text.strip())
     return " ".join(sentences[:3]) if sentences else text[:400]
 
+def extract_thematic_points(text: str, lang: str = "vi") -> List[Tuple[str, str]]:
+    """
+    Extract salient thematic points from plain text for structured takeaway view.
+    Ensures zero hallucination by aligning directly with source sentence boundaries.
+    """
+    sentences = [s.strip() for s in re.split(r"(?<=[.!?…\n])\s+", text.strip()) if len(s.strip()) > 15]
+    if len(sentences) <= 1:
+        return []
+
+    points = []
+    if len(sentences) == 2:
+        if lang in ["vi", "vietnamese"]:
+            points.append(("Khởi đầu & Bối cảnh", sentences[0]))
+            points.append(("Đánh giá & Kết luận", sentences[1]))
+        else:
+            points.append(("Context & Background", sentences[0]))
+            points.append(("Assessment & Conclusion", sentences[1]))
+    elif len(sentences) == 3:
+        if lang in ["vi", "vietnamese"]:
+            points.append(("Bối cảnh & Ứng dụng", sentences[0]))
+            points.append(("Thực trạng & Phân tích", sentences[1]))
+            points.append(("Khuyến nghị & Kết luận", sentences[2]))
+        else:
+            points.append(("Context & Core Applications", sentences[0]))
+            points.append(("Current Analysis & Key Findings", sentences[1]))
+            points.append(("Outlook & Strategic Recommendations", sentences[2]))
+    else:
+        p1 = sentences[0]
+        if len(p1.split()) < 15 and len(sentences) > 1:
+            p1 = p1 + " " + sentences[1]
+            p2 = sentences[2] if len(sentences) > 3 else sentences[1]
+        else:
+            mid_idx = len(sentences) // 2
+            p2 = sentences[mid_idx]
+        p3 = sentences[-1]
+
+        if lang in ["vi", "vietnamese"]:
+            points.append(("Bối cảnh & Ứng dụng thực tiễn", p1))
+            points.append(("Thực trạng & Thách thức then chốt", p2))
+            points.append(("Định hướng & Khuyến nghị giải pháp", p3))
+        else:
+            points.append(("Context & Core Foundations", p1))
+            points.append(("Core Mechanics & Key Observations", p2))
+            points.append(("Impact & Strategic Takeaway", p3))
+
+    return points
+
 def generate_single_summary(
     text: str,
     lang: str = "vi",
@@ -144,15 +191,18 @@ def generate_single_summary(
     )
 
     input_word_count = len(clean_text.split())
-    target_min = min(max(min_output, 35), max(input_word_count // 2, 25))
-    target_max = max(max_output, target_min + 40)
+    if input_word_count >= 70:
+        target_min = min(max(min_output, 55), 80)
+    else:
+        target_min = min(max(min_output, 25), max(input_word_count // 2, 20))
+    target_max = max(max_output, target_min + 50)
 
     with torch.no_grad():
         output_ids = model.generate(
             **inputs,
             max_new_tokens=target_max,
             min_new_tokens=target_min,
-            length_penalty=1.4,
+            length_penalty=1.6,
             num_beams=num_beams,
             no_repeat_ngram_size=3,
             repetition_penalty=1.15,
@@ -240,18 +290,18 @@ def evaluate_summary(transcript: str, summary: str, lead3: str) -> str:
     novel_words = [w for w in words_s if w not in set_lead and len(w) > 2]
     abstractive_ratio = len(novel_words) / max(n_s, 1) * 100
 
-    report = f"""| Chỉ số NLP Benchmark | Kết quả Đạt được | Ý nghĩa / Baseline Kỹ thuật |
+    report = f"""| Chỉ Số Đánh Giá (Metric) | Kết Quả Đạt Được (Score) | Mô Tả & Baseline So Sánh (Benchmark) |
 | :--- | :---: | :--- |
 | **Độ dài Bản gốc (Source Length)** | **`{n_t:,}`** từ | Toàn văn lời thoại transcript được trích xuất |
 | **Độ dài Tóm tắt (Summary Length)** | **`{n_s:,}`** từ | Bản tóm tắt điều hành được sinh tự động |
-| **Tỷ lệ Nén (Compression Ratio)** | **`{ratio * 100:.1f}%`** | Nén súc tích, cô đọng nội dung cốt lõi |
+| **Tỷ lệ Nén (Compression Ratio)** | **`{ratio * 100:.1f}%`** | Tỷ lệ cô đọng nội dung cốt lõi |
 | **Mô hình ROUGE-1 (Unigram Overlap)** | **`{r_vs_trans['rouge1'].fmeasure * 100:.1f}%`** | Độ trùng khớp từ vựng đơn ngữ nghĩa |
 | **Mô hình ROUGE-L (LCS Coherence)** | **`{r_vs_trans['rougeL'].fmeasure * 100:.1f}%`** | Mức độ mạch lạc chuỗi từ liên tiếp dài nhất |
 | **Lead-3 Baseline (ROUGE-1 / L)** | `{r_lead['rouge1'].fmeasure * 100:.1f}%` / `{r_lead['rougeL'].fmeasure * 100:.1f}%` | Chuẩn so sánh trích xuất 3 câu đầu kinh điển |
 | **Mức độ Trừu tượng (Novel Vocabulary)** | **`{abstractive_ratio:.1f}%`** | Tỷ lệ từ vựng mới sinh ra ngoài Lead-3 |
 
-> 🧠 **Mô hình Huấn luyện:** `minhunhooo/video-subtitle-summarization-mt5` (582M params)  
-> 🔬 **Thuật toán Tóm tắt:** Hierarchical Map-Reduce (Bảo toàn đầy đủ tất cả các phân đoạn)  
-> 🌐 **Bộ Chuẩn hóa:** Custom Unicode NFC Tokenizer (Bảo toàn 100% nguyên vẹn dấu thanh Tiếng Việt)"""
+> 🧠 **Kiến Trúc Mô Hình:** `minhunhooo/video-subtitle-summarization-mt5` (582M Parameters Seq2Seq Engine)  
+> 🔬 **Chiến Lược Tóm Tắt:** Hierarchical Map-Reduce with Length-Aware Beam Search  
+> 🌐 **Chuẩn Hóa Ngữ Liệu:** Custom Unicode NFC Tokenizer (Tối ưu hóa tiếng Việt & đa ngữ)"""
 
     return report

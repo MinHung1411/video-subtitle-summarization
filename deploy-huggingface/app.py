@@ -31,6 +31,7 @@ from modules.asr_engine import transcribe_audio, clean_subtitle_text, parse_srt_
 from modules.chunker import chunk_by_segments, chunk_plain_text
 from modules.summarizer_engine import (
     hierarchical_summarize,
+    extract_thematic_points,
     lead3_summarize,
     evaluate_summary,
     detect_language,
@@ -179,23 +180,28 @@ def process_pipeline(
 
         eval_report = evaluate_summary(full_transcript, exec_summary, lead3)
 
-        # Chapter Timeline Formatting
+        # Chapter Timeline & Thematic Formatting
         chapter_md = []
         if chapters and len(chapters) > 1:
             for ch in chapters:
                 time_range = ch.get("time_str", "")
                 if re.search(r"\d{1,2}:\d{2}", str(time_range)):
-                    chapter_md.append(f"### 📍 Chương {ch['chunk_id']} `⏱️ {time_range}`\n{ch['summary']}")
+                    chapter_md.append(f"### 📍 Phân Đoạn {ch['chunk_id']} `⏱️ {time_range}`\n{ch['summary']}")
                 elif time_range and time_range != "Toàn văn":
                     chapter_md.append(f"### 📍 {time_range}\n{ch['summary']}")
         elif chapters and any(re.search(r"\d{1,2}:\d{2}", str(c.get("time_str", ""))) for c in chapters):
             ch = chapters[0]
-            chapter_md.append(f"### 📍 Chương 1 `⏱️ {ch.get('time_str', '')}`\n{ch['summary']}")
+            chapter_md.append(f"### 📍 Phân Đoạn 1 `⏱️ {ch.get('time_str', '')}`\n{ch['summary']}")
 
         if chapter_md:
             chapter_display = "\n\n---\n\n".join(chapter_md)
         else:
-            chapter_display = "> ℹ️ *Nội dung đã được tóm tắt súc tích, hoàn chỉnh trong Bản Tóm Tắt ở trên.*"
+            thematic_pts = extract_thematic_points(full_transcript, lang=detected_lang)
+            if thematic_pts:
+                pts_md = [f"• 🔹 **{title}:** {content}" for title, content in thematic_pts]
+                chapter_display = "### 💡 Các Luận Điểm & Trọng Tâm Nội Dung (Thematic Breakdown)\n\n" + "\n\n".join(pts_md)
+            else:
+                chapter_display = f"> 📄 *Toàn bộ nội dung ({word_count} từ) đã được tóm tắt súc tích, hoàn chỉnh trong Bản Tóm Tắt ở trên.*"
 
         total_elapsed = time.time() - t_start
 
@@ -501,13 +507,13 @@ with gr.Blocks(title="VideoInsight · Multilingual Video Intelligence & Hierarch
                 interactive=False
             )
 
-    with gr.Accordion("📍 Dòng Thời Gian Phân Đoạn (Chapter Timeline)", open=True):
+    with gr.Accordion("📍 Dòng Thời Gian & Điểm Nhấn Phân Đoạn (Timeline & Thematic Highlights)", open=True):
         chapter_out = gr.Markdown(
-            value="*Dòng thời gian các phân đoạn nội dung chính (nếu có mốc thời gian từ video/audio) sẽ hiển thị tại đây.*",
+            value="*Dòng thời gian các phân đoạn nội dung chính hoặc các luận điểm trọng tâm sẽ hiển thị tại đây.*",
             elem_id="chapter-card"
         )
 
-    with gr.Accordion("🔬 Chi Tiết Kỹ Thuật & Đánh Giá NLP (ROUGE Benchmark · Dành cho Tuyển Dụng / Phỏng Vấn)", open=False):
+    with gr.Accordion("📊 Đánh Giá Định Lượng & Hiệu Năng Mô Hình (Model Performance & Evaluation Metrics)", open=False):
         stats_out = gr.Markdown(
             value="*Bảng chỉ số đo lường ROUGE, tỷ lệ nén và mức độ tóm tắt trừu tượng (Abstractiveness).*",
             elem_id="metrics-card"
