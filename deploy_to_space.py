@@ -29,9 +29,9 @@ def main():
         folder_path=DEPLOY_DIR,
         repo_id=args.repo_id,
         repo_type="space",
-        commit_message="Enterprise UI refactor: add Thematic Breakdown for text, enhance model evaluation metrics",
+        commit_message="Fix Vietnamese 1-sentence and extractive bias: adaptive chunking & balanced beam search",
         ignore_patterns=["__pycache__/*", "*.pyc", "*.DS_Store", ".cache/*"],
-        token=args.token
+        token=token
     )
     print(f"[+] Upload committed successfully! Commit: {commit_info.commit_id[:7] if hasattr(commit_info, 'commit_id') else 'OK'}")
     print(f" Space URL: https://huggingface.co/spaces/{args.repo_id}")

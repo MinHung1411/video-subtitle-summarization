@@ -75,7 +75,7 @@ def process_pipeline(
             full_transcript = clean_subtitle_text(raw_text)
             detected_lang = detect_language(full_transcript)
             title = "Direct Transcript"
-            chunks = chunk_plain_text(full_transcript, max_words_per_chunk=320)
+            chunks = chunk_plain_text(full_transcript)
 
         # Mode 2: File Upload (Subtitle or Video/Audio)
         elif input_type == "file":
@@ -90,18 +90,18 @@ def process_pipeline(
                     content = f.read()
                 segments = parse_srt_with_timestamps(content)
                 if segments:
-                    chunks = chunk_by_segments(segments, max_words_per_chunk=280)
+                    chunks = chunk_by_segments(segments)
                     full_transcript = " ".join([s["text"] for s in segments])
                     total_sec = segments[-1]["end"] if segments else 0
                     duration_str = format_seconds_to_time(total_sec)
                 else:
                     full_transcript = clean_subtitle_text(content)
-                    chunks = chunk_plain_text(full_transcript, max_words_per_chunk=320)
+                    chunks = chunk_plain_text(full_transcript)
                 detected_lang = detect_language(full_transcript)
             elif file_path.lower().endswith(".txt"):
                 with open(file_path, "r", encoding="utf-8", errors="ignore") as f:
                     full_transcript = clean_subtitle_text(f.read())
-                chunks = chunk_plain_text(full_transcript, max_words_per_chunk=320)
+                chunks = chunk_plain_text(full_transcript)
                 detected_lang = detect_language(full_transcript)
             else:
                 asr_res = transcribe_audio(file_path, model_size=whisper_size)
@@ -109,7 +109,7 @@ def process_pipeline(
                     return None, f"Lỗi nhận diện âm thanh ASR: {asr_res['error']}", "", "", "", None
                 full_transcript = asr_res["text"]
                 detected_lang = asr_res["language"]
-                chunks = chunk_by_segments(asr_res["segments"], max_words_per_chunk=280)
+                chunks = chunk_by_segments(asr_res["segments"])
                 if asr_res.get("segments"):
                     duration_str = format_seconds_to_time(asr_res["segments"][-1]["end"])
 
@@ -128,7 +128,7 @@ def process_pipeline(
                 if yt_res.get("success") and len(yt_res.get("text", "").split()) >= 15:
                     full_transcript = yt_res["text"]
                     detected_lang = yt_res.get("language", "en")
-                    chunks = chunk_by_segments(yt_res["segments"], max_words_per_chunk=280)
+                    chunks = chunk_by_segments(yt_res["segments"])
                     title = yt_res.get("title", f"YouTube Video ({yt_id})")
                     duration_str = format_seconds_to_time(yt_res.get("duration", 0))
                     transcript_found = True
@@ -160,7 +160,7 @@ def process_pipeline(
 
                 full_transcript = asr_res["text"]
                 detected_lang = asr_res["language"]
-                chunks = chunk_by_segments(asr_res["segments"], max_words_per_chunk=280)
+                chunks = chunk_by_segments(asr_res["segments"])
 
         word_count = len(full_transcript.split())
         if word_count < 15:

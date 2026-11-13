@@ -191,18 +191,16 @@ def generate_single_summary(
     )
 
     input_word_count = len(clean_text.split())
-    if input_word_count >= 70:
-        target_min = min(max(min_output, 55), 80)
-    else:
-        target_min = min(max(min_output, 25), max(input_word_count // 2, 20))
-    target_max = max(max_output, target_min + 50)
+    # Balanced min_new_tokens (25-35 tokens) prevents the model from copying verbatim long sentences
+    target_min = min(35, max(20, min_output // 2))
+    target_max = max(max_output, target_min + 60)
 
     with torch.no_grad():
         output_ids = model.generate(
             **inputs,
             max_new_tokens=target_max,
             min_new_tokens=target_min,
-            length_penalty=1.6,
+            length_penalty=1.35,
             num_beams=num_beams,
             no_repeat_ngram_size=3,
             repetition_penalty=1.15,
