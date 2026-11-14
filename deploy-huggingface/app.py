@@ -327,18 +327,25 @@ body, .gradio-container {
     padding: 24px 20px !important;
 }
 
-/* Tabs Navigation: Google Translate Pill Tabs */
-.tab-nav {
+/* Tabs Navigation: Google Translate Pill Tabs - Force Overrides */
+div.gradio-container .tabs > div:first-child,
+div.gradio-container .tab-nav,
+div.gradio-container [role="tablist"] {
     border-bottom: none !important;
+    border: none !important;
     background: transparent !important;
     gap: 8px !important;
-    margin: 0 0 18px 0 !important;
+    margin: 0 0 16px 0 !important;
     padding: 0 !important;
     display: flex !important;
     flex-wrap: wrap !important;
 }
-.tab-nav button {
+
+div.gradio-container .tab-nav button,
+div.gradio-container [role="tablist"] button,
+div.gradio-container button[role="tab"] {
     border: 1px solid #dadce0 !important;
+    border-bottom: 1px solid #dadce0 !important;
     border-radius: 20px !important;
     color: #3c4043 !important;
     font-weight: 500 !important;
@@ -348,22 +355,38 @@ body, .gradio-container {
     transition: all 0.15s ease-in-out !important;
     box-shadow: none !important;
     cursor: pointer !important;
-    margin: 0 !important;
+    margin: 0 4px 6px 0 !important;
+    outline: none !important;
 }
-.tab-nav button:hover {
+
+div.gradio-container .tab-nav button:hover,
+div.gradio-container [role="tablist"] button:hover,
+div.gradio-container button[role="tab"]:hover {
     background: #f1f3f4 !important;
     border-color: #dadce0 !important;
     color: #202124 !important;
 }
-.tab-nav button.selected {
+
+div.gradio-container .tab-nav button.selected,
+div.gradio-container [role="tablist"] button.selected,
+div.gradio-container button[role="tab"][aria-selected="true"],
+div.gradio-container button[role="tab"].selected {
     background: #e8f0fe !important;
     color: #1a73e8 !important;
-    border-color: #d2e3fc !important;
+    border: 1px solid #d2e3fc !important;
+    border-bottom: 1px solid #d2e3fc !important;
     font-weight: 600 !important;
+    box-shadow: none !important;
 }
-.tab-nav button::after,
-.tab-nav button::before {
+
+div.gradio-container .tab-nav button::after,
+div.gradio-container .tab-nav button::before,
+div.gradio-container button[role="tab"]::after,
+div.gradio-container button[role="tab"]::before {
     display: none !important;
+    content: none !important;
+    border: none !important;
+    height: 0 !important;
 }
 
 /* Primary Action CTA Buttons */
@@ -390,14 +413,30 @@ button.primary:active, .gr-button-primary:active {
     transform: scale(0.99) !important;
 }
 
-/* Quick-Select Sample Pills */
+/* 4 Sample Pills Row - Strictly 1 Single Row, Never Wrap */
+.sample-row {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    gap: 6px !important;
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+.sample-row > div,
+.sample-row > button {
+    flex: 1 1 0% !important;
+    min-width: 0 !important;
+    width: 25% !important;
+    margin: 0 !important;
+}
 .sample-pill {
     background: #ffffff !important;
     color: #3c4043 !important;
     border: 1px solid #dadce0 !important;
     border-radius: 6px !important;
     font-weight: 500 !important;
-    font-size: 12px !important;
+    font-size: 11.5px !important;
     padding: 6px 2px !important;
     box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
     transition: all 0.15s ease-in-out !important;
@@ -406,6 +445,10 @@ button.primary:active, .gr-button-primary:active {
     min-height: 33px !important;
     height: 33px !important;
     width: 100% !important;
+    min-width: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
 }
 .sample-pill:hover {
     background: #f1f3f4 !important;
@@ -480,6 +523,47 @@ button.primary:active, .gr-button-primary:active {
     color: #202124 !important;
     resize: none !important;
     box-sizing: border-box !important;
+    overflow-y: scroll !important;
+    overflow-x: hidden !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #bdc1c6 #f8f9fa !important;
+}
+
+/* Force visible, clean scrollbars across all browsers */
+div.gradio-container .source-box textarea::-webkit-scrollbar,
+div.gradio-container .source-box textarea.scroll-hide::-webkit-scrollbar,
+div.gradio-container .summary-box::-webkit-scrollbar,
+div.gradio-container .summary-box-tab2::-webkit-scrollbar,
+div.gradio-container .scroll-hide::-webkit-scrollbar {
+    display: block !important;
+    width: 8px !important;
+    background: #f1f3f4 !important;
+}
+
+div.gradio-container .source-box textarea::-webkit-scrollbar-track,
+div.gradio-container .source-box textarea.scroll-hide::-webkit-scrollbar-track,
+div.gradio-container .summary-box::-webkit-scrollbar-track,
+div.gradio-container .summary-box-tab2::-webkit-scrollbar-track,
+div.gradio-container .scroll-hide::-webkit-scrollbar-track {
+    background: #f1f3f4 !important;
+    border-radius: 4px !important;
+}
+
+div.gradio-container .source-box textarea::-webkit-scrollbar-thumb,
+div.gradio-container .source-box textarea.scroll-hide::-webkit-scrollbar-thumb,
+div.gradio-container .summary-box::-webkit-scrollbar-thumb,
+div.gradio-container .summary-box-tab2::-webkit-scrollbar-thumb,
+div.gradio-container .scroll-hide::-webkit-scrollbar-thumb {
+    background: #bdc1c6 !important;
+    border-radius: 4px !important;
+}
+
+div.gradio-container .source-box textarea::-webkit-scrollbar-thumb:hover,
+div.gradio-container .source-box textarea.scroll-hide::-webkit-scrollbar-thumb:hover,
+div.gradio-container .summary-box::-webkit-scrollbar-thumb:hover,
+div.gradio-container .summary-box-tab2::-webkit-scrollbar-thumb:hover,
+div.gradio-container .scroll-hide::-webkit-scrollbar-thumb:hover {
+    background: #9aa0a6 !important;
 }
 
 /* Summary Box in Tab 1 */
@@ -499,6 +583,8 @@ button.primary:active, .gr-button-primary:active {
     font-size: 14px !important;
     line-height: 1.6 !important;
     color: #202124 !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #bdc1c6 #f8f9fa !important;
 }
 
 .summary-box.block * {
@@ -524,6 +610,8 @@ button.primary:active, .gr-button-primary:active {
     box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
     margin: 0 0 10px 0 !important;
     box-sizing: border-box !important;
+    scrollbar-width: thin !important;
+    scrollbar-color: #bdc1c6 #f8f9fa !important;
 }
 .summary-box-tab2.block > .prose,
 .summary-box-tab2.block > div {
@@ -668,7 +756,28 @@ theme = gr.themes.Soft(
 )
 
 with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", theme=theme, css=CUSTOM_CSS) as demo:
-    gr.HTML(f"<style>{CUSTOM_CSS}</style>")
+    gr.HTML(
+        "<style>" + CUSTOM_CSS + "</style>\n"
+        """<script>
+        (function() {
+            function resetSourceScroll() {
+                var el = document.querySelector('.source-box textarea');
+                if (el) {
+                    el.scrollTop = 0;
+                    try { el.setSelectionRange(0, 0); } catch(e) {}
+                }
+            }
+            document.addEventListener('click', function(e) {
+                var pill = e.target && (e.target.classList.contains('sample-pill') || e.target.closest('.sample-pill'));
+                if (pill) {
+                    [40, 100, 200, 350, 500, 800, 1200].forEach(function(t) {
+                        setTimeout(resetSourceScroll, t);
+                    });
+                }
+            });
+        })();
+        </script>"""
+    )
 
     # Engineering Clean Header with Cohesive Visual Accents
     gr.HTML(
@@ -734,7 +843,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
             # Secondary action row: 4 equal sample buttons on left (25% each), Download button on right
             with gr.Row():
                 with gr.Column(scale=1):
-                    with gr.Row():
+                    with gr.Row(elem_classes=["sample-row"]):
                         btn_sample_vi = gr.Button("Vietnamese", size="sm", elem_classes=["sample-pill"])
                         btn_sample_en = gr.Button("English", size="sm", elem_classes=["sample-pill"])
                         btn_sample_fr = gr.Button("French", size="sm", elem_classes=["sample-pill"])
@@ -974,10 +1083,12 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
         outputs=[meta_out_1, exec_out_1, download_out_1],
         api_name="summarize_text"
     )
-    btn_sample_vi.click(fn=lambda: (SAMPLE_VI, "Vietnamese"), outputs=[text_in, lang_opt_1])
-    btn_sample_en.click(fn=lambda: (SAMPLE_EN, "English"), outputs=[text_in, lang_opt_1])
-    btn_sample_fr.click(fn=lambda: (SAMPLE_FR, "French"), outputs=[text_in, lang_opt_1])
-    btn_sample_es.click(fn=lambda: (SAMPLE_ES, "Spanish"), outputs=[text_in, lang_opt_1])
+    RESET_SCROLL_JS = "() => { setTimeout(() => { const el = document.querySelector('.source-box textarea'); if (el) { el.scrollTop = 0; try { el.setSelectionRange(0, 0); } catch(e) {} } }, 80); setTimeout(() => { const el = document.querySelector('.source-box textarea'); if (el) { el.scrollTop = 0; } }, 350); }"
+
+    btn_sample_vi.click(fn=lambda: (SAMPLE_VI, "Vietnamese"), outputs=[text_in, lang_opt_1], js=RESET_SCROLL_JS)
+    btn_sample_en.click(fn=lambda: (SAMPLE_EN, "English"), outputs=[text_in, lang_opt_1], js=RESET_SCROLL_JS)
+    btn_sample_fr.click(fn=lambda: (SAMPLE_FR, "French"), outputs=[text_in, lang_opt_1], js=RESET_SCROLL_JS)
+    btn_sample_es.click(fn=lambda: (SAMPLE_ES, "Spanish"), outputs=[text_in, lang_opt_1], js=RESET_SCROLL_JS)
 
     # Tab 2: URL
     btn_url.click(
