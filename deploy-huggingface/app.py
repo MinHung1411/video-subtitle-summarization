@@ -314,7 +314,7 @@ def run_url_tab(url, target_lang, whisper_size, max_tokens, min_tokens, num_beam
     return process_pipeline("url", url, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
 CUSTOM_CSS = """
-/* Modern Engineering Unified Theme - Royal Indigo & Clean Slate */
+/* Modern Senior Web Developer Theme - Tailwind / Shadcn UI Minimalist Clean Slate */
 body, .gradio-container {
     background-color: #f8fafc !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
@@ -322,104 +322,142 @@ body, .gradio-container {
 }
 
 .gradio-container {
-    max-width: 1280px !important;
+    max-width: 1240px !important;
     margin: 0 auto !important;
-    padding: 20px !important;
+    padding: 24px 20px !important;
 }
 
-/* Tabs: Full-width Horizontal Navigation */
+/* Tabs Navigation: GitHub / Vercel Minimalist Underline */
 .tab-nav {
-    border-bottom: 2px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
     background: transparent !important;
-    gap: 6px !important;
-    padding: 0 4px !important;
+    gap: 4px !important;
     margin-bottom: 20px !important;
+    padding: 0 4px !important;
 }
 .tab-nav button {
     border: none !important;
-    border-radius: 8px 8px 0 0 !important;
-    border-bottom: 2.5px solid transparent !important;
+    border-bottom: 2px solid transparent !important;
+    border-radius: 0 !important;
     color: #64748b !important;
     font-weight: 500 !important;
-    font-size: 14px !important;
-    padding: 11px 20px !important;
+    font-size: 13.5px !important;
+    padding: 10px 18px !important;
     background: transparent !important;
-    transition: all 0.15s ease !important;
+    transition: all 0.15s ease-in-out !important;
 }
 .tab-nav button:hover {
-    color: #2563eb !important;
-    background: #eff6ff !important;
+    color: #0f172a !important;
+    background: transparent !important;
+    border-bottom-color: #cbd5e1 !important;
 }
 .tab-nav button.selected {
     color: #2563eb !important;
     font-weight: 600 !important;
-    border-bottom: 2.5px solid #2563eb !important;
+    border-bottom: 2px solid #2563eb !important;
     background: transparent !important;
 }
 
-/* Primary Action Buttons: Modern Vibrant Tech Blue (Nổi bật & Đồng nhất) */
+/* Primary Action Buttons: Shadcn UI Blue */
 button.primary, .gr-button-primary {
     background: #2563eb !important;
     color: #ffffff !important;
-    border: 1px solid #1d4ed8 !important;
-    border-radius: 8px !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
-    padding: 10px 22px !important;
-    box-shadow: 0 2px 4px rgba(37, 99, 235, 0.25) !important;
-    transition: all 0.15s ease !important;
+    border: 1px solid transparent !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    font-size: 13.5px !important;
+    letter-spacing: -0.01em !important;
+    padding: 9px 18px !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    width: 100% !important;
+    cursor: pointer !important;
 }
 button.primary:hover, .gr-button-primary:hover {
     background: #1d4ed8 !important;
-    border-color: #1e40af !important;
-    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.35) !important;
+    box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1) !important;
 }
-button.primary:active {
+button.primary:active, .gr-button-primary:active {
     background: #1e40af !important;
-    transform: translateY(1px) !important;
+    transform: scale(0.99) !important;
 }
 
-/* Secondary / Sample Buttons */
-.sample-btn, button.secondary, .gr-button-secondary {
+/* Secondary / Sample Buttons / Download Buttons */
+.sample-btn, button.secondary, .gr-button-secondary, .download-btn {
     background: #ffffff !important;
     color: #334155 !important;
-    border: 1px solid #cbd5e1 !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 6px !important;
     font-weight: 500 !important;
-    font-size: 13px !important;
-    padding: 6px 14px !important;
-    transition: all 0.15s ease !important;
+    font-size: 12.5px !important;
+    padding: 6px 13px !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
+    transition: all 0.15s ease-in-out !important;
+    cursor: pointer !important;
 }
 .sample-btn:hover, button.secondary:hover, .gr-button-secondary:hover {
+    background: #f8fafc !important;
+    border-color: #cbd5e1 !important;
+    color: #0f172a !important;
+}
+
+/* Download Button Component */
+.download-btn {
+    margin-top: 10px !important;
+    width: 100% !important;
+    justify-content: center !important;
+    font-weight: 500 !important;
+    font-size: 13px !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #2563eb !important;
+}
+.download-btn:hover {
     background: #eff6ff !important;
     border-color: #bfdbfe !important;
     color: #1d4ed8 !important;
 }
 
-/* Output Result Card */
+/* Single Elevated Output Summary Card - No Nested Borders */
 .summary-result-card {
     background: #ffffff !important;
-    border: 1.5px solid #dbeafe !important;
-    border-top: 4px solid #2563eb !important;
+    border: 1px solid #e2e8f0 !important;
     border-radius: 8px !important;
-    padding: 18px 22px !important;
+    padding: 20px 24px !important;
     min-height: 250px !important;
     font-size: 14.5px !important;
-    line-height: 1.75 !important;
-    color: #0f172a !important;
-    box-shadow: 0 2px 6px rgba(37, 99, 235, 0.05) !important;
+    line-height: 1.7 !important;
+    color: #1e293b !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+/* CRITICAL: Eliminate ALL nested borders & backgrounds inside the summary card */
+.summary-result-card .summary-result-card,
+.summary-result-card .prose,
+.summary-result-card .md,
+.summary-result-card > div,
+.summary-result-card div,
+.summary-result-card p,
+.summary-result-card blockquote,
+.summary-result-card * {
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+    outline: none !important;
 }
 
 /* Form Controls */
 input, textarea, select {
     border-radius: 6px !important;
-    border: 1px solid #cbd5e1 !important;
+    border: 1px solid #e2e8f0 !important;
     font-size: 13.5px !important;
+    color: #0f172a !important;
+    background-color: #ffffff !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
 }
 input:focus, textarea:focus, select:focus {
     border-color: #2563eb !important;
     outline: none !important;
-    box-shadow: 0 0 0 2px rgba(37, 99, 235, 0.2) !important;
+    box-shadow: 0 0 0 1px #2563eb !important;
 }
 
 /* Metrics Table */
@@ -457,6 +495,7 @@ input:focus, textarea:focus, select:focus {
     background: #ffffff !important;
     margin-top: 14px !important;
     box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
+    overflow: hidden !important;
 }
 """
 
@@ -516,24 +555,25 @@ SAMPLE_ES = (
 LANG_CHOICES = ["Auto", "Vietnamese", "English", "French", "Spanish"]
 
 with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", css=CUSTOM_CSS) as demo:
+    gr.HTML(f"<style>{CUSTOM_CSS}</style>")
 
     # Engineering Clean Header with Cohesive Visual Accents (No Clutter)
     gr.HTML(
         """
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 10px; padding: 16px 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 16px 22px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
           <div>
             <div style="display: flex; align-items: center; gap: 8px;">
-              <span style="font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em;">VideoInsight</span>
-              <span style="background: #eff6ff; color: #2563eb; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid #bfdbfe;">NLP Platform</span>
+              <span style="font-size: 19px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em;">VideoInsight</span>
+              <span style="background: #eff6ff; color: #2563eb; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #bfdbfe;">NLP Platform</span>
             </div>
-            <div style="color: #64748b; font-size: 13.5px; margin-top: 3px;">
+            <div style="color: #64748b; font-size: 13px; margin-top: 3px;">
               Hệ thống nhận diện giọng nói & tóm tắt video đa ngôn ngữ (Vietnamese · English · French · Spanish)
             </div>
           </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: #475569;">
-            <span style="background: #f1f5f9; padding: 5px 12px; border-radius: 6px; font-weight: 500; border: 1px solid #e2e8f0;">Whisper ASR</span>
-            <span style="background: #f1f5f9; padding: 5px 12px; border-radius: 6px; font-weight: 500; border: 1px solid #e2e8f0;">Fine-tuned mT5 (582M)</span>
-            <span style="background: #eff6ff; color: #1d4ed8; padding: 5px 12px; border-radius: 6px; font-weight: 600; border: 1px solid #bfdbfe;">Hierarchical Map-Reduce</span>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: #475569; padding-right: 50px;">
+            <span style="background: #f8fafc; padding: 5px 12px; border-radius: 6px; font-weight: 500; border: 1px solid #e2e8f0;">Whisper ASR</span>
+            <span style="background: #f8fafc; padding: 5px 12px; border-radius: 6px; font-weight: 500; border: 1px solid #e2e8f0;">Fine-tuned mT5 (582M)</span>
+            <span style="background: #eff6ff; color: #2563eb; padding: 5px 12px; border-radius: 6px; font-weight: 600; border: 1px solid #bfdbfe;">Hierarchical Map-Reduce</span>
           </div>
         </div>
         """
@@ -558,19 +598,17 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                     
                     gr.HTML("<div style='font-size: 12.5px; font-weight: 500; color: #64748b; margin-top: 6px; margin-bottom: 4px;'>Dữ liệu mẫu thử nghiệm:</div>")
                     with gr.Row():
-                        btn_sample_vi = gr.Button("🇻🇳 Vietnamese", size="sm")
-                        btn_sample_en = gr.Button("🇬🇧 English", size="sm")
-                        btn_sample_fr = gr.Button("🇫🇷 French", size="sm")
-                        btn_sample_es = gr.Button("🇪🇸 Spanish", size="sm")
+                        btn_sample_vi = gr.Button("🇻🇳 Vietnamese", size="sm", elem_classes=["sample-btn"])
+                        btn_sample_en = gr.Button("🇬🇧 English", size="sm", elem_classes=["sample-btn"])
+                        btn_sample_fr = gr.Button("🇫🇷 French", size="sm", elem_classes=["sample-btn"])
+                        btn_sample_es = gr.Button("🇪🇸 Spanish", size="sm", elem_classes=["sample-btn"])
 
-                    with gr.Row():
-                        lang_opt_1 = gr.Dropdown(
-                            choices=LANG_CHOICES,
-                            value="Auto",
-                            label="Ngôn ngữ tóm tắt",
-                            scale=1
-                        )
-                        btn_text = gr.Button("⚡ Tóm tắt văn bản", variant="primary", scale=1)
+                    lang_opt_1 = gr.Dropdown(
+                        choices=LANG_CHOICES,
+                        value="Auto",
+                        label="Ngôn ngữ tóm tắt"
+                    )
+                    btn_text = gr.Button("⚡ Tóm tắt văn bản", variant="primary")
 
                     with gr.Accordion("Tùy chọn tham số sinh (Hyperparameters)", open=False):
                         sl_max_1 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
@@ -581,9 +619,9 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                 with gr.Column(scale=1):
                     gr.HTML(
                         """
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                          <div style="font-size: 14.5px; font-weight: 700; color: #1e40af;">Bản tóm tắt điều hành</div>
-                          <span style="background: #eff6ff; color: #2563eb; font-size: 11.5px; font-weight: 600; padding: 2px 10px; border-radius: 12px; border: 1px solid #bfdbfe;">Executive Summary</span>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                          <div style="font-size: 14px; font-weight: 600; color: #0f172a;">Bản tóm tắt điều hành</div>
+                          <span style="background: #f1f5f9; color: #475569; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">Executive Summary</span>
                         </div>
                         """
                     )
@@ -592,9 +630,12 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                         value="*Kết quả tóm tắt súc tích, mạch lạc sẽ xuất hiện tại đây sau khi xử lý.*",
                         elem_classes=["summary-result-card"]
                     )
-                    download_out_1 = gr.File(
-                        label="Tải báo cáo tóm tắt (.md)",
-                        interactive=False
+                    download_out_1 = gr.DownloadButton(
+                        label="📥 Tải báo cáo tóm tắt (.md)",
+                        value=None,
+                        size="sm",
+                        variant="secondary",
+                        elem_classes=["download-btn"]
                     )
 
         # =========================================================================
@@ -612,8 +653,8 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
 
                     gr.HTML("<div style='font-size: 12.5px; font-weight: 500; color: #64748b; margin-top: 6px; margin-bottom: 4px;'>Video mẫu thử nghiệm (có phụ đề CC):</div>")
                     with gr.Row():
-                        btn_url_vi = gr.Button("🇻🇳 Video VN: Nông nghiệp & Khí Metan", size="sm")
-                        btn_url_en = gr.Button("🇬🇧 Video EN: Steve Jobs Stanford Speech", size="sm")
+                        btn_url_vi = gr.Button("🇻🇳 Video VN: Nông nghiệp & Khí Metan", size="sm", elem_classes=["sample-btn"])
+                        btn_url_en = gr.Button("🇬🇧 Video EN: Steve Jobs Stanford Speech", size="sm", elem_classes=["sample-btn"])
 
                     with gr.Row():
                         lang_opt_2 = gr.Dropdown(
@@ -638,9 +679,9 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                 with gr.Column(scale=1):
                     gr.HTML(
                         """
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                          <div style="font-size: 14.5px; font-weight: 700; color: #1e40af;">Bản tóm tắt điều hành</div>
-                          <span style="background: #eff6ff; color: #2563eb; font-size: 11.5px; font-weight: 600; padding: 2px 10px; border-radius: 12px; border: 1px solid #bfdbfe;">Executive Summary</span>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                          <div style="font-size: 14px; font-weight: 600; color: #0f172a;">Bản tóm tắt điều hành</div>
+                          <span style="background: #f1f5f9; color: #475569; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">Executive Summary</span>
                         </div>
                         """
                     )
@@ -649,9 +690,12 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                         value="*Kết quả tóm tắt súc tích, đầy đủ ý chính sẽ xuất hiện tại đây sau khi xử lý.*",
                         elem_classes=["summary-result-card"]
                     )
-                    download_out_2 = gr.File(
-                        label="Tải báo cáo tóm tắt (.md)",
-                        interactive=False
+                    download_out_2 = gr.DownloadButton(
+                        label="📥 Tải báo cáo tóm tắt (.md)",
+                        value=None,
+                        size="sm",
+                        variant="secondary",
+                        elem_classes=["download-btn"]
                     )
 
             with gr.Accordion("📍 Phân đoạn theo dòng thời gian (Timeline & Highlights)", open=True):
@@ -696,9 +740,9 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                 with gr.Column(scale=1):
                     gr.HTML(
                         """
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                          <div style="font-size: 14.5px; font-weight: 700; color: #1e40af;">Bản tóm tắt điều hành</div>
-                          <span style="background: #eff6ff; color: #2563eb; font-size: 11.5px; font-weight: 600; padding: 2px 10px; border-radius: 12px; border: 1px solid #bfdbfe;">Executive Summary</span>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                          <div style="font-size: 14px; font-weight: 600; color: #0f172a;">Bản tóm tắt điều hành</div>
+                          <span style="background: #f1f5f9; color: #475569; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">Executive Summary</span>
                         </div>
                         """
                     )
@@ -707,9 +751,12 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                         value="*Kết quả nhận diện giọng nói và tóm tắt sẽ xuất hiện tại đây.*",
                         elem_classes=["summary-result-card"]
                     )
-                    download_out_3 = gr.File(
-                        label="Tải báo cáo tóm tắt (.md)",
-                        interactive=False
+                    download_out_3 = gr.DownloadButton(
+                        label="📥 Tải báo cáo tóm tắt (.md)",
+                        value=None,
+                        size="sm",
+                        variant="secondary",
+                        elem_classes=["download-btn"]
                     )
 
             with gr.Accordion("📍 Phân đoạn theo dòng thời gian (Timeline & Highlights)", open=True):
@@ -731,14 +778,12 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                         file_types=[".srt", ".vtt", ".txt"],
                         type="filepath"
                     )
-                    with gr.Row():
-                        lang_opt_4 = gr.Dropdown(
-                            choices=LANG_CHOICES,
-                            value="Auto",
-                            label="Ngôn ngữ tóm tắt",
-                            scale=1
-                        )
-                        btn_srt = gr.Button("⚡ Xử lý tệp phụ đề", variant="primary", scale=1)
+                    lang_opt_4 = gr.Dropdown(
+                        choices=LANG_CHOICES,
+                        value="Auto",
+                        label="Ngôn ngữ tóm tắt"
+                    )
+                    btn_srt = gr.Button("⚡ Xử lý tệp phụ đề", variant="primary")
 
                     with gr.Accordion("Tùy chọn tham số sinh", open=False):
                         sl_max_4 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
@@ -748,9 +793,9 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                 with gr.Column(scale=1):
                     gr.HTML(
                         """
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px;">
-                          <div style="font-size: 14.5px; font-weight: 700; color: #1e40af;">Bản tóm tắt điều hành</div>
-                          <span style="background: #eff6ff; color: #2563eb; font-size: 11.5px; font-weight: 600; padding: 2px 10px; border-radius: 12px; border: 1px solid #bfdbfe;">Executive Summary</span>
+                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
+                          <div style="font-size: 14px; font-weight: 600; color: #0f172a;">Bản tóm tắt điều hành</div>
+                          <span style="background: #f1f5f9; color: #475569; font-size: 11px; font-weight: 500; padding: 2px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">Executive Summary</span>
                         </div>
                         """
                     )
@@ -759,9 +804,12 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                         value="*Kết quả tóm tắt súc tích sẽ hiển thị tại đây.*",
                         elem_classes=["summary-result-card"]
                     )
-                    download_out_4 = gr.File(
-                        label="Tải báo cáo tóm tắt (.md)",
-                        interactive=False
+                    download_out_4 = gr.DownloadButton(
+                        label="📥 Tải báo cáo tóm tắt (.md)",
+                        value=None,
+                        size="sm",
+                        variant="secondary",
+                        elem_classes=["download-btn"]
                     )
 
             with gr.Accordion("📍 Phân đoạn theo dòng thời gian (Timeline & Highlights)", open=True):
