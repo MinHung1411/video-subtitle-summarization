@@ -255,7 +255,8 @@ def process_pipeline(
             executive_summary=exec_summary,
             chapters=chapters,
             keywords="",
-            metadata=metadata_dict
+            metadata=metadata_dict,
+            source_transcript=full_transcript
         )
         download_path = create_downloadable_file(full_md_report, filename_prefix="Summary_Report")
 
@@ -266,14 +267,12 @@ def process_pipeline(
             except Exception:
                 pass
 
-        transcript_preview = full_transcript[:1500] + ("..." if len(full_transcript) > 1500 else "")
-
         return (
             meta_info,
             exec_summary,
             chapter_display,
             eval_report,
-            transcript_preview,
+            full_transcript,
             download_path
         )
 
@@ -649,11 +648,11 @@ with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTO
             elem_id="metrics-card"
         )
 
-    with gr.Accordion("📄 Lời Thoại Transcript Đầy Đủ (Source Transcript)", open=False):
+    with gr.Accordion("📄 Lời Thoại Transcript Đầy Đủ 100% (Full Source Transcript)", open=False):
         transcript_out = gr.Textbox(
-            label="Nội dung lời thoại trích xuất từ audio / phụ đề",
-            lines=8,
-            max_lines=15,
+            label="Toàn bộ nội dung lời thoại trích xuất từ audio / video / phụ đề (Full Transcript - Không cắt bớt)",
+            lines=12,
+            max_lines=35,
             interactive=False
         )
 
