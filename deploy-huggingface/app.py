@@ -230,9 +230,9 @@ def process_pipeline(
                 pts_md = []
                 for pt_title, content in thematic_pts:
                     pts_md.append(
-                        f"""<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
-  <div style="font-size: 12.5px; font-weight: 600; color: #2563eb; margin-bottom: 4px;">{pt_title}</div>
-  <div style="font-size: 14px; color: #1e293b; line-height: 1.6;">{content}</div>
+                        f"""<div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 12px 16px; margin-bottom: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+  <div style="font-size: 12.5px; font-weight: 600; color: #1a73e8; margin-bottom: 4px;">{pt_title}</div>
+  <div style="font-size: 14px; color: #202124; line-height: 1.6;">{content}</div>
 </div>"""
                     )
                 chapter_display = "\n".join(pts_md)
@@ -243,13 +243,13 @@ def process_pipeline(
 
         # Clean Cohesive Metadata Bar
         meta_info = (
-            f"""<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 16px; margin-bottom: 12px; font-size: 13px; color: #475569; display: flex; flex-wrap: wrap; gap: 16px; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.03);">
-              <span>Nguồn: <strong style="color: #0f172a;">{title}</strong></span>
+            f"""<div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 8px 14px; margin-top: 8px; font-size: 12.5px; color: #3c4043; display: flex; flex-wrap: wrap; gap: 14px; align-items: center; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
+              <span>Nguồn: <strong style="color: #202124;">{title}</strong></span>
               <span>Thời lượng: <strong>{duration_str}</strong></span>
-              <span>Ngôn ngữ: <strong style="background: #eff6ff; color: #2563eb; padding: 2px 8px; border-radius: 6px; font-size: 12px; border: 1px solid #bfdbfe;">{detected_lang.upper()}</strong></span>
+              <span>Ngôn ngữ: <strong style="background: #e8f0fe; color: #1a73e8; padding: 2px 8px; border-radius: 4px; font-size: 11.5px; border: 1px solid #d2e3fc;">{detected_lang.upper()}</strong></span>
               <span>Số từ: <strong>{word_count:,}</strong></span>
-              <span>Thời gian xử lý: <strong style="color: #059669;">{total_elapsed:.1f}s</strong></span>
-              <span style="color: #64748b; font-size: 12px; background: #f8fafc; padding: 2px 8px; border-radius: 6px; border: 1px solid #e2e8f0;">CPU 16GB</span>
+              <span>Thời gian: <strong style="color: #188038;">{total_elapsed:.1f}s</strong></span>
+              <span style="color: #5f6368; font-size: 11.5px; background: #f8f9fa; padding: 2px 8px; border-radius: 4px; border: 1px solid #dadce0;">ZeroGPU</span>
             </div>"""
         )
 
@@ -314,11 +314,11 @@ def run_url_tab(url, target_lang, whisper_size, max_tokens, min_tokens, num_beam
     return process_pipeline("url", url, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
 CUSTOM_CSS = """
-/* Enterprise NLP Platform Design - Royal Blue & Slate */
+/* Google Translate / Material 3 Design System */
 body, .gradio-container {
     background-color: #f8fafc !important;
     font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
-    color: #0f172a !important;
+    color: #202124 !important;
 }
 
 .gradio-container {
@@ -327,40 +327,48 @@ body, .gradio-container {
     padding: 24px 20px !important;
 }
 
-/* Tabs: Clean Underline Navigation with Blue Active Indicator */
+/* Tabs Navigation: Google Translate Pill Tabs */
 .tab-nav {
-    border-bottom: 1px solid #e2e8f0 !important;
+    border-bottom: none !important;
     background: transparent !important;
-    gap: 4px !important;
-    margin-bottom: 20px !important;
+    gap: 8px !important;
+    margin: 0 0 18px 0 !important;
     padding: 0 !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
 }
 .tab-nav button {
-    border: none !important;
-    border-bottom: 2px solid transparent !important;
-    border-radius: 0 !important;
-    color: #64748b !important;
+    border: 1px solid #dadce0 !important;
+    border-radius: 20px !important;
+    color: #3c4043 !important;
     font-weight: 500 !important;
     font-size: 13.5px !important;
-    padding: 10px 18px !important;
-    background: transparent !important;
+    padding: 7px 18px !important;
+    background: #ffffff !important;
     transition: all 0.15s ease-in-out !important;
+    box-shadow: none !important;
+    cursor: pointer !important;
+    margin: 0 !important;
 }
 .tab-nav button:hover {
-    color: #0f172a !important;
-    background: transparent !important;
-    border-bottom-color: #cbd5e1 !important;
+    background: #f1f3f4 !important;
+    border-color: #dadce0 !important;
+    color: #202124 !important;
 }
 .tab-nav button.selected {
-    color: #2563eb !important;
+    background: #e8f0fe !important;
+    color: #1a73e8 !important;
+    border-color: #d2e3fc !important;
     font-weight: 600 !important;
-    border-bottom: 2px solid #2563eb !important;
-    background: transparent !important;
+}
+.tab-nav button::after,
+.tab-nav button::before {
+    display: none !important;
 }
 
-/* Primary Action Buttons */
+/* Primary Action CTA Buttons */
 button.primary, .gr-button-primary {
-    background: #2563eb !important;
+    background: #1a73e8 !important;
     color: #ffffff !important;
     border: 1px solid transparent !important;
     border-radius: 6px !important;
@@ -374,19 +382,19 @@ button.primary, .gr-button-primary {
     cursor: pointer !important;
 }
 button.primary:hover, .gr-button-primary:hover {
-    background: #1d4ed8 !important;
+    background: #1765cc !important;
     box-shadow: 0 2px 4px 0 rgba(0, 0, 0, 0.1) !important;
 }
 button.primary:active, .gr-button-primary:active {
-    background: #1e40af !important;
+    background: #1557b0 !important;
     transform: scale(0.99) !important;
 }
 
-/* Sample Quick-Select Pills */
+/* Quick-Select Sample Pills */
 .sample-pill {
     background: #ffffff !important;
-    color: #334155 !important;
-    border: 1px solid #e2e8f0 !important;
+    color: #3c4043 !important;
+    border: 1px solid #dadce0 !important;
     border-radius: 6px !important;
     font-weight: 500 !important;
     font-size: 12px !important;
@@ -395,20 +403,21 @@ button.primary:active, .gr-button-primary:active {
     transition: all 0.15s ease-in-out !important;
     cursor: pointer !important;
     text-align: center !important;
-    min-height: 34px !important;
-    height: 34px !important;
+    min-height: 33px !important;
+    height: 33px !important;
+    width: 100% !important;
 }
 .sample-pill:hover {
-    background: #eff6ff !important;
-    border-color: #bfdbfe !important;
-    color: #1d4ed8 !important;
+    background: #f1f3f4 !important;
+    border-color: #bdc1c6 !important;
+    color: #202124 !important;
 }
 
 /* Download Button Component */
 .dl-pill {
     background: #ffffff !important;
-    color: #2563eb !important;
-    border: 1px solid #e2e8f0 !important;
+    color: #1a73e8 !important;
+    border: 1px solid #dadce0 !important;
     border-radius: 6px !important;
     font-weight: 500 !important;
     font-size: 12.5px !important;
@@ -418,85 +427,144 @@ button.primary:active, .gr-button-primary:active {
     cursor: pointer !important;
     width: 100% !important;
     justify-content: center !important;
-    min-height: 34px !important;
-    height: 34px !important;
+    min-height: 33px !important;
+    height: 33px !important;
 }
 .dl-pill:hover {
-    background: #eff6ff !important;
-    border-color: #bfdbfe !important;
-    color: #1d4ed8 !important;
+    background: #e8f0fe !important;
+    border-color: #d2e3fc !important;
+    color: #1765cc !important;
 }
 
-/* Equal Height Side-by-Side Boxes for Tab 1 */
-.source-textbox textarea {
-    height: 280px !important;
-    min-height: 280px !important;
-    max-height: 280px !important;
-    font-size: 13.5px !important;
-    line-height: 1.65 !important;
-    border-radius: 8px !important;
-    border: 1px solid #cbd5e1 !important;
+/* Tab 1: Dual Comparison Cards - 100% Equal Height & Pixel-Perfect Alignment */
+.source-box.block, .summary-box.block {
     background: #ffffff !important;
-    resize: none !important;
+    border: 1px solid #dadce0 !important;
+    border-radius: 8px !important;
+    height: 300px !important;
+    min-height: 300px !important;
+    max-height: 300px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-sizing: border-box !important;
+    overflow: hidden !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+
+.source-box.block > div,
+.source-box.block .wrap,
+.source-box.block label {
+    height: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    border: none !important;
+    box-shadow: none !important;
+    background: transparent !important;
+}
+
+.source-box.block textarea {
+    border: none !important;
+    outline: none !important;
+    box-shadow: none !important;
+    background: #ffffff !important;
+    height: 100% !important;
+    width: 100% !important;
+    min-height: 100% !important;
+    max-height: 100% !important;
     padding: 14px 16px !important;
-    color: #0f172a !important;
-}
-
-.summary-card-body {
-    height: 280px !important;
-    min-height: 280px !important;
-    max-height: 280px !important;
-    overflow-y: auto !important;
-    background: #ffffff !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 8px !important;
-    padding: 14px 18px !important;
     font-size: 14px !important;
-    line-height: 1.65 !important;
-    color: #0f172a !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+    line-height: 1.6 !important;
+    color: #202124 !important;
+    resize: none !important;
+    box-sizing: border-box !important;
 }
 
-.summary-card-body-tall {
-    min-height: 260px !important;
-    max-height: 420px !important;
+/* Summary Box in Tab 1 */
+.summary-box.block {
+    background: #f8f9fa !important;
+}
+
+.summary-box.block > .prose,
+.summary-box.block > div {
+    height: 100% !important;
+    width: 100% !important;
+    padding: 14px 16px !important;
+    margin: 0 !important;
+    border: none !important;
+    box-sizing: border-box !important;
     overflow-y: auto !important;
-    background: #ffffff !important;
-    border: 1px solid #cbd5e1 !important;
-    border-radius: 8px !important;
-    padding: 14px 18px !important;
     font-size: 14px !important;
-    line-height: 1.65 !important;
-    color: #0f172a !important;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.03) !important;
+    line-height: 1.6 !important;
+    color: #202124 !important;
 }
 
-/* Eliminate ANY nested inner borders inside the summary card */
-.summary-card-body *, .summary-card-body-tall * {
+.summary-box.block * {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    outline: none !important;
+}
+
+/* Tabs 2, 3, 4: Balanced Height Summary Card */
+.summary-box-tab2.block {
+    background: #f8f9fa !important;
+    border: 1px solid #dadce0 !important;
+    border-radius: 8px !important;
+    min-height: 220px !important;
+    max-height: 220px !important;
+    height: 220px !important;
+    overflow-y: auto !important;
+    padding: 14px 16px !important;
+    font-size: 14px !important;
+    line-height: 1.6 !important;
+    color: #202124 !important;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
+    margin: 0 0 10px 0 !important;
+    box-sizing: border-box !important;
+}
+.summary-box-tab2.block > .prose,
+.summary-box-tab2.block > div {
+    height: 100% !important;
+    width: 100% !important;
+    padding: 0 !important;
+    margin: 0 !important;
+}
+.summary-box-tab2.block * {
     border: none !important;
     box-shadow: none !important;
     background: transparent !important;
     outline: none !important;
 }
 
-/* Form Controls */
+/* Form Controls & Inputs */
 input, select {
     border-radius: 6px !important;
-    border: 1px solid #cbd5e1 !important;
+    border: 1px solid #dadce0 !important;
     font-size: 13.5px !important;
-    color: #0f172a !important;
+    color: #202124 !important;
     background-color: #ffffff !important;
 }
 input:focus, textarea:focus, select:focus {
-    border-color: #2563eb !important;
+    border-color: #1a73e8 !important;
     outline: none !important;
-    box-shadow: 0 0 0 1px #2563eb !important;
+    box-shadow: 0 0 0 1px #1a73e8 !important;
+}
+
+/* File Upload Box */
+.file-upload-box.block {
+    min-height: 110px !important;
+    border: 1px dashed #dadce0 !important;
+    border-radius: 8px !important;
+    background: #ffffff !important;
 }
 
 /* Metrics Table */
 #metrics-card {
     background: #ffffff !important;
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid #dadce0 !important;
     border-radius: 8px !important;
     padding: 16px 20px !important;
 }
@@ -506,29 +574,35 @@ input:focus, textarea:focus, select:focus {
     margin: 10px 0 !important;
 }
 #metrics-card th {
-    background: #f8fafc !important;
-    color: #475569 !important;
+    background: #f8f9fa !important;
+    color: #5f6368 !important;
     padding: 10px 14px !important;
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid #dadce0 !important;
     font-weight: 600 !important;
     font-size: 13px !important;
     text-align: left !important;
 }
 #metrics-card td {
     padding: 9px 14px !important;
-    border: 1px solid #e2e8f0 !important;
-    color: #334155 !important;
+    border: 1px solid #dadce0 !important;
+    color: #3c4043 !important;
     font-size: 13px !important;
 }
 
 /* Accordions */
 .gr-accordion {
-    border: 1px solid #e2e8f0 !important;
+    border: 1px solid #dadce0 !important;
     border-radius: 8px !important;
     background: #ffffff !important;
     margin-top: 14px !important;
     box-shadow: 0 1px 2px rgba(0,0,0,0.02) !important;
     overflow: hidden !important;
+}
+.gr-accordion .label-wrap {
+    font-size: 13.5px !important;
+    font-weight: 600 !important;
+    color: #3c4043 !important;
+    padding: 10px 16px !important;
 }
 """
 
@@ -599,21 +673,21 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
     # Engineering Clean Header with Cohesive Visual Accents
     gr.HTML(
         """
-        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 24px; margin-bottom: 20px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
+        <div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 16px 20px; margin-bottom: 18px; box-shadow: 0 1px 2px rgba(0,0,0,0.02);">
           <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px;">
             <div>
               <div style="display: flex; align-items: center; gap: 10px;">
-                <span style="font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em;">VideoInsight</span>
-                <span style="background: #eff6ff; color: #2563eb; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #bfdbfe;">NLP Platform</span>
+                <span style="font-size: 20px; font-weight: 700; color: #202124; letter-spacing: -0.02em;">VideoInsight</span>
+                <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #d2e3fc;">NLP Platform</span>
               </div>
-              <div style="color: #64748b; font-size: 13px; margin-top: 4px;">
-                Hệ thống nhận diện giọng nói & tóm tắt video đa ngôn ngữ (Vietnamese · English · French · Spanish)
+              <div style="color: #5f6368; font-size: 13px; margin-top: 4px;">
+                Hệ thống nhận diện giọng nói &amp; tóm tắt video đa ngôn ngữ (Vietnamese · English · French · Spanish)
               </div>
             </div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: #475569; padding-right: 30px;">
-              <span style="background: #f8fafc; padding: 5px 12px; border-radius: 6px; font-weight: 500; border: 1px solid #e2e8f0;">Whisper ASR</span>
-              <span style="background: #f8fafc; padding: 5px 12px; border-radius: 6px; font-weight: 500; border: 1px solid #e2e8f0;">Fine-tuned mT5 (582M)</span>
-              <span style="background: #eff6ff; color: #2563eb; padding: 5px 12px; border-radius: 6px; font-weight: 600; border: 1px solid #bfdbfe;">Hierarchical Map-Reduce</span>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: #3c4043;">
+              <span style="background: #f8f9fa; padding: 5px 12px; border-radius: 16px; font-weight: 500; border: 1px solid #dadce0;">Whisper ASR</span>
+              <span style="background: #f8f9fa; padding: 5px 12px; border-radius: 16px; font-weight: 500; border: 1px solid #dadce0;">Fine-tuned mT5 (582M)</span>
+              <span style="background: #e8f0fe; color: #1a73e8; padding: 5px 12px; border-radius: 16px; font-weight: 600; border: 1px solid #d2e3fc;">Hierarchical Map-Reduce</span>
             </div>
           </div>
         </div>
@@ -626,22 +700,22 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
         # =========================================================================
         # TAB 1: VĂN BẢN (TEXT) - Perfectly Symmetrical Google Translate Layout
         # =========================================================================
-        with gr.Tab("Văn bản"):
+        with gr.Tab("文A Văn bản"):
             # Header row for left & right
             with gr.Row():
                 with gr.Column(scale=1):
-                    gr.HTML("<div style='font-size: 14px; font-weight: 600; color: #1e293b; padding: 4px 0;'>Văn bản nguồn (Source Text)</div>")
+                    gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Văn bản nguồn (Source Text)</div>")
                 with gr.Column(scale=1):
                     gr.HTML(
                         """
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0;">
-                          <span style="font-size: 14px; font-weight: 600; color: #1e293b;">Bản tóm tắt điều hành</span>
-                          <span style="background: #eff6ff; color: #2563eb; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #bfdbfe;">Executive Summary</span>
+                        <div style="height: 28px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #202124;">
+                          <span>Bản tóm tắt điều hành</span>
+                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #d2e3fc;">Executive Summary</span>
                         </div>
                         """
                     )
 
-            # Main content boxes: Exact side-by-side equal height
+            # Main content boxes: Exact side-by-side equal height (300px)
             with gr.Row(equal_height=True):
                 with gr.Column(scale=1):
                     text_in = gr.Textbox(
@@ -649,12 +723,12 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                         lines=12,
                         max_lines=12,
                         show_label=False,
-                        elem_classes=["source-textbox"]
+                        elem_classes=["source-box"]
                     )
                 with gr.Column(scale=1):
                     exec_out_1 = gr.Markdown(
                         value="*Kết quả tóm tắt súc tích, mạch lạc sẽ xuất hiện tại đây sau khi xử lý.*",
-                        elem_classes=["summary-card-body"]
+                        elem_classes=["summary-box"]
                     )
 
             # Secondary action row: 4 equal sample buttons on left (25% each), Download button on right
@@ -676,15 +750,17 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
 
             # Primary action row: Language option + Summarize CTA Button
             with gr.Row():
-                lang_opt_1 = gr.Dropdown(
-                    choices=LANG_CHOICES,
-                    value="Auto",
-                    label="Ngôn ngữ tóm tắt",
-                    scale=1
-                )
-                btn_text = gr.Button("Tóm tắt văn bản", variant="primary", scale=2)
-
-            meta_out_1 = gr.Markdown()
+                with gr.Column(scale=1):
+                    with gr.Row():
+                        lang_opt_1 = gr.Dropdown(
+                            choices=LANG_CHOICES,
+                            value="Auto",
+                            label="Ngôn ngữ tóm tắt",
+                            scale=1
+                        )
+                        btn_text = gr.Button("Tóm tắt văn bản", variant="primary", scale=2)
+                with gr.Column(scale=1):
+                    meta_out_1 = gr.Markdown()
 
             with gr.Accordion("Tùy chọn tham số sinh (Hyperparameters)", open=False):
                 sl_max_1 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
@@ -694,21 +770,21 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
         # =========================================================================
         # TAB 2: LINK VIDEO (URL) - Second Position per User Request
         # =========================================================================
-        with gr.Tab("Link Video (URL)"):
+        with gr.Tab("🔗 Link Video (URL)"):
             with gr.Row():
                 with gr.Column(scale=1):
-                    gr.HTML("<div style='font-size: 14px; font-weight: 600; color: #1e293b; padding: 4px 0;'>Đường dẫn video YouTube / Trực tuyến</div>")
+                    gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Đường dẫn video YouTube / Trực tuyến</div>")
                 with gr.Column(scale=1):
                     gr.HTML(
                         """
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0;">
-                          <span style="font-size: 14px; font-weight: 600; color: #1e293b;">Bản tóm tắt điều hành</span>
-                          <span style="background: #eff6ff; color: #2563eb; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #bfdbfe;">Executive Summary</span>
+                        <div style="height: 28px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #202124;">
+                          <span>Bản tóm tắt điều hành</span>
+                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #d2e3fc;">Executive Summary</span>
                         </div>
                         """
                     )
 
-            with gr.Row(equal_height=True):
+            with gr.Row():
                 with gr.Column(scale=1):
                     url_in = gr.Textbox(
                         placeholder="Dán đường dẫn video YouTube vào đây (ví dụ: https://www.youtube.com/watch?v=...)",
@@ -717,7 +793,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                         show_label=False
                     )
 
-                    gr.HTML("<div style='font-size: 12px; font-weight: 500; color: #64748b; margin-top: 4px; margin-bottom: 2px;'>Video mẫu thử nghiệm (có phụ đề CC):</div>")
+                    gr.HTML("<div style='font-size: 12px; font-weight: 500; color: #5f6368; margin-top: 4px; margin-bottom: 2px;'>Video mẫu thử nghiệm (có phụ đề CC):</div>")
                     with gr.Row():
                         btn_url_vi = gr.Button("Video VN: Nông nghiệp & Metan", size="sm", elem_classes=["sample-pill"])
                         btn_url_en = gr.Button("Video EN: Steve Jobs Stanford", size="sm", elem_classes=["sample-pill"])
@@ -743,10 +819,9 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                         sl_beam_2 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
                 with gr.Column(scale=1):
-                    meta_out_2 = gr.Markdown()
                     exec_out_2 = gr.Markdown(
                         value="*Kết quả tóm tắt súc tích, đầy đủ ý chính sẽ xuất hiện tại đây sau khi xử lý.*",
-                        elem_classes=["summary-card-body-tall"]
+                        elem_classes=["summary-box-tab2"]
                     )
                     download_out_2 = gr.DownloadButton(
                         label="Tải báo cáo tóm tắt (.md)",
@@ -755,6 +830,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                         variant="secondary",
                         elem_classes=["dl-pill"]
                     )
+                    meta_out_2 = gr.Markdown()
 
             with gr.Accordion("Phân đoạn theo dòng thời gian (Timeline & Highlights)", open=True):
                 chapter_out_2 = gr.Markdown(value="*Dòng thời gian các phân đoạn nội dung chính sẽ hiển thị tại đây.*")
@@ -766,26 +842,27 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
         # =========================================================================
         # TAB 3: UPLOAD VIDEO / AUDIO (WHISPER ASR) - Third Position
         # =========================================================================
-        with gr.Tab("Upload Video / Audio"):
+        with gr.Tab("🎥 Video / Audio"):
             with gr.Row():
                 with gr.Column(scale=1):
-                    gr.HTML("<div style='font-size: 14px; font-weight: 600; color: #1e293b; padding: 4px 0;'>Tải lên tệp Video hoặc Âm thanh</div>")
+                    gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Tải lên tệp Video hoặc Âm thanh</div>")
                 with gr.Column(scale=1):
                     gr.HTML(
                         """
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0;">
-                          <span style="font-size: 14px; font-weight: 600; color: #1e293b;">Bản tóm tắt điều hành</span>
-                          <span style="background: #eff6ff; color: #2563eb; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #bfdbfe;">Executive Summary</span>
+                        <div style="height: 28px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #202124;">
+                          <span>Bản tóm tắt điều hành</span>
+                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #d2e3fc;">Executive Summary</span>
                         </div>
                         """
                     )
 
-            with gr.Row(equal_height=True):
+            with gr.Row():
                 with gr.Column(scale=1):
                     video_in = gr.File(
                         label="Tệp phương tiện (.mp4, .mkv, .avi, .mov, .mp3, .wav, .m4a)",
                         file_types=[".mp4", ".mkv", ".avi", ".mov", ".mp3", ".wav", ".m4a"],
-                        type="filepath"
+                        type="filepath",
+                        elem_classes=["file-upload-box"]
                     )
                     with gr.Row():
                         lang_opt_3 = gr.Dropdown(
@@ -808,10 +885,9 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                         sl_beam_3 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
                 with gr.Column(scale=1):
-                    meta_out_3 = gr.Markdown()
                     exec_out_3 = gr.Markdown(
                         value="*Kết quả nhận diện giọng nói và tóm tắt sẽ xuất hiện tại đây.*",
-                        elem_classes=["summary-card-body-tall"]
+                        elem_classes=["summary-box-tab2"]
                     )
                     download_out_3 = gr.DownloadButton(
                         label="Tải báo cáo tóm tắt (.md)",
@@ -820,6 +896,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                         variant="secondary",
                         elem_classes=["dl-pill"]
                     )
+                    meta_out_3 = gr.Markdown()
 
             with gr.Accordion("Phân đoạn theo dòng thời gian (Timeline & Highlights)", open=True):
                 chapter_out_3 = gr.Markdown(value="*Dòng thời gian các phân đoạn nội dung chính sẽ hiển thị tại đây.*")
@@ -831,26 +908,27 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
         # =========================================================================
         # TAB 4: FILE PHỤ ĐỀ (.srt / .txt) - Fourth Position
         # =========================================================================
-        with gr.Tab("File Phụ Đề (.srt)"):
+        with gr.Tab("📄 File Phụ Đề (.srt)"):
             with gr.Row():
                 with gr.Column(scale=1):
-                    gr.HTML("<div style='font-size: 14px; font-weight: 600; color: #1e293b; padding: 4px 0;'>Tải lên tệp phụ đề (.srt, .vtt, .txt)</div>")
+                    gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Tải lên tệp phụ đề (.srt, .vtt, .txt)</div>")
                 with gr.Column(scale=1):
                     gr.HTML(
                         """
-                        <div style="display: flex; align-items: center; justify-content: space-between; padding: 4px 0;">
-                          <span style="font-size: 14px; font-weight: 600; color: #1e293b;">Bản tóm tắt điều hành</span>
-                          <span style="background: #eff6ff; color: #2563eb; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #bfdbfe;">Executive Summary</span>
+                        <div style="height: 28px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #202124;">
+                          <span>Bản tóm tắt điều hành</span>
+                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #d2e3fc;">Executive Summary</span>
                         </div>
                         """
                     )
 
-            with gr.Row(equal_height=True):
+            with gr.Row():
                 with gr.Column(scale=1):
                     srt_in = gr.File(
                         label="Tệp phụ đề (.srt, .vtt, .txt)",
                         file_types=[".srt", ".vtt", ".txt"],
-                        type="filepath"
+                        type="filepath",
+                        elem_classes=["file-upload-box"]
                     )
                     lang_opt_4 = gr.Dropdown(
                         choices=LANG_CHOICES,
@@ -865,10 +943,9 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                         sl_beam_4 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
                 with gr.Column(scale=1):
-                    meta_out_4 = gr.Markdown()
                     exec_out_4 = gr.Markdown(
                         value="*Kết quả tóm tắt súc tích sẽ hiển thị tại đây.*",
-                        elem_classes=["summary-card-body-tall"]
+                        elem_classes=["summary-box-tab2"]
                     )
                     download_out_4 = gr.DownloadButton(
                         label="Tải báo cáo tóm tắt (.md)",
@@ -877,6 +954,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                         variant="secondary",
                         elem_classes=["dl-pill"]
                     )
+                    meta_out_4 = gr.Markdown()
 
             with gr.Accordion("Phân đoạn theo dòng thời gian (Timeline & Highlights)", open=True):
                 chapter_out_4 = gr.Markdown(value="*Dòng thời gian các phân đoạn nội dung chính sẽ hiển thị tại đây.*")
