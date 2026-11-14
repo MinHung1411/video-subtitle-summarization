@@ -64,12 +64,28 @@ DEFAULT_MODEL_REPO = os.environ.get("MODEL_REPO", "minhunhooo/video-subtitle-sum
 
 def detect_language(text: str) -> str:
     t = text.lower()
-    if re.search(r"[ăâđêôơưáàảãạấầẩẫậắằẳẵặéèẻẽẹếềểễệíìỉĩịóòỏõọốồổỗộớờởỡợúùủũụứừửữựýỳỷỹỵ]", t):
+    
+    # Check uniquely Vietnamese diacritics & common Vietnamese function words
+    vi_unique_chars = r"[ăâđêôơưảãạẻẽẹỉĩịỏõọủũụỷỹỵấầẩẫậắằẳẵặếềểễệốồổỗộớờởỡợứừửữự]"
+    vi_words = r"\b(và|của|là|trong|người|những|các|không|được|với|cho|một|này|đã|sẽ|có)\b"
+    if re.search(vi_unique_chars, t) or re.search(vi_words, t):
         return "vi"
-    if re.search(r"\b(le|la|les|des|est|une|que)\b", t):
+        
+    # Spanish specific
+    es_score = len(re.findall(r"\b(el|los|las|del|para|con|por|como|pero|más|este|esta|en|es|y)\b", t))
+    if re.search(r"[ñ¿¡]", t):
+        es_score += 5
+        
+    # French specific
+    fr_score = len(re.findall(r"\b(le|les|des|du|dans|pour|avec|est|sont|sur|que|qui|ce|cette|ces|nous|vous|et)\b", t))
+    if re.search(r"[œæç]|(d'|l'|qu'|j'|n')", t):
+        fr_score += 5
+        
+    if fr_score > 0 and fr_score > es_score:
         return "fr"
-    if re.search(r"[ñ¿¡]|\b(el|los|las|una|que|es)\b", t):
+    if es_score > 0 and es_score > fr_score:
         return "es"
+        
     return "en"
 
 def get_summarizer_model(model_name: str = None):

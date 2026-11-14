@@ -423,19 +423,59 @@ button.primary:active {
 }
 """
 
-TRANSCRIPT_EXAMPLES = [
-    [
-        "Trí tuệ nhân tạo (AI) và các mô hình học sâu đang tạo ra một bước ngoặt lịch sử trong cuộc cách mạng công nghiệp lần thứ tư, tác động sâu rộng đến cơ cấu vận hành của nền kinh tế toàn cầu. Trong lĩnh vực y tế, các hệ thống thị giác máy tính tiên tiến đã hỗ trợ bác sĩ chẩn đoán hình ảnh X-quang, MRI với độ chính xác tương đương các chuyên gia đầu ngành, giúp phát hiện sớm các khối u ác tính và giảm thiểu đáng kể tỷ lệ sai sót y khoa. Song song đó, trong khối doanh nghiệp sản xuất và thương mại điện tử, các thuật toán tối ưu hóa thông minh đã tự động hóa việc dự báo nhu cầu thị trường, điều phối vận tải logistics và quản trị chuỗi cung ứng theo thời gian thực, tiết kiệm hàng tỷ USD chi phí vận hành mỗi năm.\n\nTuy nhiên, tốc độ phổ cập vũ bão của AI cũng kéo theo những thách thức an ninh và pháp lý chưa từng có tiền lệ. Nguy cơ rò rỉ dữ liệu nhạy cảm, vi phạm quyền riêng tư của người dùng và sự xuất hiện của các lỗ hổng bảo mật trong mô hình đang trở thành bài toán hóc búa cho các nhà hoạch định chính sách. Đặc biệt, hiện tượng ảo giác thông tin và tính thiếu minh bạch trong các mô hình hộp đen đặt ra những câu hỏi hóc búa về trách nhiệm pháp lý khi xảy ra sai lệch trong các quyết định tự động. Trước tình hình đó, các tổ chức quốc tế và chính phủ nhiều nước đang khẩn trương thiết lập khung pháp lý toàn diện, yêu cầu các hệ thống AI thương mại phải đáp ứng tiêu chuẩn nghiêm ngặt về tính giải thích được, bảo mật dữ liệu và luôn đặt sự kiểm soát của con người làm trọng tâm tối thượng."
-    ],
-    [
-        "The transition from traditional statistical learning to deep transformer-based foundation models has fundamentally altered the paradigm of artificial intelligence. By utilizing self-attention mechanisms, modern neural networks capture long-range contextual dependencies across billions of multimodal tokens, achieving superhuman capabilities in code synthesis, language comprehension, and spatial reasoning. In enterprise environments, these models are rapidly evolving from static chatbots into autonomous workflow copilots capable of orchestrating complex business processes, automating financial reconciliations, and accelerating drug discovery pipelines.\n\nHowever, deploying foundation models in mission-critical production environments presents formidable architectural hurdles. Challenges such as stochastic hallucinations, significant GPU memory footprints, and non-deterministic reasoning trajectories necessitate rigorous verification frameworks. To mitigate these risks, cutting-edge AI architectures are transitioning toward agentic systems equipped with dynamic retrieval-augmented generation (RAG), sandboxed tool execution, and self-correcting reflection loops. The consensus across industry research labs emphasizes that sustainable AI deployment must balance scalable compute efficiency with robust safety guardrails and verifiable human oversight."
-    ]
-]
+SAMPLE_VI = (
+    "Trí tuệ nhân tạo (AI) và các mô hình học sâu đang tạo ra một bước ngoặt lịch sử trong cuộc cách mạng công nghiệp lần thứ tư, "
+    "tác động sâu rộng đến cơ cấu vận hành của nền kinh tế toàn cầu. Trong lĩnh vực y tế, các hệ thống thị giác máy tính tiên tiến đã "
+    "hỗ trợ bác sĩ chẩn đoán hình ảnh X-quang, MRI với độ chính xác tương đương các chuyên gia đầu ngành, giúp phát hiện sớm các khối u "
+    "ác tính và giảm thiểu đáng kể tỷ lệ sai sót y khoa. Song song đó, trong khối doanh nghiệp sản xuất và thương mại điện tử, các "
+    "thuật toán tối ưu hóa thông minh đã tự động hóa việc dự báo nhu cầu thị trường, điều phối vận tải logistics và quản trị chuỗi "
+    "cung ứng theo thời gian thực, tiết kiệm hàng tỷ USD chi phí vận hành mỗi năm.\n\n"
+    "Tuy nhiên, tốc độ phổ cập vũ bão của AI cũng kéo theo những thách thức an ninh và pháp lý chưa từng có tiền lệ. Nguy cơ rò rỉ dữ liệu "
+    "nhạy cảm, vi phạm quyền riêng tư của người dùng và sự xuất hiện của các lỗ hổng bảo mật trong mô hình đang trở thành bài toán hóc búa "
+    "cho các nhà hoạch định chính sách. Đặc biệt, hiện tượng ảo giác thông tin và tính thiếu minh bạch trong các mô hình hộp đen đặt ra "
+    "những câu hỏi hóc búa về trách nhiệm pháp lý khi xảy ra sai lệch trong các quyết định tự động. Trước tình hình đó, các tổ chức quốc tế "
+    "và chính phủ nhiều nước đang khẩn trương thiết lập khung pháp lý toàn diện, yêu cầu các hệ thống AI thương mại phải đáp ứng tiêu "
+    "chuẩn nghiêm ngặt về tính giải thích được, bảo mật dữ liệu và luôn đặt sự kiểm soát của con người làm trọng tâm tối thượng."
+)
 
-URL_EXAMPLES = [
-    ["https://www.youtube.com/watch?v=VAIe6L68M3E"],
-    ["https://www.youtube.com/watch?v=UF8uR6Z6KLc"]
-]
+SAMPLE_EN = (
+    "The transition from traditional statistical learning to deep transformer-based foundation models has fundamentally altered the paradigm "
+    "of artificial intelligence. By utilizing self-attention mechanisms, modern neural networks capture long-range contextual dependencies "
+    "across billions of multimodal tokens, achieving superhuman capabilities in code synthesis, language comprehension, and spatial reasoning. "
+    "In enterprise environments, these models are rapidly evolving from static chatbots into autonomous workflow copilots capable of "
+    "orchestrating complex business processes, automating financial reconciliations, and accelerating drug discovery pipelines.\n\n"
+    "However, deploying foundation models in mission-critical production environments presents formidable architectural hurdles. Challenges "
+    "such as stochastic hallucinations, significant GPU memory footprints, and non-deterministic reasoning trajectories necessitate rigorous "
+    "verification frameworks. To mitigate these risks, cutting-edge AI architectures are transitioning toward agentic systems equipped with "
+    "dynamic retrieval-augmented generation (RAG), sandboxed tool execution, and self-correcting reflection loops. The consensus across industry "
+    "research labs emphasizes that sustainable AI deployment must balance scalable compute efficiency with robust safety guardrails and "
+    "verifiable human oversight."
+)
+
+SAMPLE_FR = (
+    "L'intelligence artificielle et l'apprentissage profond transforment en profondeur notre société et notre économie moderne. "
+    "Dans le secteur médical, les algorithmes de vision par ordinateur assistent désormais les radiologues avec une précision remarquable "
+    "pour détecter précocement les pathologies complexes, optimisant ainsi les protocoles de soins pour des millions de patients. "
+    "Parallèlement, dans le domaine de la transition énergétique, les réseaux neuronaux permettent d'ajuster en temps réel la distribution "
+    "des énergies renouvelables et d'optimiser l'efficacité thermique des infrastructures urbaines.\n\n"
+    "Néanmoins, cette transformation numérique rapide soulève des interrogations éthiques et réglementaires majeures. "
+    "La protection des données personnelles, la souveraineté numérique et la transparence des modèles d'apprentissage automatique "
+    "constituent des enjeux cruciaux pour les institutions européennes. L'Union européenne a ainsi adopté l'AI Act afin d'encadrer "
+    "strictement les systèmes à haut risque, d'imposer des audits rigoureux et de garantir que la technologie reste au service de l'humain "
+    "et respecte les droits fondamentaux."
+)
+
+SAMPLE_ES = (
+    "La inteligencia artificial está revolucionando de manera acelerada múltiples sectores industriales y científicos en todo el mundo. "
+    "En el ámbito de la biomedicina, las herramientas avanzadas de procesamiento de lenguaje natural y visión artificial permiten acelerar "
+    "el descubrimiento de nuevos fármacos y analizar imágenes clínicas complejas con un nivel de exactitud sin precedentes, mejorando "
+    "drásticamente el pronóstico y tratamiento de los pacientes. Asimismo, en el sector agroalimentario, los modelos predictivos optimizan "
+    "el uso eficiente del agua y reducen los impactos ambientales en la producción agrícola.\n\n"
+    "Sin embargo, el despliegue generalizado de estas soluciones autónomas plantea retos considerables en materia de privacidad, equidad "
+    "algorítmica y seguridad digital. Los sesgos inherentes a los datos de entrenamiento y la opacidad de los algoritmos de caja negra exigen "
+    "la formulación de normativas sólidas. Diversos organismos globales y gobiernos están promoviendo marcos regulatorios que garanticen "
+    "la explicabilidad, la supervisión humana continua y el uso ético y responsable de la inteligencia artificial."
+)
 
 with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTOM_CSS) as demo:
 
@@ -495,7 +535,12 @@ with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTO
                         sl_min_1 = gr.Slider(20, 150, value=35, step=5, label="Min Tokens")
                         sl_beam_1 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
-                    gr.Examples(examples=TRANSCRIPT_EXAMPLES, inputs=text_in, label="Dữ liệu mẫu:")
+                    gr.Markdown("<div style='font-size: 12.5px; font-weight: 600; color: #5f6368; margin-top: 6px; margin-bottom: 2px;'>💡 Dữ liệu mẫu (Click để điền nhanh toàn văn 4 ngôn ngữ):</div>")
+                    with gr.Row():
+                        btn_sample_vi = gr.Button("🇻🇳 Tiếng Việt", size="sm")
+                        btn_sample_en = gr.Button("🇬🇧 English", size="sm")
+                        btn_sample_fr = gr.Button("🇫🇷 Français", size="sm")
+                        btn_sample_es = gr.Button("🇪🇸 Español", size="sm")
 
                 # Tab 2: File phụ đề
                 with gr.Tab("📁 File Phụ Đề (.srt / .txt)"):
@@ -573,7 +618,10 @@ with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTO
                         sl_min_4 = gr.Slider(20, 150, value=35, step=5, label="Min Tokens")
                         sl_beam_4 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
-                    gr.Examples(examples=URL_EXAMPLES, inputs=url_in, label="Video mẫu thử nghiệm nhanh:")
+                    gr.Markdown("<div style='font-size: 12.5px; font-weight: 600; color: #5f6368; margin-top: 6px; margin-bottom: 2px;'>💡 Video mẫu có sẵn phụ đề chuẩn CC (Click để chọn nhanh):</div>")
+                    with gr.Row():
+                        btn_url_vi = gr.Button("🇻🇳 Video VN: Lúa & Khí Metan", size="sm")
+                        btn_url_en = gr.Button("🇬🇧 Video EN: Steve Jobs Stanford Speech", size="sm")
 
         # RIGHT COLUMN: Output Workspace (Google Translate Target Panel)
         with gr.Column(scale=1):
@@ -645,6 +693,16 @@ with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTO
         outputs=output_components,
         api_name="summarize_url"
     )
+
+    # Quick Sample Click Handlers (Text Tab)
+    btn_sample_vi.click(fn=lambda: (SAMPLE_VI, "Tiếng Việt"), outputs=[text_in, lang_opt_1])
+    btn_sample_en.click(fn=lambda: (SAMPLE_EN, "English"), outputs=[text_in, lang_opt_1])
+    btn_sample_fr.click(fn=lambda: (SAMPLE_FR, "Français"), outputs=[text_in, lang_opt_1])
+    btn_sample_es.click(fn=lambda: (SAMPLE_ES, "Español"), outputs=[text_in, lang_opt_1])
+
+    # Quick Sample Click Handlers (URL Tab)
+    btn_url_vi.click(fn=lambda: ("https://www.youtube.com/watch?v=VAIe6L68M3E", "Tiếng Việt"), outputs=[url_in, lang_opt_4])
+    btn_url_en.click(fn=lambda: ("https://www.youtube.com/watch?v=UF8uR6Z6KLc", "English"), outputs=[url_in, lang_opt_4])
 
 if __name__ == "__main__":
     demo.queue().launch()
