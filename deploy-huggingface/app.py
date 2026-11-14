@@ -66,17 +66,18 @@ def process_pipeline(
 
         lang_map = {
             "Auto": "auto",
+            "Auto (Detect)": "auto",
             "Tự động (Auto)": "auto",
+            "Vietnamese": "vi",
             "Tiếng Việt": "vi",
-            "Tiếng Anh (English)": "en",
-            "Tiếng Anh": "en",
             "English": "en",
-            "Tiếng Pháp (Français)": "fr",
-            "Tiếng Pháp": "fr",
+            "Tiếng Anh": "en",
+            "French": "fr",
             "Français": "fr",
-            "Tiếng Tây Ban Nha (Español)": "es",
-            "Tiếng Tây Ban Nha": "es",
+            "Tiếng Pháp": "fr",
+            "Spanish": "es",
             "Español": "es",
+            "Tiếng Tây Ban Nha": "es",
             "Tieng Viet": "vi"
         }
         target_lang_code = lang_map.get(target_lang, "auto")
@@ -512,7 +513,7 @@ SAMPLE_ES = (
     "la explicabilidad, la supervisión humana continua y el uso ético y responsable de la inteligencia artificial."
 )
 
-LANG_CHOICES = ["Tự động (Auto)", "Tiếng Việt", "Tiếng Anh (English)", "Tiếng Pháp (Français)", "Tiếng Tây Ban Nha (Español)"]
+LANG_CHOICES = ["Auto", "Vietnamese", "English", "French", "Spanish"]
 
 with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", css=CUSTOM_CSS) as demo:
 
@@ -526,7 +527,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
               <span style="background: #eff6ff; color: #2563eb; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 6px; border: 1px solid #bfdbfe;">NLP Platform</span>
             </div>
             <div style="color: #64748b; font-size: 13.5px; margin-top: 3px;">
-              Hệ thống nhận diện giọng nói & tóm tắt video đa ngôn ngữ (Tiếng Việt · Tiếng Anh · Tiếng Pháp · Tiếng Tây Ban Nha)
+              Hệ thống nhận diện giọng nói & tóm tắt video đa ngôn ngữ (Vietnamese · English · French · Spanish)
             </div>
           </div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: #475569;">
@@ -557,15 +558,15 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                     
                     gr.HTML("<div style='font-size: 12.5px; font-weight: 500; color: #64748b; margin-top: 6px; margin-bottom: 4px;'>Dữ liệu mẫu thử nghiệm:</div>")
                     with gr.Row():
-                        btn_sample_vi = gr.Button("🇻🇳 Tiếng Việt", size="sm")
-                        btn_sample_en = gr.Button("🇬🇧 Tiếng Anh", size="sm")
-                        btn_sample_fr = gr.Button("🇫🇷 Tiếng Pháp", size="sm")
-                        btn_sample_es = gr.Button("🇪🇸 Tiếng Tây Ban Nha", size="sm")
+                        btn_sample_vi = gr.Button("🇻🇳 Vietnamese", size="sm")
+                        btn_sample_en = gr.Button("🇬🇧 English", size="sm")
+                        btn_sample_fr = gr.Button("🇫🇷 French", size="sm")
+                        btn_sample_es = gr.Button("🇪🇸 Spanish", size="sm")
 
                     with gr.Row():
                         lang_opt_1 = gr.Dropdown(
                             choices=LANG_CHOICES,
-                            value="Tự động (Auto)",
+                            value="Auto",
                             label="Ngôn ngữ tóm tắt",
                             scale=1
                         )
@@ -617,7 +618,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                     with gr.Row():
                         lang_opt_2 = gr.Dropdown(
                             choices=LANG_CHOICES,
-                            value="Tự động (Auto)",
+                            value="Auto",
                             label="Ngôn ngữ tóm tắt",
                             scale=1
                         )
@@ -675,7 +676,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                     with gr.Row():
                         lang_opt_3 = gr.Dropdown(
                             choices=LANG_CHOICES,
-                            value="Tự động (Auto)",
+                            value="Auto",
                             label="Ngôn ngữ tóm tắt",
                             scale=1
                         )
@@ -733,7 +734,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
                     with gr.Row():
                         lang_opt_4 = gr.Dropdown(
                             choices=LANG_CHOICES,
-                            value="Tự động (Auto)",
+                            value="Auto",
                             label="Ngôn ngữ tóm tắt",
                             scale=1
                         )
@@ -781,10 +782,10 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
         outputs=[meta_out_1, exec_out_1, download_out_1],
         api_name="summarize_text"
     )
-    btn_sample_vi.click(fn=lambda: (SAMPLE_VI, "Tiếng Việt"), outputs=[text_in, lang_opt_1])
-    btn_sample_en.click(fn=lambda: (SAMPLE_EN, "Tiếng Anh (English)"), outputs=[text_in, lang_opt_1])
-    btn_sample_fr.click(fn=lambda: (SAMPLE_FR, "Tiếng Pháp (Français)"), outputs=[text_in, lang_opt_1])
-    btn_sample_es.click(fn=lambda: (SAMPLE_ES, "Tiếng Tây Ban Nha (Español)"), outputs=[text_in, lang_opt_1])
+    btn_sample_vi.click(fn=lambda: (SAMPLE_VI, "Vietnamese"), outputs=[text_in, lang_opt_1])
+    btn_sample_en.click(fn=lambda: (SAMPLE_EN, "English"), outputs=[text_in, lang_opt_1])
+    btn_sample_fr.click(fn=lambda: (SAMPLE_FR, "French"), outputs=[text_in, lang_opt_1])
+    btn_sample_es.click(fn=lambda: (SAMPLE_ES, "Spanish"), outputs=[text_in, lang_opt_1])
 
     # Tab 2: URL
     btn_url.click(
@@ -793,8 +794,8 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", c
         outputs=[meta_out_2, exec_out_2, chapter_out_2, stats_out_2, transcript_out_2, download_out_2],
         api_name="summarize_url"
     )
-    btn_url_vi.click(fn=lambda: ("https://www.youtube.com/watch?v=VAIe6L68M3E", "Tiếng Việt"), outputs=[url_in, lang_opt_2])
-    btn_url_en.click(fn=lambda: ("https://www.youtube.com/watch?v=UF8uR6Z6KLc", "Tiếng Anh (English)"), outputs=[url_in, lang_opt_2])
+    btn_url_vi.click(fn=lambda: ("https://www.youtube.com/watch?v=VAIe6L68M3E", "Vietnamese"), outputs=[url_in, lang_opt_2])
+    btn_url_en.click(fn=lambda: ("https://www.youtube.com/watch?v=UF8uR6Z6KLc", "English"), outputs=[url_in, lang_opt_2])
 
     # Tab 3: Video / Audio
     btn_video.click(
