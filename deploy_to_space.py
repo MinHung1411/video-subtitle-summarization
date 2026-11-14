@@ -15,6 +15,7 @@ def main():
     parser = argparse.ArgumentParser(description="Deploy Video Subtitle Summarization App to HF Spaces")
     parser.add_argument("--token", type=str, default=None, help="Hugging Face Write Token")
     parser.add_argument("--repo_id", type=str, default=SPACE_REPO_ID)
+    parser.add_argument("--message", type=str, default="Refactor layout: top-level navigation, clean text tab, distinct summary cards")
     args = parser.parse_args()
 
     token = args.token or os.environ.get("HF_TOKEN")
@@ -29,7 +30,7 @@ def main():
         folder_path=DEPLOY_DIR,
         repo_id=args.repo_id,
         repo_type="space",
-        commit_message="Fix Vietnamese 1-sentence and extractive bias: adaptive chunking & balanced beam search",
+        commit_message=args.message,
         ignore_patterns=["__pycache__/*", "*.pyc", "*.DS_Store", ".cache/*"],
         token=token
     )
