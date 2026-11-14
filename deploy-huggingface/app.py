@@ -193,24 +193,24 @@ def process_pipeline(
                 time_range = ch.get("time_str", "")
                 if re.search(r"\d{1,2}:\d{2}", str(time_range)):
                     chapter_md.append(
-                        f"""<div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(60,64,67,0.06);">
-  <div style="margin-bottom: 6px;"><span style="background: #e8f0fe; color: #1a73e8; font-weight: 600; font-size: 12px; padding: 3px 10px; border-radius: 12px; display: inline-block;">Phân Đoạn {ch['chunk_id']} · ⏱️ {time_range}</span></div>
-  <div style="font-size: 14.5px; color: #202124; line-height: 1.6;">{ch['summary']}</div>
+                        f"""<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 8px;">
+  <div style="font-size: 12.5px; font-weight: 600; color: #2563eb; margin-bottom: 4px;">Phân đoạn {ch['chunk_id']} · {time_range}</div>
+  <div style="font-size: 14px; color: #1e293b; line-height: 1.6;">{ch['summary']}</div>
 </div>"""
                     )
                 elif time_range and time_range != "Toàn văn":
                     chapter_md.append(
-                        f"""<div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(60,64,67,0.06);">
-  <div style="margin-bottom: 6px;"><span style="background: #e8f0fe; color: #1a73e8; font-weight: 600; font-size: 12px; padding: 3px 10px; border-radius: 12px; display: inline-block;">{time_range}</span></div>
-  <div style="font-size: 14.5px; color: #202124; line-height: 1.6;">{ch['summary']}</div>
+                        f"""<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 8px;">
+  <div style="font-size: 12.5px; font-weight: 600; color: #2563eb; margin-bottom: 4px;">{time_range}</div>
+  <div style="font-size: 14px; color: #1e293b; line-height: 1.6;">{ch['summary']}</div>
 </div>"""
                     )
         elif chapters and any(re.search(r"\d{1,2}:\d{2}", str(c.get("time_str", ""))) for c in chapters):
             ch = chapters[0]
             chapter_md.append(
-                f"""<div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(60,64,67,0.06);">
-  <div style="margin-bottom: 6px;"><span style="background: #e8f0fe; color: #1a73e8; font-weight: 600; font-size: 12px; padding: 3px 10px; border-radius: 12px; display: inline-block;">Phân Đoạn 1 · ⏱️ {ch.get('time_str', '')}</span></div>
-  <div style="font-size: 14.5px; color: #202124; line-height: 1.6;">{ch['summary']}</div>
+                f"""<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 8px;">
+  <div style="font-size: 12.5px; font-weight: 600; color: #2563eb; margin-bottom: 4px;">Phân đoạn 1 · {ch.get('time_str', '')}</div>
+  <div style="font-size: 14px; color: #1e293b; line-height: 1.6;">{ch['summary']}</div>
 </div>"""
             )
 
@@ -222,26 +222,26 @@ def process_pipeline(
                 pts_md = []
                 for pt_title, content in thematic_pts:
                     pts_md.append(
-                        f"""<div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 14px 18px; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(60,64,67,0.06);">
-  <div style="margin-bottom: 6px;"><span style="background: #e8f0fe; color: #1a73e8; font-weight: 600; font-size: 12px; padding: 3px 10px; border-radius: 12px; display: inline-block;">{pt_title}</span></div>
-  <div style="font-size: 14.5px; color: #202124; line-height: 1.6;">{content}</div>
+                        f"""<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 12px 16px; margin-bottom: 8px;">
+  <div style="font-size: 12.5px; font-weight: 600; color: #2563eb; margin-bottom: 4px;">{pt_title}</div>
+  <div style="font-size: 14px; color: #1e293b; line-height: 1.6;">{content}</div>
 </div>"""
                     )
                 chapter_display = "\n".join(pts_md)
             else:
-                chapter_display = f"> 📄 *Toàn bộ nội dung ({word_count} từ) đã được tóm tắt súc tích trong Bản Tóm Tắt ở trên.*"
+                chapter_display = f"> Toàn bộ nội dung ({word_count:,} từ) đã được tổng hợp trong Bản tóm tắt điều hành ở trên."
 
         total_elapsed = time.time() - t_start
 
-        # Clean Google-style Metadata Badge
+        # Clean Engineering Metadata Bar
         meta_info = (
-            f"""<div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 8px; padding: 8px 14px; margin-bottom: 10px; font-size: 13px; color: #5f6368; display: flex; flex-wrap: wrap; gap: 14px; align-items: center;">
-              <span>📁 <strong>{title}</strong></span>
-              <span>⏱️ {duration_str}</span>
-              <span>🌐 <span style="background: #e8f0fe; color: #1a73e8; padding: 2px 8px; border-radius: 10px; font-weight: 600; font-size: 12px;">{detected_lang.upper()}</span></span>
-              <span>📝 {word_count:,} từ</span>
-              <span>⚡ <strong style="color: #137333;">{total_elapsed:.1f}s</strong></span>
-              <span style="color: #1a73e8; font-weight: 500;">✓ CPU 16GB</span>
+            f"""<div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 10px 16px; margin-bottom: 12px; font-size: 13px; color: #475569; display: flex; flex-wrap: wrap; gap: 18px; align-items: center;">
+              <span>Nguồn: <strong style="color: #0f172a;">{title}</strong></span>
+              <span>Thời lượng: <strong>{duration_str}</strong></span>
+              <span>Ngôn ngữ: <strong style="color: #2563eb;">{detected_lang.upper()}</strong></span>
+              <span>Số từ: <strong>{word_count:,}</strong></span>
+              <span>Thời gian xử lý: <strong style="color: #059669;">{total_elapsed:.1f}s</strong></span>
+              <span style="color: #64748b; font-size: 12px;">Môi trường: CPU 16GB</span>
             </div>"""
         )
 
@@ -306,87 +306,117 @@ def run_url_tab(url, target_lang, whisper_size, max_tokens, min_tokens, num_beam
     return process_pipeline("url", url, "", target_lang, whisper_size, max_tokens, min_tokens, num_beams)
 
 CUSTOM_CSS = """
-/* Google Material 3 Minimalist Clean Theme */
+/* Modern Engineering Minimalist Theme - Slate & Indigo */
 body, .gradio-container {
-    background-color: #f8fafd !important;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Google Sans", Helvetica, Arial, sans-serif !important;
-    color: #202124 !important;
+    background-color: #f8fafc !important;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif !important;
+    color: #0f172a !important;
 }
 
 .gradio-container {
-    max-width: 1320px !important;
+    max-width: 1280px !important;
     margin: 0 auto !important;
-    padding: 16px 20px !important;
+    padding: 20px !important;
 }
 
-/* Tabs: Full-width Top Navigation */
+/* Tabs: Minimalist Horizontal Navigation */
 .tab-nav {
-    border-bottom: 2px solid #e8eaed !important;
+    border-bottom: 1px solid #e2e8f0 !important;
     background: transparent !important;
-    gap: 6px !important;
-    padding: 0 4px !important;
-    margin-bottom: 16px !important;
+    gap: 4px !important;
+    padding: 0 !important;
+    margin-bottom: 20px !important;
 }
 .tab-nav button {
     border: none !important;
-    border-radius: 8px 8px 0 0 !important;
-    color: #5f6368 !important;
+    border-radius: 6px 6px 0 0 !important;
+    border-bottom: 2px solid transparent !important;
+    color: #64748b !important;
     font-weight: 500 !important;
-    font-size: 14px !important;
+    font-size: 13.5px !important;
     padding: 10px 18px !important;
     background: transparent !important;
-    transition: all 0.2s ease !important;
+    transition: all 0.15s ease !important;
 }
 .tab-nav button:hover {
-    background: #f1f3f4 !important;
-    color: #202124 !important;
+    color: #0f172a !important;
+    background: #f1f5f9 !important;
 }
 .tab-nav button.selected {
-    color: #1a73e8 !important;
+    color: #0f172a !important;
     font-weight: 600 !important;
-    border-bottom: 3px solid #1a73e8 !important;
+    border-bottom: 2px solid #0f172a !important;
     background: transparent !important;
 }
 
-/* Primary Action Buttons: Google Blue Pill */
+/* Primary Action Buttons: Solid Slate */
 button.primary, .gr-button-primary {
-    background: #1a73e8 !important;
+    background: #0f172a !important;
     color: #ffffff !important;
-    border: none !important;
-    border-radius: 24px !important;
-    font-weight: 600 !important;
-    font-size: 14px !important;
-    padding: 10px 24px !important;
-    box-shadow: 0 1px 3px rgba(60,64,67,0.3) !important;
-    transition: background-color 0.2s ease, box-shadow 0.2s ease !important;
+    border: 1px solid #0f172a !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    font-size: 13.5px !important;
+    padding: 9px 20px !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05) !important;
+    transition: background-color 0.15s ease !important;
 }
 button.primary:hover, .gr-button-primary:hover {
-    background: #1765cc !important;
-    box-shadow: 0 2px 6px rgba(60,64,67,0.4) !important;
+    background: #1e293b !important;
+    border-color: #1e293b !important;
 }
 button.primary:active {
-    background: #185abc !important;
+    background: #334155 !important;
 }
 
-/* Output Result Card: Blue Top Border & Distinct Surface */
+/* Secondary / Sample Buttons */
+.sample-btn, button.secondary, .gr-button-secondary {
+    background: #ffffff !important;
+    color: #334155 !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    font-size: 12.5px !important;
+    padding: 6px 12px !important;
+    transition: all 0.15s ease !important;
+}
+.sample-btn:hover, button.secondary:hover, .gr-button-secondary:hover {
+    background: #f8fafc !important;
+    border-color: #94a3b8 !important;
+    color: #0f172a !important;
+}
+
+/* Output Result Card */
 .summary-result-card {
     background: #ffffff !important;
-    border: 1.5px solid #bfdbfe !important;
-    border-top: 4px solid #1a73e8 !important;
-    border-radius: 12px !important;
-    padding: 18px 20px !important;
-    min-height: 270px !important;
-    font-size: 15px !important;
-    line-height: 1.75 !important;
-    color: #202124 !important;
-    box-shadow: 0 1px 4px rgba(60,64,67,0.08) !important;
+    border: 1px solid #e2e8f0 !important;
+    border-left: 4px solid #2563eb !important;
+    border-radius: 6px !important;
+    padding: 18px 22px !important;
+    min-height: 250px !important;
+    font-size: 14.5px !important;
+    line-height: 1.7 !important;
+    color: #0f172a !important;
+    box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.04) !important;
+}
+
+/* Form Controls */
+input, textarea, select {
+    border-radius: 6px !important;
+    border: 1px solid #cbd5e1 !important;
+    font-size: 13.5px !important;
+}
+input:focus, textarea:focus, select:focus {
+    border-color: #2563eb !important;
+    outline: none !important;
+    box-shadow: 0 0 0 1px #2563eb !important;
 }
 
 /* Metrics Table */
 #metrics-card {
     background: #ffffff !important;
-    border: 1px solid #dadce0 !important;
-    border-radius: 10px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
     padding: 16px 20px !important;
 }
 #metrics-card table {
@@ -395,27 +425,28 @@ button.primary:active {
     margin: 10px 0 !important;
 }
 #metrics-card th {
-    background: #f8f9fa !important;
-    color: #3c4043 !important;
+    background: #f8fafc !important;
+    color: #475569 !important;
     padding: 10px 14px !important;
-    border: 1px solid #dadce0 !important;
+    border: 1px solid #e2e8f0 !important;
     font-weight: 600 !important;
-    font-size: 13.5px !important;
+    font-size: 13px !important;
+    text-align: left !important;
 }
 #metrics-card td {
     padding: 9px 14px !important;
-    border: 1px solid #dadce0 !important;
-    color: #3c4043 !important;
-    font-size: 13.5px !important;
+    border: 1px solid #e2e8f0 !important;
+    color: #334155 !important;
+    font-size: 13px !important;
 }
 
 /* Accordions */
 .gr-accordion {
-    border: 1px solid #dadce0 !important;
-    border-radius: 10px !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 6px !important;
     background: #ffffff !important;
-    margin-top: 12px !important;
-    box-shadow: 0 1px 2px rgba(60,64,67,0.06) !important;
+    margin-top: 14px !important;
+    box-shadow: none !important;
 }
 """
 
@@ -472,31 +503,22 @@ SAMPLE_ES = (
     "la explicabilidad, la supervisión humana continua y el uso ético y responsable de la inteligencia artificial."
 )
 
-with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTOM_CSS) as demo:
+with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", css=CUSTOM_CSS) as demo:
 
-    # Google Material Clean Header
+    # Engineering Minimalist Header
     gr.HTML(
         """
-        <div style="background: #ffffff; border: 1px solid #dadce0; border-radius: 12px; padding: 14px 22px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 12px; box-shadow: 0 1px 3px rgba(60,64,67,0.08);">
-          <div style="display: flex; align-items: center; gap: 12px;">
-            <div style="background: #e8f0fe; width: 40px; height: 40px; border-radius: 10px; display: flex; align-items: center; justify-content: center; font-size: 20px;">
-              🎬
-            </div>
-            <div>
-              <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 20px; font-weight: 700; color: #1a73e8; letter-spacing: -0.3px;">VideoInsight</span>
-                <span style="background: #e8f0fe; color: #1a73e8; font-size: 11.5px; font-weight: 600; padding: 2px 8px; border-radius: 12px;">AI Summarizer</span>
-              </div>
-              <p style="margin: 2px 0 0 0; color: #5f6368; font-size: 13px;">
-                Tóm tắt thông minh lời thoại video & văn bản đa ngữ (Vi · En · Fr · Es) với OpenAI Whisper & fine-tuned mT5
-              </p>
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 18px 24px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 16px;">
+          <div>
+            <div style="font-size: 20px; font-weight: 700; color: #0f172a; letter-spacing: -0.02em;">VideoInsight</div>
+            <div style="color: #64748b; font-size: 13.5px; margin-top: 3px;">
+              Hệ thống nhận diện giọng nói và tóm tắt phân cấp đa ngôn ngữ (Tiếng Việt · English · Français · Español)
             </div>
           </div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center;">
-            <span style="background: #f1f3f4; color: #3c4043; padding: 4px 10px; border-radius: 14px; font-size: 12px; font-weight: 500;">🎙️ Whisper ASR</span>
-            <span style="background: #f1f3f4; color: #3c4043; padding: 4px 10px; border-radius: 14px; font-size: 12px; font-weight: 500;">🧠 mT5 Seq2Seq</span>
-            <span style="background: #f1f3f4; color: #3c4043; padding: 4px 10px; border-radius: 14px; font-size: 12px; font-weight: 500;">⚡ Map-Reduce</span>
-            <span style="background: #e8f0fe; color: #1a73e8; padding: 4px 10px; border-radius: 14px; font-size: 12px; font-weight: 600;">☁️ High-Memory CPU</span>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 12px; color: #475569;">
+            <span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-weight: 500;">OpenAI Whisper</span>
+            <span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-weight: 500;">Fine-tuned mT5 (582M)</span>
+            <span style="background: #f1f5f9; padding: 4px 10px; border-radius: 6px; font-weight: 500;">Hierarchical Map-Reduce</span>
           </div>
         </div>
         """
@@ -506,25 +528,25 @@ with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTO
     with gr.Tabs():
 
         # =========================================================================
-        # TAB 1: 📝 VĂN BẢN (TEXT) - Pure Side-by-Side Summarization (No bottom clutter)
+        # TAB 1: VĂN BẢN (TEXT) - Side-by-Side Summarization (Clean Layout)
         # =========================================================================
-        with gr.Tab("📝 1. Văn bản (Text)"):
+        with gr.Tab("Văn bản"):
             with gr.Row(equal_height=False):
                 # Left Column: Input
                 with gr.Column(scale=1):
-                    gr.HTML("<div style='font-size: 13.5px; font-weight: 700; color: #475569; margin-bottom: 8px;'>📥 VĂN BẢN NGUỒN (INPUT TRANSCRIPT)</div>")
+                    gr.HTML("<div style='font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 8px;'>Văn bản đầu vào (Input Text)</div>")
                     text_in = gr.Textbox(
                         label="",
-                        placeholder="Nhập hoặc dán nội dung văn bản transcript vào đây, hoặc click chọn nhanh mẫu 4 ngôn ngữ bên dưới...",
+                        placeholder="Nhập hoặc dán nội dung văn bản transcript cần tóm tắt, hoặc chọn dữ liệu mẫu bên dưới...",
                         lines=11
                     )
                     
-                    gr.Markdown("<div style='font-size: 12.5px; font-weight: 600; color: #5f6368; margin-top: 4px; margin-bottom: 2px;'>💡 Chọn nhanh dữ liệu mẫu 4 ngôn ngữ:</div>")
+                    gr.HTML("<div style='font-size: 12.5px; font-weight: 500; color: #64748b; margin-top: 6px; margin-bottom: 4px;'>Dữ liệu mẫu thử nghiệm:</div>")
                     with gr.Row():
-                        btn_sample_vi = gr.Button("🇻🇳 Tiếng Việt", size="sm")
-                        btn_sample_en = gr.Button("🇬🇧 English", size="sm")
-                        btn_sample_fr = gr.Button("🇫🇷 Français", size="sm")
-                        btn_sample_es = gr.Button("🇪🇸 Español", size="sm")
+                        btn_sample_vi = gr.Button("Tiếng Việt", size="sm")
+                        btn_sample_en = gr.Button("English", size="sm")
+                        btn_sample_fr = gr.Button("Français", size="sm")
+                        btn_sample_es = gr.Button("Español", size="sm")
 
                     with gr.Row():
                         lang_opt_1 = gr.Dropdown(
@@ -535,40 +557,33 @@ with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTO
                         )
                         btn_text = gr.Button("Tóm tắt văn bản", variant="primary", scale=1)
 
-                    with gr.Accordion("⚙️ Tùy chọn tham số", open=False):
+                    with gr.Accordion("Tùy chọn tham số sinh (Hyperparameters)", open=False):
                         sl_max_1 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
                         sl_min_1 = gr.Slider(20, 150, value=35, step=5, label="Min Tokens")
                         sl_beam_1 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
                 # Right Column: Output
                 with gr.Column(scale=1):
-                    gr.HTML(
-                        """
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                          <div style="font-size: 13.5px; font-weight: 700; color: #1a73e8;">✨ BẢN TÓM TẮT ĐIỀU HÀNH (EXECUTIVE SUMMARY)</div>
-                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;">Output Card</span>
-                        </div>
-                        """
-                    )
+                    gr.HTML("<div style='font-size: 13.5px; font-weight: 600; color: #0f172a; margin-bottom: 8px;'>Bản tóm tắt điều hành (Executive Summary)</div>")
                     meta_out_1 = gr.Markdown()
                     exec_out_1 = gr.Markdown(
-                        value="*Kết quả tóm tắt súc tích, đầy đủ ý chính sẽ xuất hiện tại đây sau khi bạn nhấn nút tóm tắt.*",
+                        value="*Kết quả tóm tắt súc tích, mạch lạc sẽ xuất hiện tại đây sau khi xử lý.*",
                         elem_classes=["summary-result-card"]
                     )
                     download_out_1 = gr.File(
-                        label="📥 Tải báo cáo tóm tắt (.md)",
+                        label="Tải báo cáo tóm tắt (.md)",
                         interactive=False
                     )
 
         # =========================================================================
-        # TAB 2: 📁 FILE PHỤ ĐỀ (.srt / .txt)
+        # TAB 2: TỆP PHỤ ĐỀ (.srt / .txt)
         # =========================================================================
-        with gr.Tab("📁 2. File Phụ Đề (.srt / .txt)"):
+        with gr.Tab("Tệp phụ đề (.srt / .txt)"):
             with gr.Row(equal_height=False):
                 with gr.Column(scale=1):
-                    gr.HTML("<div style='font-size: 13.5px; font-weight: 700; color: #475569; margin-bottom: 8px;'>📁 TẢI LÊN FILE PHỤ ĐỀ</div>")
+                    gr.HTML("<div style='font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 8px;'>Tải lên tệp phụ đề</div>")
                     srt_in = gr.File(
-                        label="File phụ đề (.srt, .vtt, .txt)",
+                        label="Tệp phụ đề (.srt, .vtt, .txt)",
                         file_types=[".srt", ".vtt", ".txt"],
                         type="filepath"
                     )
@@ -579,48 +594,41 @@ with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTO
                             label="Ngôn ngữ tóm tắt",
                             scale=1
                         )
-                        btn_srt = gr.Button("Tóm tắt phụ đề", variant="primary", scale=1)
+                        btn_srt = gr.Button("Xử lý tệp phụ đề", variant="primary", scale=1)
 
-                    with gr.Accordion("⚙️ Tùy chọn tham số", open=False):
+                    with gr.Accordion("Tùy chọn tham số sinh", open=False):
                         sl_max_2 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
                         sl_min_2 = gr.Slider(20, 150, value=35, step=5, label="Min Tokens")
                         sl_beam_2 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
                 with gr.Column(scale=1):
-                    gr.HTML(
-                        """
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                          <div style="font-size: 13.5px; font-weight: 700; color: #1a73e8;">✨ BẢN TÓM TẮT ĐIỀU HÀNH (EXECUTIVE SUMMARY)</div>
-                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;">Output Card</span>
-                        </div>
-                        """
-                    )
+                    gr.HTML("<div style='font-size: 13.5px; font-weight: 600; color: #0f172a; margin-bottom: 8px;'>Bản tóm tắt điều hành (Executive Summary)</div>")
                     meta_out_2 = gr.Markdown()
                     exec_out_2 = gr.Markdown(
                         value="*Kết quả tóm tắt súc tích sẽ hiển thị tại đây.*",
                         elem_classes=["summary-result-card"]
                     )
                     download_out_2 = gr.File(
-                        label="📥 Tải báo cáo tóm tắt (.md)",
+                        label="Tải báo cáo tóm tắt (.md)",
                         interactive=False
                     )
 
-            with gr.Accordion("📍 Dòng Thời Gian & Phân Đoạn (Chapter Timeline)", open=True):
+            with gr.Accordion("Phân đoạn nội dung theo dòng thời gian (Timeline & Highlights)", open=True):
                 chapter_out_2 = gr.Markdown(value="*Dòng thời gian các phân đoạn nội dung chính sẽ hiển thị tại đây.*")
-            with gr.Accordion("📄 Lời Thoại Transcript Đầy Đủ 100% (Full Transcript)", open=False):
+            with gr.Accordion("Toàn văn lời thoại trích xuất (Full Transcript)", open=False):
                 transcript_out_2 = gr.Textbox(label="Toàn bộ lời thoại trích xuất từ file phụ đề", lines=10, max_lines=30, interactive=False)
-            with gr.Accordion("📊 Đánh Giá Đo Lường NLP (ROUGE Metrics)", open=False):
+            with gr.Accordion("Chỉ số đánh giá định lượng NLP (ROUGE Benchmark)", open=False):
                 stats_out_2 = gr.Markdown(value="*Chỉ số ROUGE và đánh giá nén.*", elem_id="metrics-card")
 
         # =========================================================================
-        # TAB 3: 🎬 UPLOAD VIDEO / AUDIO (WHISPER ASR)
+        # TAB 3: TẢI LÊN VIDEO / AUDIO (WHISPER ASR)
         # =========================================================================
-        with gr.Tab("🎬 3. Upload Video / Audio"):
+        with gr.Tab("Tải lên Video / Audio"):
             with gr.Row(equal_height=False):
                 with gr.Column(scale=1):
-                    gr.HTML("<div style='font-size: 13.5px; font-weight: 700; color: #475569; margin-bottom: 8px;'>🎙️ TẢI LÊN FILE VIDEO / AUDIO</div>")
+                    gr.HTML("<div style='font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 8px;'>Tải lên tệp Video hoặc Âm thanh</div>")
                     video_in = gr.File(
-                        label="File Video hoặc Âm thanh (.mp4, .mp3, .wav, .m4a)",
+                        label="Tệp phương tiện (.mp4, .mkv, .avi, .mov, .mp3, .wav, .m4a)",
                         file_types=[".mp4", ".mkv", ".avi", ".mov", ".mp3", ".wav", ".m4a"],
                         type="filepath"
                     )
@@ -637,56 +645,49 @@ with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTO
                             label="Whisper ASR",
                             scale=1
                         )
-                    btn_video = gr.Button("Tóm tắt Video/Audio", variant="primary")
+                    btn_video = gr.Button("Xử lý Video / Audio", variant="primary")
 
-                    with gr.Accordion("⚙️ Tùy chọn tham số sinh", open=False):
+                    with gr.Accordion("Tùy chọn tham số sinh", open=False):
                         sl_max_3 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
                         sl_min_3 = gr.Slider(20, 150, value=35, step=5, label="Min Tokens")
                         sl_beam_3 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
                 with gr.Column(scale=1):
-                    gr.HTML(
-                        """
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                          <div style="font-size: 13.5px; font-weight: 700; color: #1a73e8;">✨ BẢN TÓM TẮT ĐIỀU HÀNH (EXECUTIVE SUMMARY)</div>
-                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;">Output Card</span>
-                        </div>
-                        """
-                    )
+                    gr.HTML("<div style='font-size: 13.5px; font-weight: 600; color: #0f172a; margin-bottom: 8px;'>Bản tóm tắt điều hành (Executive Summary)</div>")
                     meta_out_3 = gr.Markdown()
                     exec_out_3 = gr.Markdown(
                         value="*Kết quả nhận diện giọng nói và tóm tắt sẽ xuất hiện tại đây.*",
                         elem_classes=["summary-result-card"]
                     )
                     download_out_3 = gr.File(
-                        label="📥 Tải báo cáo tóm tắt (.md)",
+                        label="Tải báo cáo tóm tắt (.md)",
                         interactive=False
                     )
 
-            with gr.Accordion("📍 Dòng Thời Gian & Phân Đoạn Video (Chapter Timeline)", open=True):
+            with gr.Accordion("Phân đoạn nội dung theo dòng thời gian (Timeline & Highlights)", open=True):
                 chapter_out_3 = gr.Markdown(value="*Dòng thời gian các phân đoạn nội dung chính sẽ hiển thị tại đây.*")
-            with gr.Accordion("📄 Lời Thoại Transcript Đầy Đủ 100% (Full Speech Transcript)", open=False):
+            with gr.Accordion("Toàn văn lời thoại trích xuất (Full Speech Transcript)", open=False):
                 transcript_out_3 = gr.Textbox(label="Toàn bộ lời thoại nhận diện từ âm thanh video", lines=10, max_lines=30, interactive=False)
-            with gr.Accordion("📊 Đánh Giá Đo Lường NLP (ROUGE Metrics)", open=False):
+            with gr.Accordion("Chỉ số đánh giá định lượng NLP (ROUGE Benchmark)", open=False):
                 stats_out_3 = gr.Markdown(value="*Chỉ số ROUGE và đánh giá nén.*", elem_id="metrics-card")
 
         # =========================================================================
-        # TAB 4: 🔗 LINK VIDEO TRỰC TUYẾN (URL)
+        # TAB 4: LIÊN KẾT VIDEO TRỰC TUYẾN (URL)
         # =========================================================================
-        with gr.Tab("🔗 4. Link Video Trực Tuyến (URL)"):
+        with gr.Tab("Liên kết Video (URL)"):
             with gr.Row(equal_height=False):
                 with gr.Column(scale=1):
-                    gr.HTML("<div style='font-size: 13.5px; font-weight: 700; color: #475569; margin-bottom: 8px;'>🔗 LINK VIDEO TRỰC TUYẾN (YOUTUBE / URL)</div>")
+                    gr.HTML("<div style='font-size: 13.5px; font-weight: 600; color: #334155; margin-bottom: 8px;'>Đường dẫn Video trực tuyến (YouTube / URL)</div>")
                     url_in = gr.Textbox(
                         label="",
-                        placeholder="Dán link YouTube vào đây (ví dụ: https://www.youtube.com/watch?v=...)",
+                        placeholder="Dán đường dẫn video YouTube vào đây (ví dụ: https://www.youtube.com/watch?v=...)",
                         lines=2
                     )
 
-                    gr.Markdown("<div style='font-size: 12.5px; font-weight: 600; color: #5f6368; margin-top: 4px; margin-bottom: 2px;'>💡 Video mẫu có sẵn phụ đề chuẩn CC (Click để chọn nhanh):</div>")
+                    gr.HTML("<div style='font-size: 12.5px; font-weight: 500; color: #64748b; margin-top: 6px; margin-bottom: 4px;'>Video mẫu thử nghiệm (kèm phụ đề CC):</div>")
                     with gr.Row():
-                        btn_url_vi = gr.Button("🇻🇳 Video VN: Lúa & Khí Metan", size="sm")
-                        btn_url_en = gr.Button("🇬🇧 Video EN: Steve Jobs Stanford Speech", size="sm")
+                        btn_url_vi = gr.Button("Video VN: Nông nghiệp & Phát thải Khí Metan", size="sm")
+                        btn_url_en = gr.Button("Video EN: Steve Jobs Stanford Commencement", size="sm")
 
                     with gr.Row():
                         lang_opt_4 = gr.Dropdown(
@@ -701,37 +702,30 @@ with gr.Blocks(title="VideoInsight · AI Video & Subtitle Summarizer", css=CUSTO
                             label="Whisper ASR",
                             scale=1
                         )
-                    btn_url = gr.Button("Tóm tắt từ Link URL", variant="primary")
+                    btn_url = gr.Button("Phân tích từ URL", variant="primary")
 
-                    with gr.Accordion("⚙️ Tùy chọn tham số sinh", open=False):
+                    with gr.Accordion("Tùy chọn tham số sinh", open=False):
                         sl_max_4 = gr.Slider(80, 400, value=250, step=20, label="Max Tokens")
                         sl_min_4 = gr.Slider(20, 150, value=35, step=5, label="Min Tokens")
                         sl_beam_4 = gr.Slider(2, 8, value=4, step=1, label="Num Beams")
 
                 with gr.Column(scale=1):
-                    gr.HTML(
-                        """
-                        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 8px;">
-                          <div style="font-size: 13.5px; font-weight: 700; color: #1a73e8;">✨ BẢN TÓM TẮT ĐIỀU HÀNH (EXECUTIVE SUMMARY)</div>
-                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 10px;">Output Card</span>
-                        </div>
-                        """
-                    )
+                    gr.HTML("<div style='font-size: 13.5px; font-weight: 600; color: #0f172a; margin-bottom: 8px;'>Bản tóm tắt điều hành (Executive Summary)</div>")
                     meta_out_4 = gr.Markdown()
                     exec_out_4 = gr.Markdown(
-                        value="*Kết quả tóm tắt súc tích, đầy đủ ý chính sẽ xuất hiện tại đây sau khi bạn nhấn nút tóm tắt.*",
+                        value="*Kết quả tóm tắt súc tích, đầy đủ ý chính sẽ xuất hiện tại đây sau khi xử lý.*",
                         elem_classes=["summary-result-card"]
                     )
                     download_out_4 = gr.File(
-                        label="📥 Tải báo cáo tóm tắt (.md)",
+                        label="Tải báo cáo tóm tắt (.md)",
                         interactive=False
                     )
 
-            with gr.Accordion("📍 Dòng Thời Gian & Phân Đoạn Video (Chapter Timeline & Highlights)", open=True):
+            with gr.Accordion("Phân đoạn nội dung theo dòng thời gian (Timeline & Highlights)", open=True):
                 chapter_out_4 = gr.Markdown(value="*Dòng thời gian các phân đoạn nội dung chính sẽ hiển thị tại đây.*")
-            with gr.Accordion("📄 Lời Thoại Transcript Đầy Đủ 100% (Full Speech Transcript)", open=False):
+            with gr.Accordion("Toàn văn lời thoại trích xuất (Full Speech Transcript)", open=False):
                 transcript_out_4 = gr.Textbox(label="Toàn bộ lời thoại trích xuất từ audio / video / phụ đề (Full Transcript - Không cắt bớt)", lines=12, max_lines=35, interactive=False)
-            with gr.Accordion("📊 Đánh Giá Đo Lường NLP (ROUGE Metrics & Benchmark)", open=False):
+            with gr.Accordion("Chỉ số đánh giá định lượng NLP (ROUGE Benchmark)", open=False):
                 stats_out_4 = gr.Markdown(value="*Bảng chỉ số đo lường ROUGE, tỷ lệ nén và mức độ tóm tắt trừu tượng (Abstractiveness).*", elem_id="metrics-card")
 
     # =========================================================================

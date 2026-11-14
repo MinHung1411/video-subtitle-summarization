@@ -314,8 +314,8 @@ def evaluate_summary(transcript: str, summary: str, lead3: str) -> str:
 | **Lead-3 Baseline (ROUGE-1 / L)** | `{r_lead['rouge1'].fmeasure * 100:.1f}%` / `{r_lead['rougeL'].fmeasure * 100:.1f}%` | Chuẩn so sánh trích xuất 3 câu đầu kinh điển |
 | **Mức độ Trừu tượng (Novel Vocabulary)** | **`{abstractive_ratio:.1f}%`** | Tỷ lệ từ vựng mới sinh ra ngoài Lead-3 |
 
-> 🧠 **Kiến Trúc Mô Hình:** `minhunhooo/video-subtitle-summarization-mt5` (582M Parameters Seq2Seq Engine)  
-> 🔬 **Chiến Lược Tóm Tắt:** Hierarchical Map-Reduce with Length-Aware Beam Search  
-> 🌐 **Chuẩn Hóa Ngữ Liệu:** Custom Unicode NFC Tokenizer (Tối ưu hóa tiếng Việt & đa ngữ)"""
+* **Mô hình suy luận:** `minhunhooo/video-subtitle-summarization-mt5` (582M Parameters, Seq2Seq Engine)  
+* **Thuật toán xử lý:** Hierarchical Map-Reduce với Length-Aware Beam Search  
+* **Chuẩn hóa ngữ liệu:** Custom Unicode NFC Tokenizer (bảo toàn 100% nguyên vẹn dấu thanh tiếng Việt)"""
 
     return report
