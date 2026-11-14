@@ -843,12 +843,14 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
             # Secondary action row: 4 equal sample buttons on left (25% each), Download button on right
             with gr.Row():
                 with gr.Column(scale=1):
+                    gr.HTML("<div style='font-size: 12px; font-weight: 500; color: #5f6368; margin-top: 6px; margin-bottom: 4px;'>Dữ liệu mẫu thử nghiệm (Click để chọn nhanh):</div>")
                     with gr.Row(elem_classes=["sample-row"]):
                         btn_sample_vi = gr.Button("Vietnamese", size="sm", elem_classes=["sample-pill"])
                         btn_sample_en = gr.Button("English", size="sm", elem_classes=["sample-pill"])
                         btn_sample_fr = gr.Button("French", size="sm", elem_classes=["sample-pill"])
                         btn_sample_es = gr.Button("Spanish", size="sm", elem_classes=["sample-pill"])
                 with gr.Column(scale=1):
+                    gr.HTML("<div style='font-size: 12px; font-weight: 500; color: #5f6368; margin-top: 6px; margin-bottom: 4px;'>Xuất kết quả báo cáo:</div>")
                     download_out_1 = gr.DownloadButton(
                         label="Tải báo cáo tóm tắt (.md)",
                         value=None,
