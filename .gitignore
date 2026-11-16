@@ -58,3 +58,9 @@ desktop.ini
 
 # Environment variables
 .env
+
+# Personal documentation & school reports (kept local only)
+CV_PORTFOLIO_GUIDE.md
+*.docx
+*.doc
+*.pdf

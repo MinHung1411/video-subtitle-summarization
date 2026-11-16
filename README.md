@@ -132,7 +132,6 @@ video-subtitle-summarization/
 ├── CODE_MODEL.ipynb                # Baseline single-language training notebook (BART & T5 on VT-SSum)
 ├── DEMO_CODE.ipynb                 # Inference & evaluation demonstration notebook
 ├── deploy_to_space.py             # Automated one-click deployment script
-├── CV_PORTFOLIO_GUIDE.md          # Technical interview guide & CV bullet points
 ├── requirements.txt               # Workspace development dependencies
 └── README.md                      # Project documentation & benchmark overview
 ```
