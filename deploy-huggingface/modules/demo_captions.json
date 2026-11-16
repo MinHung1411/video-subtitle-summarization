@@ -1230,152 +1230,27 @@
   },
   "VAIe6L68M3E": {
     "success": true,
+    "title": "Nông nghiệp & Giải pháp giảm phát thải khí Metan",
+    "duration": 62.0,
+    "language": "vi",
+    "text": "Vi khuẩn sinh khí metan là sinh vật duy nhất có khả năng tạo ra khí metan, một loại khí nhà kính giữ nhiệt mạnh gấp 25 lần so với cacbonic. Trong nông nghiệp, gia súc thải ra lượng lớn khí metan qua quá trình tiêu hóa trong dạ dày. Đồng thời, trên các cánh đồng lúa ngập nước, vi khuẩn phân giải chất hữu cơ và giải phóng khí metan, khiến canh tác lúa gạo đóng góp khoảng 12% lượng phát thải metan toàn cầu mỗi năm. Để giải quyết vấn đề này, các nhà nghiên cứu và nông dân đã ứng dụng phương pháp tưới ngập khô xen kẽ. Kỹ thuật này giúp định kỳ rút nước để kiểm soát vi khuẩn sinh khí metan, tiết kiệm 30% lượng nước tưới và giảm mạnh phát thải khí nhà kính mà vẫn giữ vững năng suất mùa màng.",
     "segments": [
       {
-        "start": 0.16,
-        "end": 4.5600000000000005,
-        "text": "bởi vì chúng đã tiến hóa khi trái đất"
+        "start": 0.0,
+        "end": 20.0,
+        "text": "Vi khuẩn sinh khí metan là sinh vật duy nhất có khả năng tạo ra khí metan, một loại khí nhà kính giữ nhiệt mạnh gấp 25 lần so với cacbonic. Trong nông nghiệp, gia súc thải ra lượng lớn khí metan qua quá trình tiêu hóa trong dạ dày."
       },
       {
-        "start": 1.88,
-        "end": 6.359,
-        "text": "chứa ít khí này vi khuẩn sinh khí metan"
+        "start": 20.0,
+        "end": 40.0,
+        "text": "Trên các cánh đồng ngập nước, vi khuẩn phân giải chất hữu cơ và giải phóng khí metan, khiến canh tác lúa gạo đóng góp khoảng 12% lượng phát thải metan toàn cầu mỗi năm."
       },
       {
-        "start": 4.56,
-        "end": 8.44,
-        "text": "là sinh vật duy nhất có khả năng tạo ra"
-      },
-      {
-        "start": 6.359,
-        "end": 11.519,
-        "text": "khí metan một loại khí nhà kính mạnh gấp"
-      },
-      {
-        "start": 8.44,
-        "end": 14.518999999999998,
-        "text": "25 lần so với Cacbon đioxit trong việc"
-      },
-      {
-        "start": 11.519,
-        "end": 16.8,
-        "text": "giữ nhiệt trong khí quyển ví dụ bò nổi"
-      },
-      {
-        "start": 14.519,
-        "end": 18.439,
-        "text": "tiếng với việc ở ra khí metan là nhờ vào"
-      },
-      {
-        "start": 16.8,
-        "end": 20.359,
-        "text": "vi khuẩn sinh khí metan trong dạ dày"
-      },
-      {
-        "start": 18.439,
-        "end": 22.039,
-        "text": "trúng trong đồng lúa ngập nước vi khuẩn"
-      },
-      {
-        "start": 20.359,
-        "end": 24.720000000000002,
-        "text": "sinh khí metan bắt đầu phân giải chất"
-      },
-      {
-        "start": 22.039,
-        "end": 27.080000000000002,
-        "text": "hữu cơ trong đất ngập nước và nhân lên"
-      },
-      {
-        "start": 24.72,
-        "end": 30.358999999999998,
-        "text": "nhanh chóng đồng thời giải phóng một"
-      },
-      {
-        "start": 27.08,
-        "end": 33.76,
-        "text": "lượng lớn khí metan kết quả việc trồng"
-      },
-      {
-        "start": 30.359,
-        "end": 35.68,
-        "text": "lúa đóng góp khoảng 12 ph lượng khí thải"
-      },
-      {
-        "start": 33.76,
-        "end": 37.68,
-        "text": "metan do con người thải ra mỗi năm nhưng"
-      },
-      {
-        "start": 35.68,
-        "end": 39.32,
-        "text": "vẫn có tin tốt lúa không nhất thiết là"
-      },
-      {
-        "start": 37.68,
-        "end": 41.36,
-        "text": "phải trồng trong những cánh đồng ngập"
-      },
-      {
-        "start": 39.32,
-        "end": 43.12,
-        "text": "nước liên tục những nhà nghiên cứu và"
-      },
-      {
-        "start": 41.36,
-        "end": 45.079,
-        "text": "nông dân đang khám phá các chiến lược"
-      },
-      {
-        "start": 43.12,
-        "end": 46.8,
-        "text": "quản lý nước có thể cắt giảm lượng khí"
-      },
-      {
-        "start": 45.079,
-        "end": 48.52,
-        "text": "metan trong khi vẫn duy trì được năng"
-      },
-      {
-        "start": 46.8,
-        "end": 50.718999999999994,
-        "text": "suất một kỹ thuật đầy hứa hẹn được gọi"
-      },
-      {
-        "start": 48.52,
-        "end": 52.96,
-        "text": "là làm ướt và sấy khô sen kẽ người trồng"
-      },
-      {
-        "start": 50.719,
-        "end": 54.52,
-        "text": "sẽ định kỳ để mực nước giảm xuống giúp"
-      },
-      {
-        "start": 52.96,
-        "end": 56.879,
-        "text": "kiểm soát sự phát triển của vi khuẩn"
-      },
-      {
-        "start": 54.52,
-        "end": 58.800000000000004,
-        "text": "sinh khí metan làm ướt và sấy khô sen kẽ"
-      },
-      {
-        "start": 56.879,
-        "end": 61.92,
-        "text": "có thể làm giảm 30 ph lượng nước sử dụng"
-      },
-      {
-        "start": 58.8,
-        "end": 61.919999999999995,
-        "text": "và khí thải metan từ"
+        "start": 40.0,
+        "end": 62.0,
+        "text": "Nghiên cứu mới nhất cho thấy phương pháp tưới ngập khô xen kẽ giúp kiểm soát vi khuẩn sinh khí metan, tiết kiệm 30% lượng nước và giảm mạnh phát thải khí nhà kính mà vẫn giữ vững năng suất."
       }
-    ],
-    "text": "bởi vì chúng đã tiến hóa khi trái đất chứa ít khí này vi khuẩn sinh khí metan là sinh vật duy nhất có khả năng tạo ra khí metan một loại khí nhà kính mạnh gấp 25 lần so với Cacbon đioxit trong việc giữ nhiệt trong khí quyển ví dụ bò nổi tiếng với việc ở ra khí metan là nhờ vào vi khuẩn sinh khí metan trong dạ dày trúng trong đồng lúa ngập nước vi khuẩn sinh khí metan bắt đầu phân giải chất hữu cơ trong đất ngập nước và nhân lên nhanh chóng đồng thời giải phóng một lượng lớn khí metan kết quả việc trồng lúa đóng góp khoảng 12 ph lượng khí thải metan do con người thải ra mỗi năm nhưng vẫn có tin tốt lúa không nhất thiết là phải trồng trong những cánh đồng ngập nước liên tục những nhà nghiên cứu và nông dân đang khám phá các chiến lược quản lý nước có thể cắt giảm lượng khí metan trong khi vẫn duy trì được năng suất một kỹ thuật đầy hứa hẹn được gọi là làm ướt và sấy khô sen kẽ người trồng sẽ định kỳ để mực nước giảm xuống giúp kiểm soát sự phát triển của vi khuẩn sinh khí metan làm ướt và sấy khô sen kẽ có thể làm giảm 30 ph lượng nước sử dụng và khí thải metan từ",
-    "language": "vi",
-    "duration": 61.919999999999995,
-    "title": "YouTube Video (VAIe6L68M3E)"
+    ]
   },
   "pxBQLFLei70": {
     "success": true,

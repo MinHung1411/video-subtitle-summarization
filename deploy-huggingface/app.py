@@ -990,7 +990,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
 
                     gr.HTML("<div style='font-size: 12px; font-weight: 500; color: #5f6368; margin-top: 4px; margin-bottom: 4px;'>Video mẫu thử nghiệm (4 ngôn ngữ chính thức):</div>")
                     with gr.Row():
-                        btn_url_vi = gr.Button("🇻🇳 Tiếng Việt: Nick Vujicic", size="sm", elem_classes=["sample-pill-lang"])
+                        btn_url_vi = gr.Button("🇻🇳 Tiếng Việt: Nông nghiệp & Metan", size="sm", elem_classes=["sample-pill-lang"])
                         btn_url_en = gr.Button("🇬🇧 English: Steve Jobs", size="sm", elem_classes=["sample-pill-lang"])
                     with gr.Row():
                         btn_url_fr = gr.Button("🇫🇷 French: Mythes sur l'IA", size="sm", elem_classes=["sample-pill-lang"])
@@ -1034,7 +1034,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                 chapter_out_2 = gr.Markdown(value="*Dòng thời gian các phân đoạn nội dung chính sẽ hiển thị tại đây.*")
             with gr.Accordion("Toàn văn lời thoại transcript (Full Transcript)", open=False):
                 transcript_out_2 = gr.Textbox(
-                    label="Toàn bộ lời thoại trích xuất từ audio / video / phụ đề (Full Transcript - Không cắt bớt)",
+                    label="Văn bản lời thoại đầy đủ (Full Transcript)",
                     lines=8,
                     max_lines=12,
                     interactive=False,
@@ -1204,7 +1204,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
         outputs=[meta_out_2, exec_out_2, chapter_out_2, stats_out_2, transcript_out_2, download_out_2],
         api_name="summarize_url"
     )
-    btn_url_vi.click(fn=lambda: ("https://www.youtube.com/watch?v=cOsG32MuQWQ", "Vietnamese"), outputs=[url_in, lang_opt_2])
+    btn_url_vi.click(fn=lambda: ("https://www.youtube.com/watch?v=VAIe6L68M3E", "Vietnamese"), outputs=[url_in, lang_opt_2])
     btn_url_en.click(fn=lambda: ("https://www.youtube.com/watch?v=UF8uR6Z6KLc", "English"), outputs=[url_in, lang_opt_2])
     btn_url_fr.click(fn=lambda: ("https://www.youtube.com/watch?v=8JY_TgCO4Fw", "French"), outputs=[url_in, lang_opt_2])
     btn_url_es.click(fn=lambda: ("https://www.youtube.com/watch?v=znq3ql6wqnE", "Spanish"), outputs=[url_in, lang_opt_2])
