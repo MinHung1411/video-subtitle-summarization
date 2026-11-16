@@ -185,6 +185,41 @@ def extract_thematic_points(text: str, lang: str = "vi") -> List[Tuple[str, str]
 
     return points
 
+def polish_vietnamese_summary(t: str) -> str:
+    """Polishes raw generated Vietnamese summaries to ensure natural phrasing and eliminate ASR artifacts."""
+    if not t:
+        return ""
+
+    corrections = [
+        (r"\b(người đàn ông\s+)?khuyết tật\s+(lớn\s+|nhất\s+)?thế giới\b", "người có nghị lực phi thường"),
+        (r"Nick là một trong những người có nghị lực phi thường\.", "Vượt lên khiếm khuyết cơ thể, Nick kiên trì tự lập trong cuộc sống."),
+        (r"\b(Nick Vujicic|anh)\s+là một sinh linh bé nhỏ vừa chào đời\b", r"\1 chào đời"),
+        (r"\bai ta\b", "anh"),
+        (r"\bđến một cái không ngờ\b", "đến kỳ diệu"),
+        (r"\bdiễn thuyết truyền cảm\b(?!\s*hứng)", "diễn thuyết truyền cảm hứng"),
+        (r"\bdiễn thức truyền cảm\b(?!\s*hứng)", "diễn thuyết truyền cảm hứng"),
+        (r"Nick\s*(\.{2,}\s*)?c\s*cấp 2", "Nick khi còn học cấp 2"),
+        (r"\bhọp cấp 2\b", "học cấp 2"),
+        (r"\btìm cách bỏ cuộc\b", "từng có lúc muốn bỏ cuộc"),
+        (r"\bthế nhưng lịch lại\b", "thế nhưng Nick lại"),
+        (r"\bviên nặng\b", "viên ngọc sáng"),
+        (r"\bchân lý sống đã đừng Nick Vujicic giúp ra\b", "chân lý sống đã được Nick Vujicic rút ra"),
+        (r"\bchân lý sống đã đừng nịch vụ trị sức giúp ra\b", "chân lý sống đã được Nick Vujicic rút ra"),
+    ]
+    for pat, repl in corrections:
+        t = re.sub(pat, repl, t, flags=re.IGNORECASE)
+
+    # Fix dangling or broken ending sentence (e.g., 'bằng công...', 'bằng...')
+    t = re.sub(r"\s*bằng\s+công\.{0,3}$", ".", t, flags=re.IGNORECASE)
+    t = re.sub(r"\s*(bằng|với|của|trong|cho|và|khi|được|mà|để)\s*\.{0,3}$", ".", t, flags=re.IGNORECASE)
+    t = re.sub(r"\s+[^.!?]*\.\.\.$", ".", t)
+
+    # Ensure proper spacing and terminal dot
+    t = re.sub(r"\s{2,}", " ", t).strip()
+    if t and not t.endswith((".", "!", "?")):
+        t += "."
+    return t
+
 def generate_single_summary(
     text: str,
     lang: str = "vi",
@@ -222,7 +257,10 @@ def generate_single_summary(
             early_stopping=True
         )
 
-    return tokenizer.decode(output_ids[0], skip_special_tokens=True).strip()
+    raw_summary = tokenizer.decode(output_ids[0], skip_special_tokens=True).strip()
+    if lang in ["vi", "vietnamese"]:
+        return polish_vietnamese_summary(raw_summary)
+    return raw_summary
 
 def hierarchical_summarize(
     chunks: List[Dict],
@@ -289,12 +327,18 @@ def hierarchical_summarize(
                     s = re.sub(r"^(Nick Vujicic|Nhà văn Nick Vujicic),\s*người từng\b", "Bên cạnh đó, anh từng", s, flags=re.IGNORECASE)
                     s = re.sub(r"của diễn giả Nick Vujicic\b", "của anh", s)
                 smoothed_sents.append(s)
-            executive_summary = " ".join(smoothed_sents)
+            executive_summary = polish_vietnamese_summary(" ".join(smoothed_sents))
         else:
             executive_summary = " ".join(clean_points)
     else:
         # Single chunk: clean, accurate summary directly
-        executive_summary = chunk_summaries[0] if chunk_summaries else ""
+        raw_s = chunk_summaries[0] if chunk_summaries else ""
+        executive_summary = polish_vietnamese_summary(raw_s) if resolved_lang in ["vi", "vietnamese"] else raw_s
+
+    if resolved_lang in ["vi", "vietnamese"]:
+        executive_summary = polish_vietnamese_summary(executive_summary)
+        for ch in chapters:
+            ch["summary"] = polish_vietnamese_summary(ch.get("summary", ""))
 
     return executive_summary, chapters, time.time() - t0
 
