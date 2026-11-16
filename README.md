@@ -114,12 +114,23 @@ video-subtitle-summarization/
 │       ├── chunker.py             # Time-aligned segment chunking
 │       ├── summarizer_engine.py   # mT5 generation & map-reduce logic
 │       └── exporter.py            # Formatted Markdown report export
-├── video_summarizer_mt5_training_pro.ipynb # 44,000-sample distributed Kaggle training notebook
+├── TRAIN_MULTILINGUAL_MT5.ipynb    # 44,000-sample distributed Kaggle training notebook (vi, en, fr, es)
+├── CODE_MODEL.ipynb                # Baseline single-language training notebook (BART & T5 on VT-SSum)
+├── DEMO_CODE.ipynb                 # Inference & evaluation demonstration notebook
 ├── deploy_to_space.py             # Automated one-click deployment script
 ├── CV_PORTFOLIO_GUIDE.md          # Technical interview guide & CV bullet points
 ├── requirements.txt               # Workspace development dependencies
 └── README.md                      # Project documentation & benchmark overview
 ```
+
+---
+
+## 📂 Datasets & Corpora
+
+- **VT-SSum (Video Transcripts):** [Kaggle Dataset](https://www.kaggle.com/datasets/prasadmagdum/nlpproject) | [GitHub](https://github.com/Dod-o/VT-SSum)
+- **VietNews (Vietnamese Abstractive Summarization):** [GitHub](https://github.com/Thanh-Bao-Nguyen/VietNews)
+- **XL-Sum (Multilingual Abstractive Summarization):** [Hugging Face Datasets](https://huggingface.co/datasets/csebuetnlp/xlsum)
+- **OrangeSum (French) & MLSUM (Spanish):** Integrated for zero-shot and cross-lingual validation.
 
 ---
 
