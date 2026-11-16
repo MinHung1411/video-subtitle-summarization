@@ -7,7 +7,7 @@
 [![Python](https://img.shields.io/badge/Python-3.10+-3776AB?style=for-the-badge&logo=python&logoColor=white)](https://python.org)
 [![PyTorch](https://img.shields.io/badge/PyTorch-2.0+-EE4C2C?style=for-the-badge&logo=pytorch&logoColor=white)](https://pytorch.org)
 [![HuggingFace Model](https://img.shields.io/badge/🤗%20Model-mT5--Multilingual-yellow?style=for-the-badge&logo=huggingface)](https://huggingface.co/minhunhooo/video-subtitle-summarization-mt5)
-[![HuggingFace Spaces](https://img.shields.io/badge/🤗%20Live%20Demo-Spaces-blue?style=for-the-badge&logo=huggingface)](https://huggingface.co/spaces/minhunhooo/video-subtitle-summarization)
+[![HuggingFace Spaces](https://img.shields.io/badge/🤗%20Live%20Demo-Spaces-blue?style=for-the-badge&logo=huggingface)](https://minhunhooo-video-subtitle-summarization.hf.space/)
 [![GitHub](https://img.shields.io/badge/GitHub-Repository-black?style=for-the-badge&logo=github)](https://github.com/MinHung1411/video-subtitle-summarization)
 
 *An end-to-end multi-stage NLP platform that ingests video streams directly via URL or local files, transcribes timestamped speech with OpenAI Whisper, chunks long contexts with Hierarchical Map-Reduce, and generates abstractive summaries in multiple languages (Vietnamese, English, French, Spanish).*
@@ -18,7 +18,7 @@
 
 ## 🌟 Live Demos & Artifacts
 
-- 🚀 **Interactive Hugging Face Space:** [minhunhooo/video-subtitle-summarization](https://huggingface.co/spaces/minhunhooo/video-subtitle-summarization)
+- 🚀 **Direct Live Application:** [https://minhunhooo-video-subtitle-summarization.hf.space/](https://minhunhooo-video-subtitle-summarization.hf.space/) *(or via [Space Repository](https://huggingface.co/spaces/minhunhooo/video-subtitle-summarization))*
 - 🧠 **Pre-trained & Fine-tuned Model Hub:** [minhunhooo/video-subtitle-summarization-mt5](https://huggingface.co/minhunhooo/video-subtitle-summarization-mt5) (Weights, SafeTensors, Benchmark Tables & Visualizations)
 - 📊 **Training Pipeline:** Kaggle Dual-GPU T4 distributed multi-session training with Async Hub Sync.
 

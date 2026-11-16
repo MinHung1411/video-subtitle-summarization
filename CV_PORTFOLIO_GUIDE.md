@@ -10,6 +10,8 @@ Tài liệu này được thiết kế để **biến dự án Multilingual Vide
 **VideoInsight: Production-Grade Multilingual Video Transcription & Hierarchical Summarization Platform**
 
 - **Vai trò:** Lead AI / NLP Engineer
+- **Live Demo Platform:** [https://minhunhooo-video-subtitle-summarization.hf.space/](https://minhunhooo-video-subtitle-summarization.hf.space/)
+- **GitHub Repository:** [https://github.com/MinHung1411/video-subtitle-summarization](https://github.com/MinHung1411/video-subtitle-summarization)
 - **Tech Stack:** Python, PyTorch, Hugging Face (Transformers, Datasets, Hub API), mT5, ViT5, OpenAI Whisper, yt-dlp, ROUGE (Unicode-aware), BERTScore, Gradio, Kaggle MLOps.
 
 ### **Các Bullet Points ghi điểm trong CV:**

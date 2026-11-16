@@ -19,6 +19,7 @@ An end-to-end multi-stage pipeline designed for long-form video transcript proce
 ---
 
 ## 🌟 Live Demos & Artifacts
+- 🚀 **Direct Web Application:** [https://minhunhooo-video-subtitle-summarization.hf.space/](https://minhunhooo-video-subtitle-summarization.hf.space/)
 - 🧠 **Pre-trained & Fine-tuned Model Hub:** [minhunhooo/video-subtitle-summarization-mt5](https://huggingface.co/minhunhooo/video-subtitle-summarization-mt5) (Weights, SafeTensors, Benchmark Tables & Visualizations)
 - 🐙 **GitHub Repository:** [MinHung1411/video-subtitle-summarization](https://github.com/MinHung1411/video-subtitle-summarization)
 
