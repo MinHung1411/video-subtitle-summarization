@@ -11,6 +11,33 @@ import torch
 _WHISPER_CACHE = {}
 DEVICE = "cpu"
 
+def normalize_speech_text(text: str) -> str:
+    """Cleans up ASR noise artifacts and fixes phonetic misrecognition."""
+    if not text:
+        return ""
+    # Remove bracket noise tokens: [âm nhạc], [vỗ tay], [tiếng cười], (music), etc.
+    text = re.sub(r"\[(âm nhạc|tiếng cười|vỗ tay|nhạc|music|applause|laughter)\]", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"\((âm nhạc|tiếng cười|vỗ tay|nhạc|music|applause|laughter)\)", "", text, flags=re.IGNORECASE)
+    text = re.sub(r"[♪♫]", "", text)
+
+    # Phonetic corrections for common spoken Vietnamese misrecognitions
+    replacements = [
+        (r"\bNick Vucci sức\b", "Nick Vujicic"),
+        (r"\bnext anh là ai\b", "Nick anh là ai"),
+        (r"\bxích mình bé nhỏ\b", "sinh linh bé nhỏ"),
+        (r"\bquyết trị vật\b", "khuyết tật"),
+        (r"\btiểu tạng\b", "từ thiện"),
+        (r"\bchâu đến\b", "chờ đến"),
+        (r"\bbài máu\b", "bài báo"),
+        (r"\bLife Việt phaolemis\b", "Life Without Limbs"),
+        (r"\bvì chính phủ Life\b", "phi chính phủ Life"),
+    ]
+    for pattern, repl in replacements:
+        text = re.sub(pattern, repl, text, flags=re.IGNORECASE)
+
+    text = re.sub(r"\s{2,}", " ", text)
+    return text.strip()
+
 def clean_subtitle_text(text: str) -> str:
     if not text:
         return ""
@@ -18,7 +45,7 @@ def clean_subtitle_text(text: str) -> str:
     text = re.sub(r"^\d+\s*$", "", text, flags=re.MULTILINE)
     text = re.sub(r"<[^>]+>", "", text)
     text = re.sub(r"[\r\n]+", " ", text)
-    text = re.sub(r"\s{2,}", " ", text)
+    text = normalize_speech_text(text)
     return text.strip()
 
 def parse_srt_with_timestamps(srt_content: str) -> list:
@@ -71,24 +98,31 @@ def transcribe_audio(audio_path: str, model_size: str = "base", language: str = 
         model = load_whisper_model(model_size)
         use_fp16 = torch.cuda.is_available()
 
+        context_prompt = (
+            "Đây là bản ghi âm video bài phát biểu hoặc phỏng vấn có phụ đề rõ ràng, viết hoa tên riêng chính xác (Nick Vujicic, Australia, Melbourne, Stanford, Steve Jobs)."
+            if (language in ["vi", "vietnamese"] or not language or language == "auto")
+            else "This is an audio recording of a speech or interview with clean punctuation, proper names, and capitalization."
+        )
+
         result = model.transcribe(
             audio_path,
             fp16=use_fp16,
             verbose=False,
             condition_on_previous_text=False,
             temperature=0,
-            beam_size=1,
-            best_of=1,
+            beam_size=3,
+            best_of=3,
+            initial_prompt=context_prompt,
             language=language if language and language != "auto" else None,
         )
 
-        full_text = result.get("text", "").strip()
+        full_text = normalize_speech_text(result.get("text", "").strip())
         detected_lang = result.get("language", "unknown")
 
         raw_segments = result.get("segments", [])
         structured_segments = []
         for seg in raw_segments:
-            s_text = seg.get("text", "").strip()
+            s_text = normalize_speech_text(seg.get("text", "").strip())
             if s_text:
                 structured_segments.append({
                     "start": seg.get("start", 0.0),

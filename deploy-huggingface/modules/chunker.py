@@ -30,8 +30,10 @@ def chunk_by_segments(
         target_words = max_words_per_chunk
     elif total_words <= 320:
         target_words = max(60, total_words // 2)
+    elif total_words <= 650:
+        target_words = max(180, total_words // 2)
     else:
-        target_words = min(220, max(120, total_words // 7))
+        target_words = min(260, max(180, total_words // 5))
 
     chunks = []
     current_words = []

@@ -948,6 +948,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                     gr.HTML("<div style='font-size: 12px; font-weight: 500; color: #5f6368; margin-top: 4px; margin-bottom: 2px;'>Video mẫu thử nghiệm (có phụ đề CC):</div>")
                     with gr.Row():
                         btn_url_vi = gr.Button("Video VN: Nông nghiệp & Metan", size="sm", elem_classes=["sample-pill"])
+                        btn_url_nick = gr.Button("Video VN: Nick Vujicic", size="sm", elem_classes=["sample-pill"])
                         btn_url_en = gr.Button("Video EN: Steve Jobs Stanford", size="sm", elem_classes=["sample-pill"])
                         btn_url_speech = gr.Button("Video EN: Commencement Speech", size="sm", elem_classes=["sample-pill"])
 
@@ -1160,6 +1161,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
         api_name="summarize_url"
     )
     btn_url_vi.click(fn=lambda: ("https://www.youtube.com/watch?v=VAIe6L68M3E", "Vietnamese"), outputs=[url_in, lang_opt_2])
+    btn_url_nick.click(fn=lambda: ("https://www.youtube.com/watch?v=cOsG32MuQWQ", "Vietnamese"), outputs=[url_in, lang_opt_2])
     btn_url_en.click(fn=lambda: ("https://www.youtube.com/watch?v=UF8uR6Z6KLc", "English"), outputs=[url_in, lang_opt_2])
     btn_url_speech.click(fn=lambda: ("https://www.youtube.com/watch?v=pxBQLFLei70", "English"), outputs=[url_in, lang_opt_2])
 
