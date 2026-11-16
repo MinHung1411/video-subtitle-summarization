@@ -456,6 +456,34 @@ button.primary:active, .gr-button-primary:active {
     color: #202124 !important;
 }
 
+/* Language Sample Pills (Tab 2) - 2x2 Grid with Full Text Visibility */
+.sample-pill-lang {
+    background: #ffffff !important;
+    color: #3c4043 !important;
+    border: 1px solid #dadce0 !important;
+    border-radius: 6px !important;
+    font-weight: 500 !important;
+    font-size: 12px !important;
+    padding: 7px 10px !important;
+    box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.02) !important;
+    transition: all 0.15s ease-in-out !important;
+    cursor: pointer !important;
+    text-align: center !important;
+    min-height: 35px !important;
+    height: auto !important;
+    width: 100% !important;
+    white-space: normal !important;
+    word-break: break-word !important;
+    overflow: visible !important;
+    text-overflow: clip !important;
+    line-height: 1.35 !important;
+}
+.sample-pill-lang:hover {
+    background: #f1f3f4 !important;
+    border-color: #1a73e8 !important;
+    color: #1a73e8 !important;
+}
+
 /* Download Button Component */
 .dl-pill {
     background: #ffffff !important;
@@ -945,12 +973,13 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                         show_label=False
                     )
 
-                    gr.HTML("<div style='font-size: 12px; font-weight: 500; color: #5f6368; margin-top: 4px; margin-bottom: 2px;'>Video mẫu thử nghiệm (có phụ đề CC):</div>")
+                    gr.HTML("<div style='font-size: 12px; font-weight: 500; color: #5f6368; margin-top: 4px; margin-bottom: 4px;'>Video mẫu thử nghiệm (4 ngôn ngữ chính thức):</div>")
                     with gr.Row():
-                        btn_url_vi = gr.Button("Video VN: Nông nghiệp & Metan", size="sm", elem_classes=["sample-pill"])
-                        btn_url_nick = gr.Button("Video VN: Nick Vujicic", size="sm", elem_classes=["sample-pill"])
-                        btn_url_en = gr.Button("Video EN: Steve Jobs Stanford", size="sm", elem_classes=["sample-pill"])
-                        btn_url_speech = gr.Button("Video EN: Commencement Speech", size="sm", elem_classes=["sample-pill"])
+                        btn_url_vi = gr.Button("🇻🇳 Tiếng Việt: Nick Vujicic", size="sm", elem_classes=["sample-pill-lang"])
+                        btn_url_en = gr.Button("🇬🇧 English: Steve Jobs", size="sm", elem_classes=["sample-pill-lang"])
+                    with gr.Row():
+                        btn_url_fr = gr.Button("🇫🇷 French: Mythes sur l'IA", size="sm", elem_classes=["sample-pill-lang"])
+                        btn_url_es = gr.Button("🇪🇸 Spanish: Inteligencia Artificial", size="sm", elem_classes=["sample-pill-lang"])
 
                     with gr.Row():
                         lang_opt_2 = gr.Dropdown(
@@ -1160,10 +1189,10 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
         outputs=[meta_out_2, exec_out_2, chapter_out_2, stats_out_2, transcript_out_2, download_out_2],
         api_name="summarize_url"
     )
-    btn_url_vi.click(fn=lambda: ("https://www.youtube.com/watch?v=VAIe6L68M3E", "Vietnamese"), outputs=[url_in, lang_opt_2])
-    btn_url_nick.click(fn=lambda: ("https://www.youtube.com/watch?v=cOsG32MuQWQ", "Vietnamese"), outputs=[url_in, lang_opt_2])
+    btn_url_vi.click(fn=lambda: ("https://www.youtube.com/watch?v=cOsG32MuQWQ", "Vietnamese"), outputs=[url_in, lang_opt_2])
     btn_url_en.click(fn=lambda: ("https://www.youtube.com/watch?v=UF8uR6Z6KLc", "English"), outputs=[url_in, lang_opt_2])
-    btn_url_speech.click(fn=lambda: ("https://www.youtube.com/watch?v=pxBQLFLei70", "English"), outputs=[url_in, lang_opt_2])
+    btn_url_fr.click(fn=lambda: ("https://www.youtube.com/watch?v=8JY_TgCO4Fw", "French"), outputs=[url_in, lang_opt_2])
+    btn_url_es.click(fn=lambda: ("https://www.youtube.com/watch?v=znq3ql6wqnE", "Spanish"), outputs=[url_in, lang_opt_2])
 
     # Tab 3: Video / Audio
     btn_video.click(

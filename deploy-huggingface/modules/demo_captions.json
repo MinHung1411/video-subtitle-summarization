@@ -3893,5 +3893,71 @@
         "text": "Cuộc đời là một hành trình không giới hạn nếu bạn dám tin tưởng, dám yêu thương và dám đứng dậy sau mỗi lần thất bại."
       }
     ]
+  },
+  "8JY_TgCO4Fw": {
+    "title": "3 mythes au sujet de l’IA | Jessica Hoffmann | TEDxParis",
+    "duration": 742.0,
+    "language": "fr",
+    "text": "Jessica Hoffmann, chercheuse chez Google DeepMind, presente a TEDxParis une analyse captivante pour deconstruire les idees recues sur l intelligence artificielle. Le premier mythe affirme qu il faut obligatoirement des millions de donnees pour entrainer une intelligence artificielle. En realite, grace aux methodes modernes d adaptation et de fine-tuning, une centaine d exemples suffit pour concevoir des modeles adaptes a des besoins specifiques et des PME. Le deuxieme mythe soutient qu il faut absolument utiliser les IA les plus lourdes et partager ses donnees confidentielles. En verite, les modeles open source legers tournent desormais localement sur un ordinateur portable, garantissant une confidentialite totale. Le troisieme mythe decrit l intelligence artificielle comme une boite noire incomprehensible. Les avancees majeures en interpretabilite permettent aujourd hui d inspecter les circuits de neurones et de comprendre precisement le raisonnement des algorithmes. En demystifiant ces trois croyances, Jessica Hoffmann montre que l intelligence artificielle devient un outil accessible, comprehensible et souverain, au service de tous les citoyens et innovateurs.",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 60.0,
+        "text": "Jessica Hoffmann, chercheuse chez Google DeepMind, presente a TEDxParis une analyse captivante pour deconstruire les idees recues sur l intelligence artificielle."
+      },
+      {
+        "start": 60.0,
+        "end": 180.0,
+        "text": "Le premier mythe affirme qu il faut obligatoirement des millions de donnees pour entrainer une intelligence artificielle. En realite, grace aux methodes modernes d adaptation et de fine-tuning, une centaine d exemples suffit pour concevoir des modeles adaptes a des besoins specifiques et des PME."
+      },
+      {
+        "start": 180.0,
+        "end": 360.0,
+        "text": "Le deuxieme mythe soutient qu il faut absolument utiliser les IA les plus lourdes et partager ses donnees confidentielles. En verite, les modeles open source legers tournent desormais localement sur un ordinateur portable, garantissant une confidentialite totale."
+      },
+      {
+        "start": 360.0,
+        "end": 540.0,
+        "text": "Le troisieme mythe decrit l intelligence artificielle comme une boite noire incomprehensible. Les avancees majeures en interpretabilite permettent aujourd hui d inspecter les circuits de neurones et de comprendre precisement le raisonnement des algorithmes."
+      },
+      {
+        "start": 540.0,
+        "end": 742.0,
+        "text": "En demystifiant ces trois croyances, Jessica Hoffmann montre que l intelligence artificielle devient un outil accessible, comprehensible et souverain, au service de tous les citoyens et innovateurs."
+      }
+    ]
+  },
+  "znq3ql6wqnE": {
+    "title": "Inteligencia Artificial: ¿Amiga o Enemiga? | Diego Fernández Slezak | TEDxRiodelaPlata",
+    "duration": 780.0,
+    "language": "es",
+    "text": "El profesor Diego Fernandez Slezak explora en TEDxRiodelaPlata la encrucijada historica de la inteligencia artificial y si esta representa una aliada o una amenaza para la humanidad. A traves de la historia de la ciencia y la neurociencia computacional, se analiza como las redes neuronales pasaron de simples reglas logicas a comprender patrones complejos del lenguaje y el pensamiento humano. Las aplicaciones medicas de la IA permiten diagnosticar patologias tempranas y caracterizar alteraciones neurologicas analizando unicamente la estructura del discurso de los pacientes. Surgen dilemas eticos profundos sobre la autonomia de las maquinas, los sesgos algoritmicos y la necesidad de una regulacion democratica para evitar la concentracion desmedida del poder tecnologico. La inteligencia artificial no es intrinsecamente buena ni mala; es un espejo de la propia condicion humana, y su futuro depende de los valores eticos y la colaboracion colectiva que decidamos imprimirle.",
+    "segments": [
+      {
+        "start": 0.0,
+        "end": 75.0,
+        "text": "El profesor Diego Fernandez Slezak explora en TEDxRiodelaPlata la encrucijada historica de la inteligencia artificial y si esta representa una aliada o una amenaza para la humanidad."
+      },
+      {
+        "start": 75.0,
+        "end": 210.0,
+        "text": "A traves de la historia de la ciencia y la neurociencia computacional, se analiza como las redes neuronales pasaron de simples reglas logicas a comprender patrones complejos del lenguaje y el pensamiento humano."
+      },
+      {
+        "start": 210.0,
+        "end": 390.0,
+        "text": "Las aplicaciones medicas de la IA permiten diagnosticar patologias tempranas y caracterizar alteraciones neurologicas analizando unicamente la estructura del discurso de los pacientes."
+      },
+      {
+        "start": 390.0,
+        "end": 570.0,
+        "text": "Surgen dilemas eticos profundos sobre la autonomia de las maquinas, los sesgos algoritmicos y la necesidad de una regulacion democratica para evitar la concentracion desmedida del poder tecnologico."
+      },
+      {
+        "start": 570.0,
+        "end": 780.0,
+        "text": "La inteligencia artificial no es intrinsecamente buena ni mala; es un espejo de la propia condicion humana, y su futuro depende de los valores eticos y la colaboracion colectiva que decidamos imprimirle."
+      }
+    ]
   }
 }
