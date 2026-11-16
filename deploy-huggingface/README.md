@@ -18,15 +18,23 @@ An end-to-end multi-stage pipeline designed for long-form video transcript proce
 
 ---
 
+## 🌟 Live Demos & Artifacts
+- 🧠 **Pre-trained & Fine-tuned Model Hub:** [minhunhooo/video-subtitle-summarization-mt5](https://huggingface.co/minhunhooo/video-subtitle-summarization-mt5) (Weights, SafeTensors, Benchmark Tables & Visualizations)
+- 🐙 **GitHub Repository:** [MinHung1411/video-subtitle-summarization](https://github.com/MinHung1411/video-subtitle-summarization)
+
+---
+
 ## 🚀 Key Architectural Highlights
 
 1. **Ingestion Engine (`yt-dlp` & Local I/O):**
    - High-throughput audio stream extraction from YouTube, TikTok, and Vimeo.
-   - Support for direct video/audio uploads (`.mp4`, `.mkv`, `.mp3`, `.wav`) and subtitle files (`.srt`, `.vtt`).
+   - Support for 4 distinct input modalities: direct video/audio uploads (`.mp4`, `.mkv`, `.mp3`, `.wav`), video URLs, subtitle files (`.srt`, `.vtt`), and raw plain text.
 
 2. **ASR with Temporal Alignment (OpenAI Whisper):**
    - Timestamp-aware acoustic transcription.
    - Extracts sentence boundaries and exact timestamps for timeline visualization.
+   - Automatic bracket noise suppression (`[âm nhạc]`, `♪♫`) and YouTube promotional outro stripping.
+   - Context-aware phonetic speech rectification for spoken Vietnamese.
 
 3. **Hierarchical Map-Reduce Chunker:**
    - Overcomes standard Transformer context length limits ($512$ tokens).
@@ -35,6 +43,7 @@ An end-to-end multi-stage pipeline designed for long-form video transcript proce
 4. **Fine-Tuned Multilingual Seq2Seq Backbone (`mT5`):**
    - Trained across 44,000 multi-domain samples (VT-SSum, VietNews, CNN/DailyMail, OrangeSum, MLSUM).
    - Conditioned via language control prefix: `summarize <lang>: <text>` for Vietnamese, English, French, and Spanish.
+   - Post-generation Vietnamese polish engine eliminating awkward literal translations and preserving natural phrasing.
 
 ---
 
@@ -59,11 +68,11 @@ An end-to-end multi-stage pipeline designed for long-form video transcript proce
 ├── apt.txt                    # System dependencies (ffmpeg)
 ├── README.md                  # Space metadata card
 └── modules/                   # Production modular pipeline
-    ├── audio_handler.py       # Audio downloader & duration sanitizer
-    ├── asr_engine.py          # Whisper STT & subtitle parser
+    ├── audio_handler.py       # Audio stream ingestion via yt-dlp
+    ├── asr_engine.py          # Whisper transcription & timestamp parser
     ├── chunker.py             # Time-aligned segment chunking
-    ├── summarizer_engine.py   # mT5 inference & map-reduce logic
-    └── exporter.py            # Markdown report generator
+    ├── summarizer_engine.py   # mT5 generation & map-reduce logic
+    └── exporter.py            # Formatted Markdown report export
 ```
 
 *Note: Model weights are loaded dynamically from Hugging Face Hub (`minhunhooo/video-subtitle-summarization-mt5`) at runtime to keep repository storage lightweight and fast to clone.*

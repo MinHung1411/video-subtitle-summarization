@@ -99,6 +99,20 @@ Evaluated across **VT-SSum** (Video), **VietNews** (Vietnamese News), **CNN/Dail
 
 ---
 
+## 🚀 Recent Production Updates & Engineering Highlights
+
+| Feature / Upgrade | Technical Implementation | Impact / Value |
+| :--- | :--- | :--- |
+| **ASR Noise & Outro Purge** | Regex pattern matching in `asr_engine.py` targeting bracket noise (`[âm nhạc]`, `♪♫`) and YouTube subscription outro ads | Prevents junk promotional text from polluting summaries |
+| **Phonetic Speech Rectification** | Contextual phoneme dictionary in `asr_engine.py` for Vietnamese acoustic misrecognitions | Restores correct proper names, technical terms, and speaker titles |
+| **Vietnamese Polish Engine** | Grammar & tone refinery in `summarizer_engine.py` (`polish_vietnamese_summary`) | Eliminates stiff or offensive literal phrasing, ensures natural human-level readability |
+| **Cohesive Executive Briefing** | Redesigned generation prompt in `app.py` replacing AI-tagged bullet lists with smooth narrative paragraphs | Executive-ready briefing suitable for reports and business summaries |
+| **4-Language Presets** | One-click instant sample loaders for Vietnamese, English, French, and Spanish | Allows instant zero-configuration testing for reviewers and recruiters |
+| **Interactive ROUGE Benchmark** | Real-time Lead-3 vs fine-tuned mT5 comparison using NFC Unicode-aware tokenization | Demonstrates empirical superiority over extractive baselines on the fly |
+| **Full Modular Decoupling** | Modular architecture (`asr_engine`, `chunker`, `summarizer_engine`, `exporter`) | Production-ready, maintainable, easily deployable as microservices |
+
+---
+
 ## 🗂️ Project Structure
 
 ```
