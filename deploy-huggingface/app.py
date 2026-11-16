@@ -237,7 +237,7 @@ def process_pipeline(
                     )
                 chapter_display = "\n".join(pts_md)
             else:
-                chapter_display = f"> *Toàn bộ nội dung ({word_count:,} từ) đã được tổng hợp trong Bản tóm tắt điều hành ở trên.*"
+                chapter_display = f"> *Toàn bộ nội dung ({word_count:,} từ) đã được tổng hợp trong Bản tóm tắt ở trên.*"
 
         total_elapsed = time.time() - t_start
 
@@ -622,14 +622,14 @@ div.gradio-container .scroll-hide::-webkit-scrollbar-thumb:hover {
     outline: none !important;
 }
 
-/* Tabs 2, 3, 4: Balanced Height Summary Card */
+/* Tabs 1, 2, 4: Balanced Height Summary Card - Aligned with Left Column */
 .summary-box-tab2.block {
     background: #f8f9fa !important;
     border: 1px solid #dadce0 !important;
     border-radius: 8px !important;
-    min-height: 220px !important;
-    max-height: 220px !important;
-    height: 220px !important;
+    min-height: 255px !important;
+    max-height: 255px !important;
+    height: 255px !important;
     overflow-y: auto !important;
     padding: 14px 16px !important;
     font-size: 14px !important;
@@ -898,14 +898,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                 with gr.Column(scale=1):
                     gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Tải lên tệp Video hoặc Âm thanh</div>")
                 with gr.Column(scale=1):
-                    gr.HTML(
-                        """
-                        <div style="height: 28px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #202124;">
-                          <span>Bản tóm tắt điều hành</span>
-                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #d2e3fc;">Executive Summary</span>
-                        </div>
-                        """
-                    )
+                    gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Bản tóm tắt</div>")
 
             with gr.Row():
                 with gr.Column(scale=1):
@@ -970,14 +963,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                 with gr.Column(scale=1):
                     gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Đường dẫn video YouTube / Trực tuyến</div>")
                 with gr.Column(scale=1):
-                    gr.HTML(
-                        """
-                        <div style="height: 28px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #202124;">
-                          <span>Bản tóm tắt điều hành</span>
-                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #d2e3fc;">Executive Summary</span>
-                        </div>
-                        """
-                    )
+                    gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Bản tóm tắt</div>")
 
             with gr.Row():
                 with gr.Column(scale=1):
@@ -1052,14 +1038,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                 with gr.Column(scale=1):
                     gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Văn bản nguồn (Source Text)</div>")
                 with gr.Column(scale=1):
-                    gr.HTML(
-                        """
-                        <div style="height: 28px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #202124;">
-                          <span>Bản tóm tắt điều hành</span>
-                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #d2e3fc;">Executive Summary</span>
-                        </div>
-                        """
-                    )
+                    gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Bản tóm tắt</div>")
 
             # Main content boxes: Exact side-by-side equal height (300px)
             with gr.Row(equal_height=True):
@@ -1123,14 +1102,7 @@ with gr.Blocks(title="VideoInsight · Multilingual Video & Speech Summarizer", t
                 with gr.Column(scale=1):
                     gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Tải lên tệp phụ đề (.srt, .vtt, .txt)</div>")
                 with gr.Column(scale=1):
-                    gr.HTML(
-                        """
-                        <div style="height: 28px; display: flex; align-items: center; justify-content: space-between; font-size: 14px; font-weight: 600; color: #202124;">
-                          <span>Bản tóm tắt điều hành</span>
-                          <span style="background: #e8f0fe; color: #1a73e8; font-size: 11px; font-weight: 600; padding: 2px 8px; border-radius: 4px; border: 1px solid #d2e3fc;">Executive Summary</span>
-                        </div>
-                        """
-                    )
+                    gr.HTML("<div style='height: 28px; display: flex; align-items: center; font-size: 14px; font-weight: 600; color: #202124;'>Bản tóm tắt</div>")
 
             with gr.Row():
                 with gr.Column(scale=1):
