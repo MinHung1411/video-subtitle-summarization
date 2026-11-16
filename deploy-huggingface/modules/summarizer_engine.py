@@ -269,7 +269,7 @@ def hierarchical_summarize(
             "raw_text": c_text
         })
 
-    # Reduce Phase: Synthesize into structured executive briefing
+    # Reduce Phase: Synthesize into clean, cohesive narrative summary (natural paragraph, no AI headers)
     if len(chunk_summaries) > 1:
         clean_points = []
         for s in chunk_summaries:
@@ -280,35 +280,18 @@ def hierarchical_summarize(
                 clean_points.append(s_clean)
 
         if resolved_lang in ["vi", "vietnamese"]:
-            lead_overview = clean_points[-1] if len(clean_points) >= 2 else "Tổng quan nội dung tóm tắt từ video:"
-            bullets_list = clean_points[:-1] if len(clean_points) >= 2 else clean_points
-
-            thematic_icons = ["📌", "🎓", "💪", "🏆", "🌟", "💡", "🎯", "🚀"]
-            bullets_md = []
-            for i, pt in enumerate(bullets_list):
-                icon = thematic_icons[i % len(thematic_icons)]
-                bullets_md.append(f"* {icon} {pt}")
-
-            bullets_block = "\n".join(bullets_md)
-            executive_summary = f"**Tổng quan điều hành:**\n{lead_overview}\n\n**Các điểm nhấn nội dung then chốt:**\n{bullets_block}"
-        elif resolved_lang in ["fr", "french"]:
-            lead_overview = clean_points[-1] if len(clean_points) >= 2 else "Synthèse exécutive des points clés:"
-            bullets_list = clean_points[:-1] if len(clean_points) >= 2 else clean_points
-            bullets_md = [f"* 📌 {pt}" for pt in bullets_list]
-            bullets_block = "\n".join(bullets_md)
-            executive_summary = f"**Synthèse Exécutive:**\n{lead_overview}\n\n**Points Clés & Perspectives:**\n{bullets_block}"
-        elif resolved_lang in ["es", "spanish"]:
-            lead_overview = clean_points[-1] if len(clean_points) >= 2 else "Resumen ejecutivo de los puntos clave:"
-            bullets_list = clean_points[:-1] if len(clean_points) >= 2 else clean_points
-            bullets_md = [f"* 📌 {pt}" for pt in bullets_list]
-            bullets_block = "\n".join(bullets_md)
-            executive_summary = f"**Resumen Ejecutivo:**\n{lead_overview}\n\n**Puntos Clave & Conclusiones:**\n{bullets_block}"
+            smoothed_sents = []
+            for i, sent in enumerate(clean_points):
+                s = sent.strip()
+                if i > 0:
+                    s = re.sub(r"^(Nick Vujicic|Nhà văn Nick Vujicic|Diễn giả Nick Vujicic)\s+là\b", "Sau đó, anh trở thành", s, flags=re.IGNORECASE)
+                    s = re.sub(r"^(Nick Vujicic|Nhà văn Nick Vujicic|Diễn giả Nick Vujicic)\s+(đã\s+)?", "Anh ", s, flags=re.IGNORECASE)
+                    s = re.sub(r"^(Nick Vujicic|Nhà văn Nick Vujicic),\s*người từng\b", "Bên cạnh đó, anh từng", s, flags=re.IGNORECASE)
+                    s = re.sub(r"của diễn giả Nick Vujicic\b", "của anh", s)
+                smoothed_sents.append(s)
+            executive_summary = " ".join(smoothed_sents)
         else:
-            lead_overview = clean_points[-1] if len(clean_points) >= 2 else "Executive summary synthesized from key sections:"
-            bullets_list = clean_points[:-1] if len(clean_points) >= 2 else clean_points
-            bullets_md = [f"* 📌 {pt}" for pt in bullets_list]
-            bullets_block = "\n".join(bullets_md)
-            executive_summary = f"**Executive Overview:**\n{lead_overview}\n\n**Key Takeaways & Highlights:**\n{bullets_block}"
+            executive_summary = " ".join(clean_points)
     else:
         # Single chunk: clean, accurate summary directly
         executive_summary = chunk_summaries[0] if chunk_summaries else ""
