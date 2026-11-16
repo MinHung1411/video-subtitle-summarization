@@ -643,16 +643,31 @@ div.gradio-container .scroll-hide::-webkit-scrollbar-thumb:hover {
 }
 .summary-box-tab2.block > .prose,
 .summary-box-tab2.block > div {
-    height: 100% !important;
+    height: auto !important;
+    min-height: 100% !important;
     width: 100% !important;
     padding: 0 !important;
     margin: 0 !important;
 }
-.summary-box-tab2.block * {
-    border: none !important;
-    box-shadow: none !important;
+.summary-box-tab2.block *,
+.summary-box.block * {
     background: transparent !important;
     outline: none !important;
+}
+.summary-box-tab2.block p,
+.summary-box.block p {
+    margin-bottom: 8px !important;
+    line-height: 1.6 !important;
+}
+.summary-box-tab2.block ul,
+.summary-box.block ul {
+    margin: 6px 0 8px 18px !important;
+    padding: 0 !important;
+}
+.summary-box-tab2.block li,
+.summary-box.block li {
+    margin-bottom: 5px !important;
+    line-height: 1.5 !important;
 }
 
 /* Form Controls & Inputs */

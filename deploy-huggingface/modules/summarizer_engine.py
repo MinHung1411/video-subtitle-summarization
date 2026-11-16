@@ -207,8 +207,7 @@ def generate_single_summary(
     )
 
     input_word_count = len(clean_text.split())
-    # Balanced min_new_tokens (25-35 tokens) prevents the model from copying verbatim long sentences
-    target_min = min(35, max(20, min_output // 2))
+    target_min = min(20, max(10, min_output // 3))
     target_max = max(max_output, target_min + 60)
 
     with torch.no_grad():
@@ -216,10 +215,10 @@ def generate_single_summary(
             **inputs,
             max_new_tokens=target_max,
             min_new_tokens=target_min,
-            length_penalty=1.35,
+            length_penalty=0.95,
             num_beams=num_beams,
             no_repeat_ngram_size=3,
-            repetition_penalty=1.15,
+            repetition_penalty=1.25,
             early_stopping=True
         )
 
@@ -258,7 +257,7 @@ def hierarchical_summarize(
             c_text,
             lang=resolved_lang,
             max_output=max(120, max_output),
-            min_output=max(25, min_output // 2),
+            min_output=max(15, min_output // 3),
             num_beams=num_beams
         )
 
@@ -272,17 +271,44 @@ def hierarchical_summarize(
 
     # Reduce Phase: Synthesize into structured executive briefing
     if len(chunk_summaries) > 1:
-        combined_sents = []
+        clean_points = []
         for s in chunk_summaries:
             s_clean = s.strip()
             if s_clean and not s_clean.endswith((".", "!", "?")):
                 s_clean += "."
-            if s_clean:
-                combined_sents.append(s_clean)
+            if s_clean and s_clean not in clean_points:
+                clean_points.append(s_clean)
 
-        full_overview = " ".join(combined_sents)
+        if resolved_lang in ["vi", "vietnamese"]:
+            lead_overview = clean_points[-1] if len(clean_points) >= 2 else "Tổng quan nội dung tóm tắt từ video:"
+            bullets_list = clean_points[:-1] if len(clean_points) >= 2 else clean_points
 
-        executive_summary = full_overview
+            thematic_icons = ["📌", "🎓", "💪", "🏆", "🌟", "💡", "🎯", "🚀"]
+            bullets_md = []
+            for i, pt in enumerate(bullets_list):
+                icon = thematic_icons[i % len(thematic_icons)]
+                bullets_md.append(f"* {icon} {pt}")
+
+            bullets_block = "\n".join(bullets_md)
+            executive_summary = f"**Tổng quan điều hành:**\n{lead_overview}\n\n**Các điểm nhấn nội dung then chốt:**\n{bullets_block}"
+        elif resolved_lang in ["fr", "french"]:
+            lead_overview = clean_points[-1] if len(clean_points) >= 2 else "Synthèse exécutive des points clés:"
+            bullets_list = clean_points[:-1] if len(clean_points) >= 2 else clean_points
+            bullets_md = [f"* 📌 {pt}" for pt in bullets_list]
+            bullets_block = "\n".join(bullets_md)
+            executive_summary = f"**Synthèse Exécutive:**\n{lead_overview}\n\n**Points Clés & Perspectives:**\n{bullets_block}"
+        elif resolved_lang in ["es", "spanish"]:
+            lead_overview = clean_points[-1] if len(clean_points) >= 2 else "Resumen ejecutivo de los puntos clave:"
+            bullets_list = clean_points[:-1] if len(clean_points) >= 2 else clean_points
+            bullets_md = [f"* 📌 {pt}" for pt in bullets_list]
+            bullets_block = "\n".join(bullets_md)
+            executive_summary = f"**Resumen Ejecutivo:**\n{lead_overview}\n\n**Puntos Clave & Conclusiones:**\n{bullets_block}"
+        else:
+            lead_overview = clean_points[-1] if len(clean_points) >= 2 else "Executive summary synthesized from key sections:"
+            bullets_list = clean_points[:-1] if len(clean_points) >= 2 else clean_points
+            bullets_md = [f"* 📌 {pt}" for pt in bullets_list]
+            bullets_block = "\n".join(bullets_md)
+            executive_summary = f"**Executive Overview:**\n{lead_overview}\n\n**Key Takeaways & Highlights:**\n{bullets_block}"
     else:
         # Single chunk: clean, accurate summary directly
         executive_summary = chunk_summaries[0] if chunk_summaries else ""

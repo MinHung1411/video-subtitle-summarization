@@ -23,17 +23,36 @@ def chunk_by_segments(
     if not segments:
         return []
 
+    # Check if segments are already high-level chapters (3-10 segments, each covering significant duration/words)
+    if 3 <= len(segments) <= 10 and all(
+        (s.get("end", 0) - s.get("start", 0) >= 15) or (len(s.get("text", "").split()) >= 25)
+        for s in segments
+    ):
+        chunks = []
+        for i, s in enumerate(segments):
+            st = s.get("start", 0.0)
+            en = s.get("end", 0.0)
+            chunks.append({
+                "chunk_id": i + 1,
+                "start_time": st,
+                "end_time": en,
+                "time_str": f"{format_seconds_to_time(st)} - {format_seconds_to_time(en)}",
+                "text": s.get("text", "").strip(),
+                "word_count": len(s.get("text", "").split()),
+            })
+        return chunks
+
     # Calculate total words across all segments
     total_words = sum(len(seg.get("text", "").split()) for seg in segments)
 
     if max_words_per_chunk is not None and max_words_per_chunk > 0:
         target_words = max_words_per_chunk
     elif total_words <= 320:
-        target_words = max(60, total_words // 2)
+        target_words = max(55, total_words // 4)
     elif total_words <= 800:
-        target_words = min(110, max(75, total_words // 5))
+        target_words = min(110, max(65, total_words // 6))
     else:
-        target_words = min(220, max(120, total_words // 6))
+        target_words = min(220, max(120, total_words // 8))
 
     chunks = []
     current_words = []
