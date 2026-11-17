@@ -73,8 +73,8 @@
 | :--- | :---: | :---: | :---: | :---: | :---: |
 | Lead-3 (Extractive Baseline) | - | 19.42% | 8.15% | 15.20% | Baseline |
 | Zero-shot mT5-XLSum | 582M | 14.80% | 5.21% | 11.55% | - |
-| BART-large-cnn (Previous Baseline) | 406M | 42.16% | 21.62% | 24.98% | +9.78% |
-| **Our Fine-Tuned mT5 (Epoch 4)** | **582M** | **38.92%** | **22.45%** | **33.65%** | **+8.67% (vs BART)** |
+| BART-large-cnn (v1 Baseline) | 406M | 42.16% | 21.62% | 24.98% | +9.78% |
+| **Our Fine-Tuned mT5 (v2 Multilingual)** | **582M** | **38.92%** | **22.45%** | **33.65%** | **+8.67% (vs v1 BART)** |
 
 ### 2. Multi-Domain & Multilingual Generalization (Macro Average across 5 Datasets)
 
@@ -84,14 +84,14 @@ Evaluated across **VT-SSum** (Video), **VietNews** (Vietnamese News), **CNN/Dail
 | :--- | :---: | :---: | :---: | :---: |
 | Zero-Shot mT5-XLSum | 29.41% | 13.82% | 22.65% | 0.702 |
 | Lead-3 Extractive | 24.12% | 10.35% | 18.17% | - |
-| **Our Fine-Tuned mT5** | **33.19%** | **16.03%** | **26.99%** | **0.758 (Avg across Vi/En/Fr/Es)** |
+| **Our Fine-Tuned mT5 (v2 Multilingual)** | **33.19%** | **16.03%** | **26.99%** | **0.758 (Avg across Vi/En/Fr/Es)** |
 
 ### 3. Hierarchical Map-Reduce Ablation (Full-Length Long Content)
 
 | Method | Video Transcripts (VT-SSum) | Long Articles (CNN/DM) |
 | :--- | :---: | :---: |
 | Truncation (First 512 tokens) | 14.03% | 17.04% |
-| **Hierarchical Map-Reduce (Ours)** | **16.37% (+2.34%)** | **21.09% (+4.05%)** |
+| **Hierarchical Map-Reduce (v2 Ours)** | **16.37% (+2.34%)** | **21.09% (+4.05%)** |
 
 ### 4. Faithfulness & Numeric Hallucination Check
 - **VT-SSum:** 100.0% numeric consistency (0 hallucinated numbers).
@@ -99,7 +99,7 @@ Evaluated across **VT-SSum** (Video), **VietNews** (Vietnamese News), **CNN/Dail
 
 ---
 
-## 🚀 Recent Production Updates & Engineering Highlights
+## 🚀 Version 2 (v2) Production Updates & Engineering Highlights
 
 | Feature / Upgrade | Technical Implementation | Impact / Value |
 | :--- | :--- | :--- |
@@ -128,9 +128,9 @@ video-subtitle-summarization/
 │       ├── chunker.py             # Time-aligned segment chunking
 │       ├── summarizer_engine.py   # mT5 generation & map-reduce logic
 │       └── exporter.py            # Formatted Markdown report export
-├── TRAIN_MULTILINGUAL_MT5.ipynb    # 44,000-sample distributed Kaggle training notebook (vi, en, fr, es)
-├── CODE_MODEL.ipynb                # Baseline single-language training notebook (BART & T5 on VT-SSum)
-├── DEMO_CODE.ipynb                 # Inference & evaluation demonstration notebook
+├── CODE_MODEL.ipynb                # [v1 Baseline] Huấn luyện mô hình tiếng Anh (BART-large & T5-small trên VT-SSum)
+├── CODE_MODEL_v2_multilingual.ipynb # [v2 Update] Huấn luyện mô hình đa ngôn ngữ mT5 44k mẫu (vi, en, fr, es)
+├── DEMO_CODE.ipynb                 # Demo suy luận & đánh giá thử nghiệm
 ├── deploy_to_space.py             # Automated one-click deployment script
 ├── requirements.txt               # Workspace development dependencies
 └── README.md                      # Project documentation & benchmark overview
