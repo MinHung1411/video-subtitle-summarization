@@ -186,8 +186,14 @@ This will automatically push the clean modular pipeline to `minhunhooo/video-sub
 *NLP Research Project · Topic 17 · 2026*  
 Instructor: **TS. Bùi Thanh Hùng**
 
-- **Hồ Minh Hưng** (`@minhunhooo`): Project Lead, Distributed Model Training, MLOps Hub Sync, Gradio UI & Deployment.
-- **Huỳnh Quốc Anh**: Baseline evaluation, report writing, system diagrams.
+| Member | Responsibilities (Nhiệm vụ thực tế) | Hours | % |
+|---|---|:---:|:---:|
+| **Hồ Minh Hưng** (`@minhunhooo`) | Data EDA, tiền xử lý dữ liệu VT-SSum, xây dựng dataset loading pipeline | 40h | 20% |
+| **Hồ Minh Hưng** (`@minhunhooo`) | Fine-tuning mô hình Seq2Seq (BART / mT5), cấu hình Trainer API, theo dõi training curves | 60h | 30% |
+| **Hồ Minh Hưng** (`@minhunhooo`) | Xây dựng ứng dụng giao diện Gradio demo app, triển khai lên Hugging Face Spaces | 40h | 20% |
+| **Huỳnh Quốc Anh** | Cài đặt mô hình đối chứng (T5-small baseline, Lead-3 extractive), tính toán và so sánh metrics | 40h | 20% |
+| **Huỳnh Quốc Anh** | Soạn thảo báo cáo kỹ thuật, bài báo đồ án, vẽ sơ đồ tổng quát & lưu đồ giải thuật | 20h | 10% |
+| **Total** | — | **200h** | **100%** |
 
 ---
 
